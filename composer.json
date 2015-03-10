@@ -5,9 +5,12 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+        "barryvdh/laravel-debugbar": "1.8.4",
+        "laravelbook/ardent": "2.*",
+        "cartalyst/sentry": "2.1.*"
 	},
-	"autoload": {
+    "autoload": {
 		"classmap": [
 			"app/commands",
 			"app/controllers",
