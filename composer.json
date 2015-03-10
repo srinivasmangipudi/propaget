@@ -12,6 +12,7 @@
 	},
     "autoload": {
 		"classmap": [
+			"app/helpers",
 			"app/commands",
 			"app/controllers",
 			"app/models",

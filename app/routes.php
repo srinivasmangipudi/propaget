@@ -12,3 +12,5 @@
 */
 
 Route::get('/', 'HomeController@getHomePage');
+
+Route::get('login', 'UserController@getLoginPage');
