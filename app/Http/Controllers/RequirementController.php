@@ -21,6 +21,7 @@ class RequirementController extends Controller {
         $req->agentId = 1;
         $req->clientId = 1;
         $req->location = $postData['location'];
+        $req->area = $postData['area'];
         $req->save();
 
         return redirect()->route('addRequirement');
