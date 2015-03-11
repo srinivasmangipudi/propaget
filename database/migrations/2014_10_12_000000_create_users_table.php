@@ -12,8 +12,10 @@ class CreateUsersTable extends Migration {
 	 */
 	public function up()
 	{
+        Schema::dropIfExists('users');
 		Schema::create('users', function(Blueprint $table)
 		{
+            $table->engine = 'InnoDB';
 			$table->increments('id');
 			$table->string('name');
 			$table->string('phoneNumber', 20);
@@ -33,7 +35,7 @@ class CreateUsersTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('users');
+        Schema::dropIfExists('users');
 	}
 
 }
