@@ -1,5 +1,7 @@
 <?php namespace App;
+
 use Illuminate\Database\Eloquent\Model;
+use App\Events\EventRequirementAdded;
 
 class Requirement extends BaseModel {
 
@@ -15,5 +17,7 @@ class Requirement extends BaseModel {
     public function save(array $options = array())
     {
         parent::save($options);
+
+        \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
     }
 }

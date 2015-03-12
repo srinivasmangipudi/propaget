@@ -9,19 +9,20 @@ class EventRequirementAdded extends Event {
 
 	use SerializesModels;
 
-    public $userId;
+    public $user;
 
     public $requirement;
 
-	/**
-	 * Create a new event instance.
-	 *
-	 * @return void
-	 */
-	public function __construct($userId, Requirement $requirement)
+    /**
+     * Create a new event instance.
+     *
+     * @param User $user
+     * @param Requirement $requirement
+     */
+	public function __construct($user, $requirement)
 	{
 		\Log::info("Requirement was created");
-        $this->userId = $userId;
+        $this->user = $user;
         $this->requirement = $requirement;
 	}
 

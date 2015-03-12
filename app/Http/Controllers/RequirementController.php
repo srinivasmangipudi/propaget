@@ -21,11 +21,13 @@ class RequirementController extends Controller {
         return view('requirements.view-requirement',compact('allRequirements'));
     }
 
-	public function getAddRequirementPage() {
+	public function getAddRequirementPage()
+    {
         return view('requirements.add-requirement');
     }
 
-    public function postSaveRequirement(Request $request) {
+    public function postSaveRequirement(Request $request)
+    {
         $postData = $request->input();
         $user = Auth::user();
 
@@ -38,8 +40,8 @@ class RequirementController extends Controller {
         $req->price = $postData['price'];
         $req->priceRange = $postData['priceRange'];
         $req->type = $postData['type'];
-
-        if ( ! $req->save())
+        
+        if ( ! $req->save(['user' => $user, 'requirement' => $req]))
         {
             $errors = $req->getErrors()->all();
             return redirect()->back()
