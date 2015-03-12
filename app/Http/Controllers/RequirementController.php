@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Event;
 
 class RequirementController extends Controller {
 
-    public function listRequirementPage()
+    public function getListRequirementPage()
     {
         //get all Requirement of this user
         $user = Auth::user();
