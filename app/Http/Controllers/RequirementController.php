@@ -38,9 +38,14 @@ class RequirementController extends Controller {
         $req->price = $postData['price'];
         $req->priceRange = $postData['priceRange'];
         $req->type = $postData['type'];
-        $req->save();
 
-        \Event::fire(new EventRequirementAdded(1, $req));
+        if ( ! $req->save())
+        {
+            $errors = $req->getErrors()->all();
+            return redirect()->back()
+                ->withErrors($errors)
+                ->withInput();
+        }
 
         return redirect()->route('viewRequirement');
     }
