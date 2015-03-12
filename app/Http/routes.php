@@ -16,7 +16,7 @@ Route::get('/', 'WelcomeController@index');
 Route::get('home', ['uses' => 'HomeController@index', 'as' => 'userHome']);
 
 Route::group(['middleware' => 'auth', 'prefix' => 'requirements'], function() {
-    Route::get('view', ['uses' => 'RequirementController@listRequirementPage', 'as' => 'viewRequirement']);
+    Route::get('view', ['uses' => 'RequirementController@getListRequirementPage', 'as' => 'viewRequirement']);
     Route::get('add', ['uses' => 'RequirementController@getAddRequirementPage', 'as' => 'addRequirement']);
     Route::post('save', ['uses' => 'RequirementController@postSaveRequirement', 'as' => 'saveRequirement']);
 });
