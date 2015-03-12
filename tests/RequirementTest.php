@@ -18,7 +18,7 @@ class RequirementTest extends TestCase {
         $req->agentId = 1;
         $req->clientId = 1;
         $req->location = 'Location';
-//        $req->area = 'Area';
+       $req->area = 'Area';
 
         if ($req->save()) {
             $this->assertTrue(true);
