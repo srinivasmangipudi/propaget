@@ -9,4 +9,9 @@ class BaseModel extends Model {
 
     use ValidatingTrait;
 
+    public function save(array $options = array())
+    {
+        parent::save($options);
+    }
+
 }

@@ -12,4 +12,8 @@ class Requirement extends BaseModel {
     protected $messages = [
     ];
 
+    public function save(array $options = array())
+    {
+        parent::save($options);
+    }
 }
