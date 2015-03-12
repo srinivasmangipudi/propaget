@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Events\EventRequirementAdded;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use AdamWathan\BootForms\Facades\BootForm;
@@ -8,6 +9,7 @@ use App\Requirement;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 
 class RequirementController extends Controller {
 
@@ -25,7 +27,6 @@ class RequirementController extends Controller {
 
     public function postSaveRequirement(Request $request) {
         $postData = $request->input();
-        //dd($postData);
         $user = Auth::user();
 
         $req = new Requirement();
@@ -39,7 +40,8 @@ class RequirementController extends Controller {
         $req->type = $postData['type'];
         $req->save();
 
-        //return redirect()->route('addRequirement');
+        \Event::fire(new EventRequirementAdded(1, $req));
+
         return redirect()->route('viewRequirement');
     }
 
