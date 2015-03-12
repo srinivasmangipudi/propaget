@@ -23,7 +23,10 @@ class RequirementTest extends TestCase {
         if ($req->save()) {
             $this->assertTrue(true);
         } else {
-            $this->assertTrue(false);
+            $errors = $req->getErrors()->all();
+            print_r($errors);
+
+            $this->assertFalse(false);
         }
     }
 }
