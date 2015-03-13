@@ -40,11 +40,14 @@ class RequirementController extends Controller {
         $req->price = $postData['price'];
         $req->priceRange = $postData['priceRange'];
         $req->type = $postData['type'];
-
-        $req->save([
-            'user' => $user,
-            'requirement' => $req
-        ]);
+        
+        if ( ! $req->save(['user' => $user, 'requirement' => $req]))
+        {
+            $errors = $req->getErrors()->all();
+            return redirect()->back()
+                ->withErrors($errors)
+                ->withInput();
+        }
 
         return redirect()->route('viewRequirement');
     }
