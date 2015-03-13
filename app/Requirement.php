@@ -8,10 +8,14 @@ class Requirement extends BaseModel {
     protected $table = 'requirements';
 
     protected $rules = [
-        'area' => 'required'
+        'location' => 'required|min:5',
+        'area' => 'required',
+        'price' => 'required|numeric'
     ];
 
-    protected $messages = [
+    protected $validationMessages = [
+        'required' => 'A :attribute is required',
+        'location.min' => 'A Location should be longer. Min 3 characters'
     ];
 
     public function save(array $options = array())
