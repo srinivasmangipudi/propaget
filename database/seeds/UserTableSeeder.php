@@ -14,6 +14,9 @@ use Faker\Provider\en_US\PhoneNumber;
 
 class UserTableSeeder extends Seeder {
 
+    /**
+     *
+     */
     public function run()
     {
         DB::table('users')->truncate();

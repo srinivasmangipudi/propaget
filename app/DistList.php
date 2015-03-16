@@ -1,11 +1,18 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Faker;
+use Illuminate\Support\Facades\Log;
 
 class DistList extends Model {
 
-	protected $table = 'dist_list';
+	protected $table = 'dist_lists';
 
+    /**
+     * @param array $listData
+     * @param array $members
+     */
     public function saveEntireDistributionList(array $listData, array $members)
     {
         // validate the list data and member data
@@ -13,9 +20,6 @@ class DistList extends Model {
 
         // save the distribution list
         $distList = $this->saveDistributionList($listData);
-
-        // correct to the member data
-        array_unshift($members, $listData['createdBy']);
 
         // check users exist and new users
         $finalArray = $this->checkExistingAndNewUser($members, $listData['createdBy']);
@@ -46,6 +50,9 @@ class DistList extends Model {
 
     private function checkExistingAndNewUser($members)
     {
+        Log::info("Members");
+        Log::info(print_r($members, true));
+
         // get users from DB based on members provided
         $userData = DB::table('users')->whereIn('phoneNumber', $members)->get();
 
@@ -60,18 +67,34 @@ class DistList extends Model {
                 // search for the key
                 $key = array_search($row->phoneNumber, $members);
                 // unset the array index so that next time the search is quicker.
-                unset($members[$key]);
+                /*unset($members[$key]);*/
             }
         }
 
+
+        Log::info("Final");
+        Log::info(print_r($finalArray, true));
+
+        Log::info("Not present");
         $notPresent = array_diff($members, $finalArray);
+        Log::info(print_r($notPresent, true));
+
+        if (!empty($notPresent))
+        {
+            $this->createNewUsers($notPresent);
+        }
 
         return $finalArray;
     }
 
     private function createNewUsers($notPresent)
     {
+        $faker = Faker\Factory::create();
+//        Log::info(print_r($notPresent, true));
+        foreach ($notPresent as $userNumber)
+        {
 
+        }
     }
 
 }

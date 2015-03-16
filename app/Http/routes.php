@@ -82,7 +82,7 @@ Route::get('properties', 'PropertyAppController@index');
 
 Route::get('test-me', function()
 {
-    $members = array('+919820098200', '+919820099583', '+919820098355', '+919820099278', '+919820099825', '+919820215537');
+    /*$members = array('+919820098200', '+919820099583', '+919820098355', '+919820099278', '+919820099825', '+919820215537');
     print '<pre>'; print_r($members); print '</pre>';
 
     $userData = DB::table('users')->select(array('id', 'phoneNumber'))->whereIn('phoneNumber', $members)->get();
@@ -110,5 +110,5 @@ Route::get('test-me', function()
     echo '<br />';
     print '<pre>'; print_r($notPresent); print '</pre>';
 
-    dd($userData);
+    dd($userData);*/
 });
