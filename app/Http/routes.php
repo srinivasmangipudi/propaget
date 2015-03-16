@@ -18,9 +18,9 @@ Route::get('/', 'WelcomeController@index');
 Route::get('home', ['uses' => 'HomeController@index', 'as' => 'userHome']);
 
 Route::group(['middleware' => 'auth', 'prefix' => 'requirements'], function() {
-    Route::get('view', ['uses' => 'RequirementController@getListRequirementPage', 'as' => 'viewRequirement']);
-    Route::get('add', ['uses' => 'RequirementController@getAddRequirementPage', 'as' => 'addRequirement']);
-    Route::post('save', ['uses' => 'RequirementController@postSaveRequirement', 'as' => 'saveRequirement']);
+    Route::get('view', ['uses' => 'RequirementoldController@getListRequirementPage', 'as' => 'viewRequirement']);
+    Route::get('add', ['uses' => 'RequirementoldController@getAddRequirementPage', 'as' => 'addRequirement']);
+    Route::post('save', ['uses' => 'RequirementoldController@postSaveRequirement', 'as' => 'saveRequirement']);
 });
 
 Route::controllers([
@@ -58,6 +58,9 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
 
 Route::resource('dist-list', 'DistListController');
 Route::controller('dist-list', 'DistListController');
+
+Route::resource('req-list','RequirementController');
+Route::controller('req-list','RequirementController');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();

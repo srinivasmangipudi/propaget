@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DistListController extends Controller {
 
@@ -15,6 +16,7 @@ class DistListController extends Controller {
 	 */
 	public function index()
 	{
+        Log::info('I was here');
 		$data = DB::table('migrations')->get();
         return $data;
 	}
@@ -86,5 +88,11 @@ class DistListController extends Controller {
 	{
 		//
 	}
+
+    public function getAllRequirement($id = null    )
+    {
+        Log::info('I was here');
+        return array(1,2,3);
+    }
 
 }
