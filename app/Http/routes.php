@@ -73,3 +73,36 @@ Route::post('register-device', function(Request $request) {
         array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
     );*/
 });
+
+Route::get('test-me', function()
+{
+    $members = array('+919820098200', '+919820099583', '+919820098355', '+919820099278', '+919820099825', '+919820215537');
+    print '<pre>'; print_r($members); print '</pre>';
+
+    $userData = DB::table('users')->select(array('id', 'phoneNumber'))->whereIn('phoneNumber', $members)->get();
+    print '<pre>'; print_r($userData); print '</pre>';
+
+    $finalArray = array();
+
+    foreach ($userData as $row)
+    {
+        if (in_array($row->phoneNumber, $members))
+        {
+            // push to the final array
+            $finalArray[$row->id] = $row->phoneNumber;
+            // search for the key
+            $key = array_search($row->phoneNumber, $members);
+            // unset the array index so that next time the search is quicker.
+            unset($members[$key]);
+        }
+    }
+
+    $notPresent = array_diff($members, $finalArray);
+
+    echo '<br />';
+    print '<pre>'; print_r($finalArray); print '</pre>';
+    echo '<br />';
+    print '<pre>'; print_r($notPresent); print '</pre>';
+
+    dd($userData);
+});

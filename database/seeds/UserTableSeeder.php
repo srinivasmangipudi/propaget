@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
+use Faker\Provider\en_US\PhoneNumber;
 
 /**
  * Created by PhpStorm.
@@ -25,5 +26,20 @@ class UserTableSeeder extends Seeder {
         $user->userType = 'normal';
         $user->userId = '0';
         $user->save();
+
+        $faker = Faker\Factory::create();
+
+        for ($i = 0; $i < 100; $i++)
+        {
+            $number = $faker->numberBetween('9820098200', '9820099900');
+            $user = new User;
+            $user->name = $faker->userName;
+            $user->phoneNumber = '+91' . $number;
+            $user->email = $faker->email;
+            $user->password = Hash::make('password');
+            $user->userType = $faker->randomElement(array('normal', 'facebook', 'google'));
+            $user->userId = '0';
+            $user->save();
+        }
     }
 }
