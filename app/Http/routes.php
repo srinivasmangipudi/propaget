@@ -28,6 +28,9 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::resource('dist-list', 'DistListController');
+Route::controller('dist-list', 'DistListController');
+
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
 

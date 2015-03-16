@@ -1,9 +1,10 @@
 <?php namespace App\Http\Controllers;
 
+use App\Device;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DistListController extends Controller {
 
@@ -14,7 +15,8 @@ class DistListController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		$data = DB::table('migrations')->get();
+        return $data;
 	}
 
 	/**
@@ -32,9 +34,13 @@ class DistListController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		$postData = $request->input();
+        $device = new Device;
+        $device->deviceId = $postData['deviceId'];
+        $device->save();
+        return $device;
 	}
 
 	/**
