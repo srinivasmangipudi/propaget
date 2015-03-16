@@ -20,7 +20,7 @@ class GcmHelper {
      * @param $message
      * @return mixed
      */
-    public function sendNotification(array $registatoinIds, $message)
+    public function sendNotification(array $registatoinIds, array $message)
     {
         // Set POST variables
         $url = 'https://android.googleapis.com/gcm/send';
