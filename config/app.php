@@ -145,10 +145,13 @@ return [
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
 
+
+
         /*
          * Contrib service providers
          */
-
+        'Laravel\Socialite\SocialiteServiceProvider',
+        'Illuminate\Html\HtmlServiceProvider'
 
 	],
 
@@ -197,7 +200,8 @@ return [
 		'URL'       => 'Illuminate\Support\Facades\URL',
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
-
+        'Socialize' => 'Laravel\Socialite\Facades\Socialite',
+        'Str'             => 'Illuminate\Support\Str',
 
 	],
 

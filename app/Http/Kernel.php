@@ -10,12 +10,14 @@ class Kernel extends HttpKernel {
 	 * @var array
 	 */
 	protected $middleware = [
-		'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
+       // 'App\Http\Middleware\AuthTokenMiddleware',
+        'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
 		'Illuminate\Cookie\Middleware\EncryptCookies',
 		'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 		'Illuminate\Session\Middleware\StartSession',
 		'Illuminate\View\Middleware\ShareErrorsFromSession',
-		'App\Http\Middleware\VerifyCsrfToken',
+		//'App\Http\Middleware\VerifyCsrfToken',
+//		'App\Http\Middleware\AuthTokenMiddleware'
 	];
 
 	/**
@@ -27,6 +29,8 @@ class Kernel extends HttpKernel {
 		'auth' => 'App\Http\Middleware\Authenticate',
 		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
 		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
+		'auth.token' => 'App\Http\Middleware\AuthTokenMiddleware',
+        'csrf' => 'App\Http\Middleware\VerifyCsrfToken',
 	];
 
 }
