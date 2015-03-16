@@ -73,3 +73,6 @@ Route::post('register-device', function(Request $request) {
         array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
     );*/
 });
+
+Route::resource('property', 'PropertyController');
+Route::get('properties', 'PropertyAppController@index');
