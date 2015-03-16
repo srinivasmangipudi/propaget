@@ -34,7 +34,7 @@ class WelcomeController extends Controller {
 	{
         echo '<a href="fb/login">Login With FB</a>';
         //return view('home');
-        return 'hi';
+       // return 'hi';
         if (Auth::check()) {
             redirect('userHome');
         }

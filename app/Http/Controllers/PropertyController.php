@@ -1,14 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\Device;
-use App\DistList;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Properties;
 
-class DistListController extends Controller {
+use Illuminate\Http\Request;
+
+class PropertyController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -17,9 +15,8 @@ class DistListController extends Controller {
 	 */
 	public function index()
 	{
-        Log::info('I was here');
-		$data = DB::table('migrations')->get();
-        return $data;
+        $properties = Properties::all();
+        return $properties;
 	}
 
 	/**
@@ -37,17 +34,9 @@ class DistListController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function store()
 	{
-        // get all post data
-		$postData = $request->input();
-
-        // handle the saving of the distribution list and all it's members
-        $distList = new DistList;
-        $distList->saveEntireDistributionList(array(
-            'name' => $postData['name'],
-            'createdBy' => $postData['createdBy']
-        ), $postData['members']);
+		$properties
 	}
 
 	/**
@@ -58,7 +47,7 @@ class DistListController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+        return $id;
 	}
 
 	/**
@@ -93,11 +82,5 @@ class DistListController extends Controller {
 	{
 		//
 	}
-
-    public function getAllRequirement($id = null    )
-    {
-        Log::info('I was here');
-        return array(1,2,3);
-    }
 
 }

@@ -27,11 +27,14 @@
 
 	@yield('content')
 
-    <button id="click">Click</button>
+    <!--<button id="click">Click</button>-->
 
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	 <script>
+          var base_url = "{{ URL::to('/') }}/";
+    </script>
     <script>
         $(document).ready(function() {
             $.ajaxSetup({
@@ -57,5 +60,7 @@
             });
         }
     </script>
+    <script src="{{url('js/lib/angular.min.js')}}"></script>
+    <script src="{{url('js/prod/propertyController.min.js')}}"></script>
 </body>
 </html>
