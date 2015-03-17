@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Requirementctrl;
 
 use App\Events\EventRequirementAdded;
 use App\Http\Requests;
@@ -10,12 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 
 class RequirementoldController extends Controller {
 
     public function getListRequirementPage()
     {
         //get all Requirement of this user
+        Log::error('i m in list of old fun');
         $user = Auth::user();
         $allRequirements = Requirement::where('agentId','=',$user->id)->get();
         return view('requirements.view-requirement',compact('allRequirements'));
@@ -49,6 +51,7 @@ class RequirementoldController extends Controller {
         else
         {
             $errors = $req->getErrors()->all();
+            print_r($errors);
             return redirect()->back()
                 ->withErrors($errors)
                 ->withInput();
