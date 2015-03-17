@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Faker;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class DistList extends Model {
@@ -37,6 +38,10 @@ class DistList extends Model {
 
     }
 
+    /**
+     * @param $listData
+     * @return DistList
+     */
     private function saveDistributionList($listData)
     {
         // save the distribution list
@@ -48,10 +53,14 @@ class DistList extends Model {
         return $distList;
     }
 
+    /**
+     * @param $members
+     * @return array
+     */
     private function checkExistingAndNewUser($members)
     {
-        Log::info("Members");
-        Log::info(print_r($members, true));
+//        Log::info("Members");
+//        Log::info(print_r($members, true));
 
         // get users from DB based on members provided
         $userData = DB::table('users')->whereIn('phoneNumber', $members)->get();
@@ -66,35 +75,61 @@ class DistList extends Model {
                 $finalArray[$row->id] = $row->phoneNumber;
                 // search for the key
                 $key = array_search($row->phoneNumber, $members);
+
                 // unset the array index so that next time the search is quicker.
                 /*unset($members[$key]);*/
             }
         }
 
 
-        Log::info("Final");
-        Log::info(print_r($finalArray, true));
+//        Log::info("Final");
+//        Log::info(print_r($finalArray, true));
 
-        Log::info("Not present");
+//        Log::info("Not present");
         $notPresent = array_diff($members, $finalArray);
-        Log::info(print_r($notPresent, true));
+//        Log::info(print_r($notPresent, true));
 
         if (!empty($notPresent))
         {
-            $this->createNewUsers($notPresent);
+            $newUserArray = $this->createNewUsers($notPresent);
+
+            foreach ($newUserArray as $key => $value)
+            {
+                $finalArray[$key] = $value;
+            }
         }
 
         return $finalArray;
     }
 
+    /**
+     * @param $notPresent
+     * @return array
+     */
     private function createNewUsers($notPresent)
     {
+        // final array of new users that will be created
+        $newUserArray = array();
+
+        // create faker instance
         $faker = Faker\Factory::create();
-//        Log::info(print_r($notPresent, true));
+
+        // create user for each new number
         foreach ($notPresent as $userNumber)
         {
-
+            $user = new User;
+            $user->name = $faker->userName;
+            $user->phoneNumber = $userNumber;
+            $user->email = $faker->email;
+            $user->password = Hash::make('password');
+            $user->userType = 'normal';
+            $user->userId = '0';
+            $user->save();
+            $newUserArray[$user->id] = $userNumber;
+            Log::info('User created: ' . $user->id);
         }
+
+        return $newUserArray;
     }
 
 }

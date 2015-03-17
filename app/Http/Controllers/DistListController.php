@@ -41,7 +41,7 @@ class DistListController extends Controller {
 	{
         // get all post data
 		$postData = $request->input();
-        $members = json_decode('["+919820098200", "+919820098237", "+919833356536", "+919820215537"]');
+        $members = json_decode($postData['members']);
         // handle the saving of the distribution list and all it's members
         $distList = new DistList;
         $distList->saveEntireDistributionList(array(

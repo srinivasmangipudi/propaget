@@ -32,7 +32,7 @@ class UserTableSeeder extends Seeder {
 
         $faker = Faker\Factory::create();
 
-        for ($i = 0; $i < 100; $i++)
+        for ($i = 0; $i < 49; $i++)
         {
             $number = $faker->numberBetween('9820098200', '9820099900');
             $user = new User;
