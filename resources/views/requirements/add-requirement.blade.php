@@ -19,7 +19,6 @@
                 <?php echo BootForm::open()->post()->action('save'); ?>
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <?php echo BootForm::text('Location', 'location')->placeholder('Enter the location.'); ?>
-                {{ $errors->first('area') }}
                 <?php echo BootForm::text('Area', 'area')->placeholder('Enter the area.'); ?>
                 <?php echo BootForm::text('Range', 'range'); ?>
                 <?php echo BootForm::text('Price', 'price'); ?>

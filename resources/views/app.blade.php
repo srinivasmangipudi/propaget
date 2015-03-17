@@ -62,5 +62,6 @@
     </script>
     <script src="{{url('js/lib/angular.min.js')}}"></script>
     <script src="{{url('js/prod/propertyController.min.js')}}"></script>
+    <script src="{{url('js/prod/requirementController.min.js')}}"></script>
 </body>
 </html>

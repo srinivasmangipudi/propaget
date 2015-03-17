@@ -12,15 +12,16 @@
 */
 use Illuminate\Http\Request;
 use App\Device;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', ['uses' => 'HomeController@index', 'as' => 'userHome']);
 
-Route::group(['middleware' => 'auth', 'prefix' => 'requirements'], function() {
-    Route::get('view', ['uses' => 'RequirementoldController@getListRequirementPage', 'as' => 'viewRequirement']);
-    Route::get('add', ['uses' => 'RequirementoldController@getAddRequirementPage', 'as' => 'addRequirement']);
-    Route::post('save', ['uses' => 'RequirementoldController@postSaveRequirement', 'as' => 'saveRequirement']);
+Route::group(['middleware' => 'auth', 'prefix' => 'requirementsold'], function() {
+    Route::get('view', ['uses' => 'Requirementctrl\RequirementoldController@getListRequirementPage', 'as' => 'viewRequirement']);
+    Route::get('add', ['uses' => 'Requirementctrl\RequirementoldController@getAddRequirementPage', 'as' => 'addRequirement']);
+    Route::post('save', ['uses' => 'Requirementctrl\RequirementoldController@postSaveRequirement', 'as' => 'saveRequirement']);
 });
 
 Route::controllers([
@@ -59,8 +60,9 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
 Route::resource('dist-list', 'DistListController');
 Route::controller('dist-list', 'DistListController');
 
-Route::resource('req-list','RequirementController');
-Route::controller('req-list','RequirementController');
+Route::resource('req-list','Requirementctrl\RequirementController');
+Route::controller('req-list','Requirementctrl\RequirementController');
+Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
@@ -79,3 +81,7 @@ Route::post('register-device', function(Request $request) {
 
 Route::resource('property', 'PropertyController');
 Route::get('properties', 'PropertyAppController@index');
+
+/*Route::get('test',function(){
+    return "i m here in test";
+});*/
