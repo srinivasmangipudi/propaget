@@ -1,10 +1,12 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Property;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Properties;
+use Auth;
+use App\User;
 
-use Illuminate\Http\Request;
+use Request;
 
 class PropertyController extends Controller {
 
@@ -15,7 +17,8 @@ class PropertyController extends Controller {
 	 */
 	public function index()
 	{
-        $properties = Properties::all();
+        $userId = Auth::user()->id;
+        $properties = Properties::where('agentId', '=', $userId)->get();
         return $properties;
 	}
 
@@ -36,7 +39,12 @@ class PropertyController extends Controller {
 	 */
 	public function store()
 	{
-		$properties
+        $userId = Auth::user()->id;
+        $propertyData = Request::all();
+        $propertyData['agentId'] = $userId;
+        $propertyData['clientId'] = $userId;
+        $properties = Properties::create($propertyData);
+        return $properties;
 	}
 
 	/**
@@ -58,7 +66,8 @@ class PropertyController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+        $property = Properties::find($id);
+        return $property;
 	}
 
 	/**

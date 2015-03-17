@@ -29,7 +29,7 @@ Route::controllers([
 ]);
 
 
-Route::get('/fb/login', 'SocialLoginController@fb_login');
+Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');
 
 
@@ -50,7 +50,7 @@ Route::get('mobile-logout', function() {
 });
 
 //Route::post('mobile/login', 'SocialLoginController@mobile_login', ['middleware' => 'auth.token']);
-Route::post('mobile/login', 'SocialLoginController@mobile_login');
+Route::post('mobile/login', 'SocialLogin\SocialLoginController@mobile_login');
 Route::post('testingAuth', ['middleware' => 'auth.token', function () {
    return 'Successfully Authenticated';
 }]);
@@ -77,5 +77,9 @@ Route::post('register-device', function(Request $request) {
     );*/
 });
 
-Route::resource('property', 'PropertyController');
-Route::get('properties', 'PropertyAppController@index');
+
+
+Route::resource('property', 'Property\PropertyController');
+Route::get('properties', 'Property\PropertyAppController@index');
+Route::get('properties/list', 'Property\PropertyAppController@listing');
+Route::get('properties/add', 'Property\PropertyAppController@add');

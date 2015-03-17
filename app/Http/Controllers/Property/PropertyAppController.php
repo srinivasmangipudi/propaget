@@ -6,9 +6,12 @@
  * Time: 2:37 PM
  */
 
- namespace App\Http\Controllers;
+ namespace App\Http\Controllers\Property;
 
-class PropertyAppController extends Controller {
+ use App\Http\Controllers\Controller;
+
+
+ class PropertyAppController extends Controller {
 
     /*
     |--------------------------------------------------------------------------
@@ -39,6 +42,16 @@ class PropertyAppController extends Controller {
     public function index()
     {
         return view('property/index');
+    }
+
+    public function listing()
+    {
+        return view('property/list');
+    }
+
+    public function add()
+    {
+        return view('property/add');
     }
 
 }

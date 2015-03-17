@@ -19,6 +19,10 @@ class CreatePropertiesTable extends Migration {
             $table->increments('id');
             $table->integer('agentId');
             $table->integer('clientId');
+            $table->string('title', '255');
+            $table->string('clientEmail', '255');
+            $table->text('description');
+            $table->string('address', '255');
             $table->string('type', '100');
             $table->string('location', '100');
             $table->string('area', '255');
@@ -37,7 +41,7 @@ class CreatePropertiesTable extends Migration {
 	 */
 	public function down()
 	{
-        Schema::dropIfExists('requirements');
+        Schema::dropIfExists('properties');
 	}
 
 }

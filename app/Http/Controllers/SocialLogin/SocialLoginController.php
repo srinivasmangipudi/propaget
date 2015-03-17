@@ -1,5 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\SocialLogin;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Auth;
 use Str;
