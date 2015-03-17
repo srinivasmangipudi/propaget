@@ -3,7 +3,11 @@
 <div class="container" ng-app="requirementApp">
     <div ng-controller="requirementController">
             <h1>Requirement</h1>
-
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-md"  ng-click="addRequirement()">Add Requirement</button>
+                </div>
+            </div>
             <hr>
 
             <table class="table table-striped">

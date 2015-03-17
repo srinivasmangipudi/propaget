@@ -29,4 +29,10 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
        $scope.requirements = requirementData.data;
         console.log(requirementData);
     });
+
+    $scope.addRequirement = function()
+    {
+        console.log('i m add req');
+
+    }
 }]);
