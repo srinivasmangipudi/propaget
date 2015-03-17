@@ -117,10 +117,11 @@ class DistList extends Model {
         // create user for each new number
         foreach ($notPresent as $userNumber)
         {
+            $userNumber = str_replace(' ', '', $userNumber);
             $user = new User;
-            $user->name = $faker->userName;
+            $user->name = "propagate_" . $userNumber;
             $user->phoneNumber = $userNumber;
-            $user->email = $faker->email;
+            $user->email = $userNumber . '@propagate.com';
             $user->password = Hash::make('password');
             $user->userType = 'normal';
             $user->userId = '0';
