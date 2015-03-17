@@ -65,6 +65,7 @@ Route::controller('req-list','Requirementctrl\RequirementController');
 
 Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
 Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
+Route::get('requirements/add', 'Requirementctrl\RequirementAppController@add');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();

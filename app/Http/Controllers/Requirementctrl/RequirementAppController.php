@@ -47,4 +47,8 @@ class RequirementAppController extends Controller {
         return view('requirements/list');
     }
 
+    public function add()
+    {
+        return view('requirements/add');
+    }
 }
