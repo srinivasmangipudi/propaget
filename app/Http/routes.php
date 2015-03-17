@@ -62,7 +62,9 @@ Route::controller('dist-list', 'DistListController');
 
 Route::resource('req-list','Requirementctrl\RequirementController');
 Route::controller('req-list','Requirementctrl\RequirementController');
+
 Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
+Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
