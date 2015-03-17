@@ -30,7 +30,7 @@ Route::controllers([
 ]);
 
 
-Route::get('/fb/login', 'SocialLoginController@fb_login');
+Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');
 
 
@@ -51,7 +51,7 @@ Route::get('mobile-logout', function() {
 });
 
 //Route::post('mobile/login', 'SocialLoginController@mobile_login', ['middleware' => 'auth.token']);
-Route::post('mobile/login', 'SocialLoginController@mobile_login');
+Route::post('mobile/login', 'SocialLogin\SocialLoginController@mobile_login');
 Route::post('testingAuth', ['middleware' => 'auth.token', function () {
    return 'Successfully Authenticated';
 }]);
