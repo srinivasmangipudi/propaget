@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Device;
+use App\DistList;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -38,11 +39,15 @@ class DistListController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+        // get all post data
 		$postData = $request->input();
-        $device = new Device;
-        $device->deviceId = $postData['deviceId'];
-        $device->save();
-        return $device;
+        $members = json_decode($postData['members']);
+        // handle the saving of the distribution list and all it's members
+        $distList = new DistList;
+        $distList->saveEntireDistributionList(array(
+            'name' => $postData['name'],
+            'createdBy' => $postData['createdBy']
+        ), $members);
 	}
 
 	/**

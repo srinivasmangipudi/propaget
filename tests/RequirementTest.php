@@ -8,9 +8,9 @@
 
 class RequirementTest extends TestCase {
 
-    public function testSomethingIsTrue() {
+    /*public function testSomethingIsTrue() {
         $this->assertTrue(true);
-    }
+    }*/
 
     public function testRequirementSave() {
         $req = new \App\Requirement();

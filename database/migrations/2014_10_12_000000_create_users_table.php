@@ -22,9 +22,10 @@ class CreateUsersTable extends Migration {
 			$table->string('email')->unique();
 			$table->string('password', 60);
             $table->string('userId')->default("0");
-            $table->enum('userType', array('facebook', 'google', 'normal'))->default('normal');
+            $table->enum('userType', array('facebook', 'google', 'normal'))->default('normal')->comment('How the user was created. Facebook, Google etc');
 			$table->rememberToken();
 			$table->timestamps();
+            $table->enum('status', array(0,1,2))->default(1)->comment('The user status 0: Inactive 1: Active 2: Banned');
 		});
 	}
 
