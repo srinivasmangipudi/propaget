@@ -1,6 +1,17 @@
 <div ng-controller="propertyAddCtrl">
-    <h1>Add property</h1>
-        <form name="addProperty" id="addPropertyForm"  ng-submit="save_property()">
+<style type="text/css">
+  #addPropertyForm input.ng-invalid.ng-touched {
+    border-color: #ff0011;
+  }
+
+  #addPropertyForm input.ng-valid.ng-touched {
+    border-color: #cccccc;
+  }
+</style>
+
+    <h1 ng-show="!property.id">Add property</h1>
+    <h1 ng-show="property.id">Edit property</h1>
+        <form name="addPropertyForm" id="addPropertyForm"  ng-submit="save_property()" novalidate>
            <div class="form-group">
                 <label>Title:</label>
                 <input type='text' ng-model="property.title" name="title" class="form-control" required>

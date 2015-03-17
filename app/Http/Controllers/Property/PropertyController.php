@@ -78,8 +78,13 @@ class PropertyController extends Controller {
 	 */
 	public function update($id)
 	{
-		//
-	}
+        $propertyData = Request::all();
+        unset($propertyData['updated_at']);
+        unset($propertyData['created_at']);
+        print_r($propertyData);
+        Properties::where('id', $id)->update($propertyData);
+        return 'Updated property';
+    }
 
 	/**
 	 * Remove the specified resource from storage.
