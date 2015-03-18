@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Faker;
 use Illuminate\Support\Facades\Hash;
@@ -13,9 +14,13 @@ class DistList extends Model {
     /**
      * @param array $listData
      * @param array $members
+     * @return DistList
      */
     public function saveEntireDistributionList(array $listData, array $members)
     {
+        // sanitize the member numbers
+        $members = $this->sanitizeMemberNumbers($members);
+
         // validate the list data and member data
         // TODO: Need to write the validation rules
 
@@ -28,6 +33,7 @@ class DistList extends Model {
         // save the member data
         $distListId = $distList->id;
 
+        // creating entries of the distribution list and member relation
         foreach ($finalArray as $key => $row)
         {
             $distListMem = new DistListMembers;
@@ -36,9 +42,28 @@ class DistList extends Model {
             $distListMem->save();
         }
 
+        return $distList;
     }
 
     /**
+     * This function will sanitize the member phone numbers
+     * @param $members
+     * @return mixed
+     */
+    private function sanitizeMemberNumbers($members)
+    {
+        foreach ($members as $key => $member)
+        {
+            $members[$key] = str_replace(' ', '', $member);
+        }
+
+        $members = array_unique($members);
+
+        return $members;
+    }
+
+    /**
+     * Saving the distribution list name and other details.
      * @param $listData
      * @return DistList
      */
@@ -54,14 +79,12 @@ class DistList extends Model {
     }
 
     /**
+     * Checking for existing users and also adding new users who are not in our system.
      * @param $members
      * @return array
      */
     private function checkExistingAndNewUser($members)
     {
-//        Log::info("Members");
-//        Log::info(print_r($members, true));
-
         // get users from DB based on members provided
         $userData = DB::table('users')->whereIn('phoneNumber', $members)->get();
 
@@ -73,22 +96,18 @@ class DistList extends Model {
             {
                 // push to the final array
                 $finalArray[$row->id] = $row->phoneNumber;
+
                 // search for the key
                 $key = array_search($row->phoneNumber, $members);
 
                 // unset the array index so that next time the search is quicker.
-                /*unset($members[$key]);*/
+                unset($members[$key]);
             }
         }
 
-
-//        Log::info("Final");
-//        Log::info(print_r($finalArray, true));
-
-//        Log::info("Not present");
         $notPresent = array_diff($members, $finalArray);
-//        Log::info(print_r($notPresent, true));
 
+        // if there are users in dist list not present in system
         if (!empty($notPresent))
         {
             $newUserArray = $this->createNewUsers($notPresent);
@@ -103,6 +122,8 @@ class DistList extends Model {
     }
 
     /**
+     * Create user for the numbers which are sent in the distribution list
+     * but they are not present in our system.
      * @param $notPresent
      * @return array
      */
