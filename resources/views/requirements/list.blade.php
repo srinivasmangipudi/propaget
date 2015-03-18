@@ -30,7 +30,7 @@
                        <td>@{{ req.price }}</td>
                        <td>@{{ req.type }}</td>
                        <td><a href="#edit/@{{ req.id }}">Edit</a></td>
-                       <td ng-click="deleteReq(req.id)">Delete </td>
+                       <td ng-click="deleteRequirement(req.id)">Delete </td>
                    </tr>
                </tbody>
             </table>

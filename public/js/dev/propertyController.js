@@ -1,5 +1,14 @@
-var propertyApp = angular.module('propertyApp', ['ngRoute']);
+var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
 
+propertyApp.filter('startFrom', function() {
+    return function(input, start) {
+        if(input) {
+            start = +start; //parse to int
+            return input.slice(start);
+        }
+        return [];
+    }
+});
 propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
     $routeProvider
@@ -34,6 +43,15 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
             })
             .success(function (jsonData) {
             });
+        },
+        deleteProperty: function (propertyId){
+            return $http({
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                url: base_url + 'property/' + propertyId,
+                method: "DELETE"
+            })
+            .success(function(propertyData){
+            });
         }
     }
 }]);
@@ -43,7 +61,7 @@ propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scop
 
 }]);
 
-propertyApp.controller('propertyController', ['$scope', 'propertyService',  function($scope, propertyService) {
+propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
    //propertyService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
@@ -51,7 +69,40 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService',  func
 
    propertyService.apiCall('getProperties', method, functionUrl).then(function(propertyData) {
        $scope.properties = propertyData.data;
+
+       $scope.currentPage = 1; //current page
+       $scope.entryLimit = 5; //max no of items to display in a page
+       $scope.filteredItems = $scope.properties.length; //Initially for no filter
+       $scope.totalItems = $scope.properties.length;
+
     });
+
+    /** Function for angular pager starts **/
+    $scope.setPage = function(pageNo) {
+        $scope.currentPage = pageNo;
+    };
+
+    $scope.filter = function() {
+        $timeout(function() {
+            $scope.filteredItems = $scope.filtered.length;
+        }, 10);
+    };
+
+    $scope.sort_by = function(predicate) {
+        $scope.predicate = predicate;
+        $scope.reverse = !$scope.reverse;
+    };
+
+    $scope.deleteProperty = function (propertyId)
+    {
+        console.log(propertyId);
+        propertyService.deleteProperty(propertyId).then(function(propertyData) {
+            console.log(propertyData);
+            $location.path('/');
+        });
+
+    }
+
 }]);
 
 propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {

@@ -78,6 +78,15 @@ requirementApp.factory('requirementService', ['$http', '$rootScope', function($h
             })
             .success(function (requirementData) {
             });
+        },
+        deleteRequirement: function (requirement_id){
+            return $http({
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                url: base_url + 'req-list/' + requirement_id,
+                method: "DELETE"
+            })
+            .success(function(requirementData){
+            });
         }
     }
 }]);
@@ -86,7 +95,7 @@ requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function
 
 }]);
 
-requirementApp.controller('requirementController', ['$scope', 'requirementService',  function($scope, requirementService) {
+requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
 
      $scope.name = 'Urmi';
      requirementService.getRequirements().then(function(requirementData) {
@@ -94,7 +103,7 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
          //console.log(requirementData);
 
          $scope.currentPage = 1; //current page
-         $scope.entryLimit = 5; //max no of items to display in a page
+         $scope.entryLimit = 10; //max no of items to display in a page
          $scope.filteredItems = $scope.requirements.length; //Initially for no filter
          $scope.totalItems = $scope.requirements.length;
 
@@ -118,9 +127,14 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
     };
 
 
-    $scope.deleteReq = function ()
+    $scope.deleteRequirement = function (requirementId)
     {
-        console.log('Delete Called');
+        console.log(requirementId);
+        requirementService.deleteRequirement(requirementId).then(function(requirementData) {
+            console.log(requirementData);
+            $location.path('/');
+        });
+
     }
 
 
@@ -156,11 +170,11 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
             $scope.submitClicked = true;
             console.log('In save add');
             if($scope.addRequirementForm.$invalid) {
-                console.log('In if');
+                //console.log('In if');
                 console.log('IF'+$scope.addRequirementForm);
 
             }else {
-                console.log('In Else');
+                //console.log('In Else');
                 console.log('Else'+$scope.addRequirementForm);
                 requirementService.saveRequirement($scope.requirement).then(function (requirementData) {
                     $location.path('/');
