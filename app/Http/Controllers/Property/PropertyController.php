@@ -39,7 +39,8 @@ class PropertyController extends Controller {
 	 */
 	public function store()
 	{
-        $userId = Auth::user()->id;
+        //$userId = Auth::user()->id;
+        $userId = 1;
         $propertyData = Request::all();
         $propertyData['agentId'] = $userId;
         $propertyData['clientId'] = $userId;
