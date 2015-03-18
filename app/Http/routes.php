@@ -10,9 +10,12 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+use App\DistList;
+use App\User;
 use Illuminate\Http\Request;
 use App\Device;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', 'WelcomeController@index');
 
@@ -62,7 +65,10 @@ Route::controller('dist-list', 'DistListController');
 
 Route::resource('req-list','Requirementctrl\RequirementController');
 Route::controller('req-list','Requirementctrl\RequirementController');
+
 Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
+Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
+Route::get('requirements/add', 'Requirementctrl\RequirementAppController@add');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
@@ -87,7 +93,7 @@ Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
 
 
-Route::get('test-me', function()
+Route::post('test-me', function(Request $request)
 {
     /*$members = array('+919820098200', '+919820099583', '+919820098355', '+919820099278', '+919820099825', '+919820215537');
     print '<pre>'; print_r($members); print '</pre>';
@@ -118,4 +124,81 @@ Route::get('test-me', function()
     print '<pre>'; print_r($notPresent); print '</pre>';
 
     dd($userData);*/
+
+    /*Log::info('I was here: ' . time());
+    // get all post data
+    $postData = $request->input();
+    $contacts = json_decode($postData['members']);
+
+    $distList = new DistList;
+    $distList->name = $postData['name'];
+    $distList->createdBy = $postData['createdBy'];
+        $distList->save();
+
+    $distListId = $distList->id;
+    $arrUserIds = array();
+
+    // sanitise
+    foreach ($contacts as $key => $member)
+    {
+        $contacts[$key] = str_replace(' ', '', $member);
+    }
+
+    $existingContacts = DB::table('users')->whereIn('phoneNumber', $contacts)->get();
+
+    if (count($existingContacts) == 0)
+    {
+        // all new contacts
+        foreach ($contacts as $c)
+        {
+            $user = new User;
+            $user->name = "propagate_" . $c;
+            $user->phoneNumber = $c;
+            $user->email = $c . '@propagate.com';
+            $user->password = 'pass';
+            $user->userType = 'normal';
+            $user->userId = '0';
+                $user->save();
+            $arrUserIds[] = $user->id;
+        }
+    }
+    else
+    {
+        // some users needs to be created
+        Log::info('some users needs to be created');
+
+        $arrDBUsers = array();
+        foreach ($existingContacts as $dbUsers)
+        {
+            $arrDBUsers[] = $dbUsers->phoneNumber;
+            $arrUserIds[] = $dbUsers->id;
+        }
+
+        $uniqueUsers = array_diff($contacts, $arrDBUsers);
+        Log::info('unique users');
+//        Log::info(print_r($uniqueUsers, true));
+
+        foreach ($uniqueUsers as $c)
+        {
+            $user = new User;
+            $user->name = "propagate_" . $c;
+            $user->phoneNumber = $c;
+            $user->email = $c . '@propagate.com';
+            $user->password = 'pass';
+            $user->userType = 'normal';
+            $user->userId = '0';
+            $user->save();
+            $arrUserIds[] = $user->id;
+        }
+    }
+
+    foreach ($arrUserIds as $ref)
+    {
+        $distListMem = new App\DistListMembers;
+        $distListMem->distListId = $distListId;
+        $distListMem->userId = $ref;
+            $distListMem->save();
+    }
+
+    return array();*/
 });

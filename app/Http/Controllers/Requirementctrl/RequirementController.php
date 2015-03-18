@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use PhpSpec\Exception\Exception;
 use Illuminate\Support\Facades\Request;
+use Auth;
 
 class RequirementController extends Controller {
 
@@ -20,7 +21,9 @@ class RequirementController extends Controller {
 	public function index()
 	{
         //$allRequirement = Requirement::all();
-        $allRequirement = Requirement::where('agentId','=','2')->get();
+        //$userId = Auth::user()->id;
+        $userId = 2;
+        $allRequirement = Requirement::where('agentId','=',$userId)->get();
         return $allRequirement;
 	}
 
@@ -49,7 +52,15 @@ class RequirementController extends Controller {
 	 */
 	public function store()
 	{
-        $requirement = Requirement::create(Request::all());
+        //$userId = Auth::user()->id;
+        $userId = 2;
+        $requirementData = Request::all();
+        $requirementData['agentId'] = $userId;
+        $requirementData['clientId'] = $userId;
+        //Log::error('i m in store');
+        Log::info('this store'. print_r($requirementData, true));
+        $requirement = Requirement::create($requirementData);
+        Log::info('this store'. print_r($requirement, true));
         return $requirement;
 	}
 
@@ -61,19 +72,20 @@ class RequirementController extends Controller {
 	 */
 	public function show($id)
 	{
-        try{
+        return $id;
+        /*try{
             $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
             $statusCode = 200;
         }
         catch(Exception $e)
         {
             $response = [
-                "error" => "Error while showing Requirment"
+                "error" => "Error while showing Requirement"
             ];
             $statusCode = 404;
         }
 
-        return Response::json($response, $statusCode);
+        return Response::json($response, $statusCode);*/
 	}
 
 	/**
@@ -84,7 +96,8 @@ class RequirementController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+        $requirement = Requirement::find($id);
+        return $requirement;
 	}
 
 	/**
@@ -95,11 +108,19 @@ class RequirementController extends Controller {
 	 */
 	public function update($id)
 	{
-		$requirement = Requirement::find($id);
+
+        $requirementData = Request::all();
+        unset($requirementData['updated_at']);
+        unset($requirementData['created_at']);
+        print_r($requirementData);
+        Requirement::where('id', $id)->update($requirementData);
+        return 'Updated requirement';
+
+		/*$requirement = Requirement::find($id);
         //Log::info('this array'. print_r(Request::all(), true));
         $requirement->area = Request::input('area');
         $requirement->save();
-        return $requirement;
+        return $requirement;*/
 	}
 
 	/**

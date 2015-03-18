@@ -7,7 +7,7 @@ class Requirement extends BaseModel {
 
     protected $table = 'requirements';
 
-    protected $fillable = ['agentId','clientId','location', 'area', 'range', 'price', 'priceRange','type'];
+    protected $fillable = ['agentId','clientId','clientEmail','title','description','location', 'area', 'range', 'price', 'priceRange','type'];
 
     protected $rules = [
         'location' => 'required|min:5',
@@ -20,10 +20,10 @@ class Requirement extends BaseModel {
         'location.min' => 'A Location should be longer. Min 3 characters'
     ];
 
-   /* public function save(array $options = array())
+    public function save(array $options = array())
     {
         parent::save($options);
 
         //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
-    }*/
+    }
 }
