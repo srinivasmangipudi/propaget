@@ -10,12 +10,12 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-use App\DistList;
-use App\User;
+use App\Commands\SendEmail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Device;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Response;
 
 Route::get('/', 'WelcomeController@index');
 
@@ -95,110 +95,8 @@ Route::get('properties/add', 'Property\PropertyAppController@add');
 
 Route::post('test-me', function(Request $request)
 {
-    /*$members = array('+919820098200', '+919820099583', '+919820098355', '+919820099278', '+919820099825', '+919820215537');
-    print '<pre>'; print_r($members); print '</pre>';
-
-    $userData = DB::table('users')->select(array('id', 'phoneNumber'))->whereIn('phoneNumber', $members)->get();
-    print '<pre>'; print_r($userData); print '</pre>';
-
-    $finalArray = array();
-
-    foreach ($userData as $row)
-    {
-        if (in_array($row->phoneNumber, $members))
-        {
-            // push to the final array
-            $finalArray[$row->id] = $row->phoneNumber;
-            // search for the key
-            $key = array_search($row->phoneNumber, $members);
-            // unset the array index so that next time the search is quicker.
-            unset($members[$key]);
-        }
-    }
-
-    $notPresent = array_diff($members, $finalArray);
-
-    echo '<br />';
-    print '<pre>'; print_r($finalArray); print '</pre>';
-    echo '<br />';
-    print '<pre>'; print_r($notPresent); print '</pre>';
-
-    dd($userData);*/
-
-    /*Log::info('I was here: ' . time());
-    // get all post data
     $postData = $request->input();
-    $contacts = json_decode($postData['members']);
-
-    $distList = new DistList;
-    $distList->name = $postData['name'];
-    $distList->createdBy = $postData['createdBy'];
-        $distList->save();
-
-    $distListId = $distList->id;
-    $arrUserIds = array();
-
-    // sanitise
-    foreach ($contacts as $key => $member)
-    {
-        $contacts[$key] = str_replace(' ', '', $member);
-    }
-
-    $existingContacts = DB::table('users')->whereIn('phoneNumber', $contacts)->get();
-
-    if (count($existingContacts) == 0)
-    {
-        // all new contacts
-        foreach ($contacts as $c)
-        {
-            $user = new User;
-            $user->name = "propagate_" . $c;
-            $user->phoneNumber = $c;
-            $user->email = $c . '@propagate.com';
-            $user->password = 'pass';
-            $user->userType = 'normal';
-            $user->userId = '0';
-                $user->save();
-            $arrUserIds[] = $user->id;
-        }
-    }
-    else
-    {
-        // some users needs to be created
-        Log::info('some users needs to be created');
-
-        $arrDBUsers = array();
-        foreach ($existingContacts as $dbUsers)
-        {
-            $arrDBUsers[] = $dbUsers->phoneNumber;
-            $arrUserIds[] = $dbUsers->id;
-        }
-
-        $uniqueUsers = array_diff($contacts, $arrDBUsers);
-        Log::info('unique users');
-//        Log::info(print_r($uniqueUsers, true));
-
-        foreach ($uniqueUsers as $c)
-        {
-            $user = new User;
-            $user->name = "propagate_" . $c;
-            $user->phoneNumber = $c;
-            $user->email = $c . '@propagate.com';
-            $user->password = 'pass';
-            $user->userType = 'normal';
-            $user->userId = '0';
-            $user->save();
-            $arrUserIds[] = $user->id;
-        }
-    }
-
-    foreach ($arrUserIds as $ref)
-    {
-        $distListMem = new App\DistListMembers;
-        $distListMem->distListId = $distListId;
-        $distListMem->userId = $ref;
-            $distListMem->save();
-    }
-
-    return array();*/
+    $members = json_decode($postData['members']);
+    Queue::later('sendmail', new SendEmail($postData, $members));
+    return Response::json($postData);
 });
