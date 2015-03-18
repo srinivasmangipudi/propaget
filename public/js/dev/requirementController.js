@@ -1,5 +1,13 @@
-var requirementApp = angular.module('requirementApp', ['ngRoute']);
-
+var requirementApp = angular.module('requirementApp', ['ngRoute', 'ui.bootstrap']);
+requirementApp.filter('startFrom', function() {
+    return function(input, start) {
+        if(input) {
+            start = +start; //parse to int
+            return input.slice(start);
+        }
+        return [];
+    }
+});
 requirementApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
         .when('/list',{
@@ -70,6 +78,15 @@ requirementApp.factory('requirementService', ['$http', '$rootScope', function($h
             })
             .success(function (requirementData) {
             });
+        },
+        deleteRequirement: function (requirement_id){
+            return $http({
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                url: base_url + 'req-list/' + requirement_id,
+                method: "DELETE"
+            })
+            .success(function(requirementData){
+            });
         }
     }
 }]);
@@ -78,13 +95,47 @@ requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function
 
 }]);
 
-requirementApp.controller('requirementController', ['$scope', 'requirementService',  function($scope, requirementService) {
+requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
 
      $scope.name = 'Urmi';
      requirementService.getRequirements().then(function(requirementData) {
         $scope.requirements = requirementData.data;
          //console.log(requirementData);
+
+         $scope.currentPage = 1; //current page
+         $scope.entryLimit = 10; //max no of items to display in a page
+         $scope.filteredItems = $scope.requirements.length; //Initially for no filter
+         $scope.totalItems = $scope.requirements.length;
+
      });
+
+
+    /** Function for angular pager starts **/
+    $scope.setPage = function(pageNo) {
+        $scope.currentPage = pageNo;
+    };
+
+    $scope.filter = function() {
+        $timeout(function() {
+            $scope.filteredItems = $scope.filtered.length;
+        }, 10);
+    };
+
+    $scope.sort_by = function(predicate) {
+        $scope.predicate = predicate;
+        $scope.reverse = !$scope.reverse;
+    };
+
+
+    $scope.deleteRequirement = function (requirementId)
+    {
+        console.log(requirementId);
+        requirementService.deleteRequirement(requirementId).then(function(requirementData) {
+            console.log(requirementData);
+            $location.path('/');
+        });
+
+    }
 
 
 }]);
@@ -119,11 +170,11 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
             $scope.submitClicked = true;
             console.log('In save add');
             if($scope.addRequirementForm.$invalid) {
-                console.log('In if');
+                //console.log('In if');
                 console.log('IF'+$scope.addRequirementForm);
 
             }else {
-                console.log('In Else');
+                //console.log('In Else');
                 console.log('Else'+$scope.addRequirementForm);
                 requirementService.saveRequirement($scope.requirement).then(function (requirementData) {
                     $location.path('/');

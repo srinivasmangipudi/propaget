@@ -1,5 +1,14 @@
-var propertyApp = angular.module('propertyApp', ['ngRoute']);
+var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
 
+propertyApp.filter('startFrom', function() {
+    return function(input, start) {
+        if(input) {
+            start = +start; //parse to int
+            return input.slice(start);
+        }
+        return [];
+    }
+});
 propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
     $routeProvider
@@ -23,75 +32,89 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
         });
 }]);
 
-    propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $rootScope) {
-    var properties = [];
+propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $rootScope) {
     return {
-        getProperties: function () {
+        apiCall: function (operation, method, functionUrl, propertyData) {
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property',
-                method: "GET"
+                url: base_url + functionUrl,
+                method: method,
+                data: (propertyData!=undefined) ? $.param(propertyData) : ''
             })
             .success(function (jsonData) {
-                if (jsonData) {
-                    properties = jsonData.data;
-                }
-                else {
-                    properties = {};
-                }
-                // quiz = addData;
-                $rootScope.$broadcast('handleProjectsBroadcast', properties);
             });
         },
-        saveProperty: function (propertyData) {
+        deleteProperty: function (propertyId){
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property',
-                method: "POST",
-                data: $.param(propertyData)
+                url: base_url + 'property/' + propertyId,
+                method: "DELETE"
             })
-            .success(function (propertyData) {
-            });
-        },
-        getProperty: function (property_id) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property/' + property_id + '/edit',
-                method: "GET"
-            })
-            .success(function (propertyData) {
-            });
-        },
-        updateProperty: function (property_id, propertyData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property/' + property_id,
-                method: "PUT",
-                data: $.param(propertyData)
-            })
-            .success(function (propertyData) {
+            .success(function(propertyData){
             });
         }
     }
 }]);
 
+
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
 
 }]);
 
-propertyApp.controller('propertyController', ['$scope', 'propertyService',  function($scope, propertyService) {
-   propertyService.getProperties().then(function(propertyData) {
+propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
+   //propertyService.getProperties().then(function(propertyData) {
+
+    var method = 'GET';
+    var functionUrl = 'property';
+
+   propertyService.apiCall('getProperties', method, functionUrl).then(function(propertyData) {
        $scope.properties = propertyData.data;
-        console.log(propertyData);
+
+       $scope.currentPage = 1; //current page
+       $scope.entryLimit = 5; //max no of items to display in a page
+       $scope.filteredItems = $scope.properties.length; //Initially for no filter
+       $scope.totalItems = $scope.properties.length;
+
     });
+
+    /** Function for angular pager starts **/
+    $scope.setPage = function(pageNo) {
+        $scope.currentPage = pageNo;
+    };
+
+    $scope.filter = function() {
+        $timeout(function() {
+            $scope.filteredItems = $scope.filtered.length;
+        }, 10);
+    };
+
+    $scope.sort_by = function(predicate) {
+        $scope.predicate = predicate;
+        $scope.reverse = !$scope.reverse;
+    };
+
+    $scope.deleteProperty = function (propertyId)
+    {
+        console.log(propertyId);
+        propertyService.deleteProperty(propertyId).then(function(propertyData) {
+            console.log(propertyData);
+            $location.path('/');
+        });
+
+    }
+
 }]);
 
 propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {
     $scope.property ={};
     $scope.submitClicked = false;
+
+    /* Check if the form is in edit mode with property id in the url */
     if($routeParams.id) {
         var propertyId = $scope.property.id = $routeParams.id;
-        propertyService.getProperty(propertyId).then(function(propertyData) {
+        var method = 'GET';
+        var functionUrl = 'property/' + propertyId + '/edit';
+        propertyService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
             if(propertyData.data) {
                 $scope.property = propertyData.data;
             }
@@ -99,11 +122,13 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
 
         $scope.save_property = function() {
             $scope.submitClicked = true;
+            /* Check for Validation */
             if($scope.addPropertyForm.$invalid) {
-                console.log($scope.addPropertyForm);
 
             }else {
-                propertyService.updateProperty(propertyId, $scope.property).then(function (propertyData) {
+                var method = 'PUT';
+                var functionUrl = 'property/' + propertyId;
+                propertyService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
                     $location.path('/');
                 });
             }
@@ -113,18 +138,18 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
         $scope.save_property = function () {
             $scope.submitClicked = true;
             if($scope.addPropertyForm.$invalid) {
-                console.log($scope.addPropertyForm);
 
             }else {
-                console.log($scope.addPropertyForm);
-                propertyService.saveProperty($scope.property).then(function (propertyData) {
+                var method = 'POST';
+                var functionUrl = 'property/';
+                propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
                  $location.path('/');
                  });
             }
         }
     }
 
-    /* To put error class for input
+    /* To put error class for input */
     $scope.show_error = function(name) {
         if($scope.submitClicked) {
             if($scope.addPropertyForm[name].$invalid) {
@@ -137,7 +162,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
             }
         }
         return '';
-    } */
+    }
 
    /*propertyService.addProperty().then(function() {
        $scope.properties = propertyData.data;

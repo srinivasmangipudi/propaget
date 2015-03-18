@@ -21,8 +21,8 @@ class RequirementController extends Controller {
 	public function index()
 	{
         //$allRequirement = Requirement::all();
-        $userId = Auth::user()->id;
-        //$userId = 2;
+        //$userId = Auth::user()->id;
+        $userId = 2;
         $allRequirement = Requirement::where('agentId','=',$userId)->get();
         return $allRequirement;
 	}
@@ -52,8 +52,8 @@ class RequirementController extends Controller {
 	 */
 	public function store()
 	{
-        $userId = Auth::user()->id;
-        //$userId = 1;
+        //$userId = Auth::user()->id;
+        $userId = 2;
         $requirementData = Request::all();
         $requirementData['agentId'] = $userId;
         $requirementData['clientId'] = $userId;
@@ -131,6 +131,8 @@ class RequirementController extends Controller {
 	 */
 	public function destroy($id)
 	{
+        //Log::error('i m in delete'.$id);
 		Requirement::destroy($id);
+        return "Delete Requirement";
 	}
 }

@@ -4,6 +4,10 @@
     border-color: #ff0011;
   }
 
+    #addPropertyForm input.error {
+    border-color: #ff0011;
+  }
+
   #addPropertyForm input.ng-valid.ng-touched {
     border-color: #cccccc;
   }
@@ -14,7 +18,7 @@
         <form name="addPropertyForm" id="addPropertyForm"  ng-submit="save_property()" novalidate>
            <div class="form-group">
                 <label>Title:</label>
-                <input type='text' ng-model="property.title" name="title" class="form-control" required>
+                <input type='text' ng-model="property.title" name="title" class="form-control" required ng-class="show_error('title')">
             </div>
 
            <div class="form-group">
@@ -24,7 +28,7 @@
 
             <div class="form-group">
                 <label>Client Email:</label>
-                <input type='email' name="title" ng-model="property.clientEmail" class="form-control" name="clientEmail" required>
+                <input type='email' name="title" ng-model="property.clientEmail" class="form-control" name="clientEmail" required  ng-class="show_error('clientEmail')">
             </div>
 
            <div class="form-group">
@@ -34,22 +38,22 @@
 
            <div class="form-group">
                 <label>Location:</label>
-                <input type='text' ng-model="property.location" class="form-control" name="location" required>
+                <input type='text' ng-model="property.location" class="form-control" name="location" required  ng-class="show_error('title')">
            </div>
 
            <div class="form-group">
                 <label>Area:</label>
-                <input type='text' ng-model="property.area" class="form-control" name="area" required>
+                <input type='text' ng-model="property.area" class="form-control" name="area" required  ng-class="show_error('title')">
            </div>
 
            <div class="form-group">
                 <label>Price:</label>
-                <input type='text' ng-model="property.price" class="form-control" name="price" required>
+                <input type='text' ng-model="property.price" class="form-control" name="price" required  ng-class="show_error('title')">
            </div>
 
            <div class="form-group">
                 <label>Type:</label>
-                <select type='text' ng-model="property.type" class="form-control" name="type" required>
+                <select type='text' ng-model="property.type" class="form-control" name="type" required  ng-class="show_error('title')">
                     <option value="Sale">Sale</option>
                     <option value="Lease">Lease</option>
                 </select>
