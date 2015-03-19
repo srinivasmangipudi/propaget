@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use App\Events\EventRequirementAdded;
+use Illuminate\Support\Facades\Log;
 
 class Requirement extends BaseModel {
 
@@ -22,6 +23,7 @@ class Requirement extends BaseModel {
 
     public function save(array $options = array())
     {
+        Log::error('I AM IN SAVE');
         parent::save($options);
 
         //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
