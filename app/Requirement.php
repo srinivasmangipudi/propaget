@@ -32,6 +32,7 @@ class Requirement extends BaseModel {
             parent::boot();
         }
 
+        Log::error('I AM IN SAVE');
         parent::save($options);
 
         \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
