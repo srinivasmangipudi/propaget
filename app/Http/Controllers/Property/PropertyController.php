@@ -95,7 +95,8 @@ class PropertyController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		//
+        Properties::destroy($id);
+        return "Delete Property";
 	}
 
 }

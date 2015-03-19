@@ -36,88 +36,22 @@ class DistListController extends Controller {
 		//
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 * @return Response
-	 */
+    /**
+     * Store a newly created resource in storage.
+     * @param Request $request
+     * @return Response
+     */
 	public function store(Request $request)
 	{
-        Log::info('I was here: ' . time());
         // get all post data
-		$postData = $request->input();
-        $contacts = json_decode($postData['members']);
-
+        $postData = $request->input();
+        $members = json_decode('["+919820098200", "+919820098237", "+919833356536", "+919820215537"]');
+        // handle the saving of the distribution list and all it's members
         $distList = new DistList;
-        $distList->name = $postData['name'];
-        $distList->createdBy = $postData['createdBy'];
-//        $distList->save();
-
-        $distListId = $distList->id;
-        $arrUserIds = array();
-
-        // sanitise
-        foreach ($contacts as $key => $member)
-        {
-            $contacts[$key] = str_replace(' ', '', $member);
-        }
-
-        $existingContacts = DB::table('users')->whereIn('phoneNumber', $contacts)->get();
-
-        if (count($existingContacts) == 0)
-        {
-            // all new contacts
-            foreach ($contacts as $c)
-            {
-                $user = new User;
-                $user->name = "propagate_" . $c;
-                $user->phoneNumber = $c;
-                $user->email = $c . '@propagate.com';
-                $user->password = Hash::make('password');
-                $user->userType = 'normal';
-                $user->userId = '0';
-//                $user->save();
-                $arrUserIds[] = $user->id;
-            }
-        }
-        else
-        {
-            // some users needs to be created
-            Log::info('some users needs to be created');
-
-            $arrDBUsers = array();
-            foreach ($existingContacts as $dbUsers)
-            {
-                $arrDBUsers[] = $dbUsers->phoneNumber;
-                $arrUserIds[] = $dbUsers->id;
-            }
-
-            $uniqueUsers = array_diff($contacts, $arrDBUsers);
-            Log::info('unique users');
-            Log::info(print_r($uniqueUsers, true));
-
-            foreach ($uniqueUsers as $c)
-            {
-                $user = new User;
-                $user->name = "propagate_" . $c;
-                $user->phoneNumber = $c;
-                $user->email = $c . '@propagate.com';
-                $user->password = Hash::make('password');
-                $user->userType = 'normal';
-                $user->userId = '0';
-//                $user->save();
-                $arrUserIds[] = $user->id;
-            }
-        }
-
-        foreach ($arrUserIds as $ref)
-        {
-            $distListMem = new DistListMembers;
-            $distListMem->distListId = $distListId;
-            $distListMem->userId = $ref;
-//            $distListMem->save();
-        }
-
-        return array();
+        $distList->saveEntireDistributionList(array(
+            'name' => $postData['name'],
+            'createdBy' => $postData['createdBy']
+        ), $members);
 	}
 
 	/**

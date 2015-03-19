@@ -20,8 +20,10 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Actions <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{url('requirementsold/view')}}">View Requirement</a></li>
-                            <li><a href="{{url('requirementsold/add')}}">Add Requirement</a></li>
+                            <li><a href="{{url('requirements#/list')}}">View Requirement</a></li>
+                            <li><a href="{{url('requirements#/add')}}">Add Requirement</a></li>
+                            <li><a href="{{url('properties#/list')}}">View Property</a></li>
+                            <li><a href="{{url('properties#/add')}}">Add Property</a></li>
                         </ul>
                     </li>
                      <li class="dropdown">

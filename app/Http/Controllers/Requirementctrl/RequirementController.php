@@ -131,6 +131,8 @@ class RequirementController extends Controller {
 	 */
 	public function destroy($id)
 	{
+        //Log::error('i m in delete'.$id);
 		Requirement::destroy($id);
+        return "Delete Requirement";
 	}
 }
