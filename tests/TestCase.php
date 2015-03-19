@@ -1,5 +1,8 @@
 <?php
 
+use App\Requirement;
+use Illuminate\Support\Facades\Config;
+
 class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
 	/**
@@ -15,5 +18,11 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
 		return $app;
 	}
+
+    public function setUp()
+    {
+        parent::setUp();
+        Config::set('app.fwtestmode', 'true');
+    }
 
 }

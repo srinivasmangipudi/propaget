@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Requirement;
 //use Illuminate\Http\Request;
+use App\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use PhpSpec\Exception\Exception;
@@ -55,13 +56,23 @@ class RequirementController extends Controller {
         //$userId = Auth::user()->id;
         $userId = 2;
         $requirementData = Request::all();
-        $requirementData['agentId'] = $userId;
-        $requirementData['clientId'] = $userId;
         //Log::error('i m in store');
         Log::info('this store'. print_r($requirementData, true));
-        $requirement = Requirement::create($requirementData);
-        Log::info('this store'. print_r($requirement, true));
-        return $requirement;
+
+        //$requirement = Requirement::create($requirementData);
+        $user = User::find(1);
+        $req = new Requirement();
+        $req->agentId = 1;
+        $req->clientId = 1;
+        $req->location = $requirementData['location'];
+        $req->area = $requirementData['area'];
+        $req->range = $requirementData['range'];
+        $req->price = $requirementData['price'];
+        $req->priceRange = $requirementData['priceRange'];
+        $req->type = $requirementData['type'];
+        $req->save(['user' => $user, 'requirement' => $req]);
+        return $req;
+
 	}
 
 	/**

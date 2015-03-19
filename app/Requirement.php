@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 use App\Events\EventRequirementAdded;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class Requirement extends BaseModel {
 
@@ -22,8 +24,16 @@ class Requirement extends BaseModel {
 
     public function save(array $options = array())
     {
+        $config = Config::get('app.fwtestmode');
+
+        if ($config == 'true') {
+            //Log::info("I was here");
+            parent::flushEventListeners();
+            parent::boot();
+        }
+
         parent::save($options);
 
-        //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
+        \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
     }
 }
