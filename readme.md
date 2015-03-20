@@ -162,9 +162,9 @@ GET: /agent/{my_agent_id}/notifications?all=true
 
 
 
-### Propaget
-* ###### propaget property tile to a distribution list or a single agent
-POST: /propaget/property/{id}
+### Forward (Propaget)
+* ###### forward property tile to a distribution list or a single agent
+POST: /forward/property/{id}
 
         params:
             up_agent_id = xxx
@@ -173,7 +173,7 @@ POST: /propaget/property/{id}
           OR
           down_agent_id = xxx
 
-* ###### propaget requirement tile to a distribution list or a single agent
+* ###### forward requirement tile to a distribution list or a single agent
 POST: /propaget/requirement/{id}
 
         params:
