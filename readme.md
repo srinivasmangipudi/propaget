@@ -220,7 +220,7 @@ POST: /handshake/{network_chain_id}?confirm=true
 
 ### Matches
 * ###### get matches for requirement - for an agent
-GET: /agent/{my_agent_id}/requirement/{id}/matches
+GET: /matches/requirement/{id}?agent_id=xxx
 
         params:
             agent_id: xxx
@@ -233,7 +233,7 @@ GET: /agent/{my_agent_id}/requirement/{id}/matches
           }
 
 * ###### get matches for property - for an agent
-GET: /agent/{my_agent_id}/property/{id}/matches
+GET: /matches/property/{id}?agent_id=xxx
 
         params:
             agent_id: xxx
