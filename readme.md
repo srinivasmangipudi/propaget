@@ -62,9 +62,9 @@ GET: /agent/{id}
 * ###### update agent information
 PUT: /agent/{id}
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 
 
