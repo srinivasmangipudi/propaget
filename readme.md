@@ -71,27 +71,27 @@ PUT: /agent
 ### Distribution List
 
 * ###### get distribution list information
-GET: /distribution_list/{id}
+GET: /agent/distribution_list/{id}
 
 * ###### update distribution list information
-PUT: /distribution_list/{id}
+PUT: /agent/distribution_list/{id}
 
         params:
             name1=value1
           & name2=value2  
 
 * ###### create a new distribution list
-POST: /distribution_list
+POST: /agent/distribution_list
 
         params:
             name1=value1
           & name2=value2  
 
 * ###### delete a distribution list
-DELETE: /distribution_list/{id}
+DELETE: /agent/distribution_list/{id}
 
 * ###### get saved distribution lists for an agent
-GET: /distribution_lists
+GET: /agent/distribution_lists
 
 
 
