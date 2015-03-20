@@ -76,16 +76,16 @@ GET: /distribution_list/{id}
 * ###### update distribution list information
 PUT: /distribution_list/{id}
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 * ###### create a new distribution list
 POST: /distribution_list
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 * ###### delete a distribution list
 DELETE: /distribution_list/{id}
@@ -103,16 +103,16 @@ GET: /requirement/{id}
 * ###### create a new requirement
 POST: /requirement
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 * ###### update requirement details
 PUT: /requirement/{id}
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 * ###### get all (drafts + handshaken) requirement cards of an agent
 GET: /agent/{agent_id}/requirements
@@ -131,16 +131,16 @@ GET: /property/{id}
 * ###### create a new property
 POST: /property
 
-      params:
-          name1=value1
-        & name2=value2  
+        params:
+            name1=value1
+          & name2=value2  
 
 * ###### update property details
 PUT: /property/{id}
 
-      params:
-          name1=value1
-        & name2=value2
+        params:
+            name1=value1
+          & name2=value2
 
 * ###### get all (drafts + handshaken) property cards of an agent
 GET: /agent/{agent_id}/properties
@@ -166,22 +166,22 @@ GET: /agent/{my_agent_id}/notifications?all=true
 * ###### propaget property tile to a distribution list or a single agent
 POST: /propaget/property/{id}
 
-      params:
-          up_agent_id = xxx
-        & property_id = xxx
-        & distribution_list_id = xxx
-        OR
-        down_agent_id = xxx
+        params:
+            up_agent_id = xxx
+          & property_id = xxx
+          & distribution_list_id = xxx
+          OR
+          down_agent_id = xxx
 
 * ###### propaget requirement tile to a distribution list or a single agent
 POST: /propaget/requirement/{id}
 
-      params:
-          up_agent_id = xxx
-        & requirement_id = xxx
-        & distribution_list_id = xxx
-        OR
-        down_agent_id = xxx
+        params:
+            up_agent_id = xxx
+          & requirement_id = xxx
+          & distribution_list_id = xxx
+          OR
+          down_agent_id = xxx
 
 
 
@@ -208,13 +208,13 @@ GET: /requirement/{requirement_id}/handshakes?pending=true
 * ###### confirm a received handshake
 POST: /handshake/{network_chain_id}?confirm=true
 
-      params:
-            network_chain_id: xxx
-          & up_agent_id: xxx
-          & dwn_agent_id: xxx
-          & requirement_id: xxx
-          OR
-          & property_id: xxx
+        params:
+              network_chain_id: xxx
+            & up_agent_id: xxx
+            & dwn_agent_id: xxx
+            & requirement_id: xxx
+            OR
+            & property_id: xxx
 
 
 
@@ -222,33 +222,33 @@ POST: /handshake/{network_chain_id}?confirm=true
 * ###### get matches for requirement - for an agent
 GET: /agent/{my_agent_id}/requirement/{id}/matches
 
-      params:
-          agent_id: xxx
+        params:
+            agent_id: xxx
 
-      returns (array of properties):
-        {
-          [
-            prop1, prop2, prop3, ... propN
-          ]
-        }
+        returns (array of properties):
+          {
+            [
+              prop1, prop2, prop3, ... propN
+            ]
+          }
 
 * ###### get matches for property - for an agent
 GET: /agent/{my_agent_id}/property/{id}/matches
 
-      params:
-          agent_id: xxx
+        params:
+            agent_id: xxx
 
-      returns (array of requirements):
-        {
-          [
-            req1, req2, req3, ... reqN
-          ]
-        }
+        returns (array of requirements):
+          {
+            [
+              req1, req2, req3, ... reqN
+            ]
+          }
 
 * ###### confirm match
 POST: /confirm_match
 
-      params:
-            agent_id: xxx
-          & property_id: xxx
-          & requirement_id: xxx
+        params:
+              agent_id: xxx
+            & property_id: xxx
+            & requirement_id: xxx
