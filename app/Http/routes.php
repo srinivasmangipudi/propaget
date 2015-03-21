@@ -11,9 +11,8 @@
 |
 */
 use App\Commands\SendEmail;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Device;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Response;
 
@@ -99,4 +98,47 @@ Route::post('test-me', function(Request $request)
     $members = json_decode($postData['members']);
     Queue::later('sendmail', new SendEmail($postData, $members));
     return Response::json($postData);
+});
+
+Route::post('oauth/token', function(Request $request)
+{
+    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
+    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+
+    $bridgedResponse = App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);
+
+    return $bridgedResponse;
+});
+
+Route::get('private', function(Request $request)
+{
+    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
+    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+
+    if (App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+
+        $token = App::make('oauth2')->getAccessTokenData($bridgedRequest);
+
+        return Response::json(array(
+            'private' => 'stuff',
+            'user_id' => $token['user_id'],
+            'client'  => $token['client_id'],
+            'expires' => $token['expires'],
+        ));
+    }
+    else {
+        return Response::json(array(
+            'error' => 'Unauthorized'
+        ), $bridgedResponse->getStatusCode());
+    }
+});
+
+App::singleton('oauth2', function() {
+    $storage = new OAuth2\Storage\Pdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
+    $server = new OAuth2\Server($storage);
+
+    $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
+    $server->addGrantType(new OAuth2\GrantType\UserCredentials($storage));
+
+    return $server;
 });
