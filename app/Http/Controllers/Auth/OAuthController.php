@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use OAuth2\HttpFoundationBridge\Request as OAuthRequest;
 
 /**
  * Created by PhpStorm.
@@ -26,5 +27,29 @@ class OAuthController extends Controller {
         $bridgedResponse = \App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);
 
         return $bridgedResponse;
+    }
+
+    public function validateAccessToken(Request $request)
+    {
+        $req = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+        $bridgedRequest  = OAuthRequest::createFromRequest($req);
+        $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
+
+        if (\App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+
+            $token = \App::make('oauth2')->getAccessTokenData($bridgedRequest);
+
+            return \Response::json(array(
+                'private' => 'stuff',
+                'user_id' => $token['user_id'],
+                'client'  => $token['client_id'],
+                'expires' => $token['expires'],
+            ));
+        }
+        else {
+            return \Response::json(array(
+                'error' => 'Unauthorized'
+            ), $bridgedResponse->getStatusCode());
+        }
     }
 }

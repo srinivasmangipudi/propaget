@@ -74,30 +74,7 @@ Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
 
 Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
-
-Route::get('private', function(Request $request)
-{
-    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
-    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
-    dd($bridgedResponse);
-
-    if (App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
-
-        $token = App::make('oauth2')->getAccessTokenData($bridgedRequest);
-
-        return Response::json(array(
-            'private' => 'stuff',
-            'user_id' => $token['user_id'],
-            'client'  => $token['client_id'],
-            'expires' => $token['expires'],
-        ));
-    }
-    else {
-        return Response::json(array(
-            'error' => 'Unauthorized'
-        ), $bridgedResponse->getStatusCode());
-    }
-});
+Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
 
 App::singleton('oauth2', function() {
     $storage = new OAuth2\Storage\Pdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
@@ -109,20 +86,4 @@ App::singleton('oauth2', function() {
     $server->addGrantType(new OAuth2\GrantType\RefreshToken($storage));
 
     return $server;
-});
-
-Route::get('getUser',function(Request $request)
-{
-    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
-    
-
-    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
-    if (!App::make('oauth2')->verifyResourceRequest($bridgedRequest,$bridgedResponse)) {
-
-       App::make('oauth2')->getResponse()->send();
-       die;
-    };
-
-    $token = App::make('oauth2')->getAccessTokenData($bridgedRequest ,$bridgedResponse);
-    echo "User ID associated with this token is {$token['user_id']}";
 });
