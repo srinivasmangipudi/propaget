@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Properties;
 use Auth;
 use App\User;
+use Illuminate\Support\Facades\Log;
 
 use Request;
 
@@ -17,7 +18,8 @@ class PropertyController extends Controller {
 	 */
 	public function index()
 	{
-        $userId = Auth::user()->id;
+        //$userId = Auth::user()->id;
+        $userId = 2;
         $properties = Properties::where('agentId', '=', $userId)->get();
         return $properties;
 	}
@@ -40,12 +42,32 @@ class PropertyController extends Controller {
 	public function store()
 	{
         //$userId = Auth::user()->id;
-        $userId = 1;
+        //$user = User::find(1);
         $propertyData = Request::all();
-        $propertyData['agentId'] = $userId;
-        $propertyData['clientId'] = $userId;
-        $properties = Properties::create($propertyData);
-        return $properties;
+
+        $pro = new Properties();
+        $pro->agentId = 2;
+        $pro->clientId = 1;
+        $pro->title = $propertyData['title'];
+        $pro->description = $propertyData['description'];
+        $pro->clientEmail = $propertyData['clientEmail'];
+        $pro->address = $propertyData['address'];
+        $pro->location = $propertyData['location'];
+        $pro->area = $propertyData['area'];
+        $pro->price = $propertyData['price'];
+        $pro->type = $propertyData['type'];
+        $pro->save();
+
+        $errors = $pro->getErrors()->all();
+        if (empty($errors))
+        {
+            echo "Property added successfully";
+        }
+        else
+        {
+            echo "Property not added ";
+        }
+
 	}
 
 	/**
@@ -79,12 +101,39 @@ class PropertyController extends Controller {
 	 */
 	public function update($id)
 	{
-        $propertyData = Request::all();
+        /*$propertyData = Request::all();
         unset($propertyData['updated_at']);
         unset($propertyData['created_at']);
         print_r($propertyData);
         Properties::where('id', $id)->update($propertyData);
-        return 'Updated property';
+        return 'Updated property';*/
+
+        //$user = User::find(1);
+        $propertyData = Request::all();
+        $pro = Properties::find($id);
+        $pro->agentId = 2;
+        $pro->clientId = 1;
+        $pro->title = $propertyData['title'];
+        $pro->description = $propertyData['description'];
+        $pro->clientEmail = $propertyData['clientEmail'];
+        $pro->address = $propertyData['address'];
+        $pro->location = $propertyData['location'];
+        $pro->area = $propertyData['area'];
+        $pro->price = $propertyData['price'];
+        $pro->type = $propertyData['type'];
+
+        $pro->save();
+
+        $errors = $pro->getErrors()->all();
+        //Log::info('this update'. print_r($errors, true));
+        if (empty($errors))
+        {
+            echo "Property updated successfully";
+        }
+        else
+        {
+            echo "Property not updated ";
+        }
     }
 
 	/**
@@ -96,7 +145,7 @@ class PropertyController extends Controller {
 	public function destroy($id)
 	{
         Properties::destroy($id);
-        return "Delete Property";
+        echo  "Delete Property";
 	}
 
 }

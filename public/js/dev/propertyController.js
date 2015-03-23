@@ -59,6 +59,13 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
 
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
 
+    $scope.infoMsg = 'dummy';
+    $scope.$on('MsgEvent', function(event, data) {
+        //console.log('mi:'+data);
+        $scope.infoMsg = data;
+    });
+    $scope.infoMsg = '';
+
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
@@ -97,7 +104,8 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
     {
         console.log(propertyId);
         propertyService.deleteProperty(propertyId).then(function(propertyData) {
-            console.log(propertyData);
+            //console.log('Delete Msg : ' + propertyData.data);
+            $scope.$emit('MsgEvent', propertyData.data);
             $location.path('/');
         });
 
@@ -108,6 +116,7 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
 propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {
     $scope.property ={};
     $scope.submitClicked = false;
+    $scope.$emit('MsgEvent', '');
 
     /* Check if the form is in edit mode with property id in the url */
     if($routeParams.id) {
@@ -129,6 +138,9 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 var method = 'PUT';
                 var functionUrl = 'property/' + propertyId;
                 propertyService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
+
+                    //console.log('Update Msg : ' + propertyData.data);
+                    $scope.$emit('MsgEvent', propertyData.data);
                     $location.path('/');
                 });
             }
@@ -143,7 +155,9 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 var method = 'POST';
                 var functionUrl = 'property/';
                 propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                 $location.path('/');
+                    //console.log('Add Msg : ' + propertyData.data);
+                    $scope.$emit('MsgEvent', propertyData.data);
+                    $location.path('/');
                  });
             }
         }

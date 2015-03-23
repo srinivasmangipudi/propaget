@@ -195,5 +195,19 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }
         }
     }
+    /* To put error class for input */
+    $scope.show_error = function(name) {
+        if($scope.submitClicked) {
+            if($scope.addRequirementForm[name].$invalid) {
+                return 'error';
+            }
+        }
+        else {
+            if($scope.addRequirementForm[name].$invalid && $scope.addRequirementForm[name].$dirty) {
+                return 'error';
+            }
+        }
+        return '';
+    }
 
 }]);
