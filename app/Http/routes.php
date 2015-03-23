@@ -1,19 +1,7 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-use App\Commands\SendEmail;
 use App\Device;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Response;
 
 Route::get('/', 'WelcomeController@index');
@@ -76,12 +64,6 @@ Route::post('register-device', function(Request $request) {
     $device->deviceId = $postData['deviceId'];
     $device->registraionId = $postData['registrationId'];
     $device->save();
-
-    /*$gcm = new GcmHelper;
-    $gcm->sendNotification(
-        array($device->registraionId),
-        array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
-    );*/
 });
 
 
@@ -91,20 +73,13 @@ Route::get('properties', 'Property\PropertyAppController@index');
 Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
 
-Route::post('oauth/token', function(Request $request)
-{
-    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
-    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
-
-    $bridgedResponse = App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);
-
-    return $bridgedResponse;
-});
+Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
 
 Route::get('private', function(Request $request)
 {
     $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
     $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+    dd($bridgedResponse);
 
     if (App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
 
@@ -130,6 +105,24 @@ App::singleton('oauth2', function() {
 
     $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
     $server->addGrantType(new OAuth2\GrantType\UserCredentials($storage));
+    $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
+    $server->addGrantType(new OAuth2\GrantType\RefreshToken($storage));
 
     return $server;
+});
+
+Route::get('getUser',function(Request $request)
+{
+    $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
+    
+
+    $bridgedResponse = new OAuth2\HttpFoundationBridge\Response();
+    if (!App::make('oauth2')->verifyResourceRequest($bridgedRequest,$bridgedResponse)) {
+
+       App::make('oauth2')->getResponse()->send();
+       die;
+    };
+
+    $token = App::make('oauth2')->getAccessTokenData($bridgedRequest ,$bridgedResponse);
+    echo "User ID associated with this token is {$token['user_id']}";
 });
