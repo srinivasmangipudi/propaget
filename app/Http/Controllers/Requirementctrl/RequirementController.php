@@ -62,7 +62,7 @@ class RequirementController extends Controller {
         //$requirement = Requirement::create($requirementData);
         $user = User::find(1);
         $req = new Requirement();
-        $req->agentId = 1;
+        $req->agentId = 2;
         $req->clientId = 1;
         $req->location = $requirementData['location'];
         $req->area = $requirementData['area'];
@@ -120,18 +120,36 @@ class RequirementController extends Controller {
 	public function update($id)
 	{
 
-        $requirementData = Request::all();
+        /*$requirementData = Request::all();
         unset($requirementData['updated_at']);
         unset($requirementData['created_at']);
         print_r($requirementData);
-        Requirement::where('id', $id)->update($requirementData);
-        return 'Updated requirement';
+        Requirement::where('id', $id)->update($requirementData);*/
 
-		/*$requirement = Requirement::find($id);
-        //Log::info('this array'. print_r(Request::all(), true));
-        $requirement->area = Request::input('area');
-        $requirement->save();
-        return $requirement;*/
+        Log::error('-------i m in update function------------');
+        $user = User::find(1);
+        $requirementData = Request::all();
+        $req =  Requirement::find($id);
+        $req->agentId = 2;
+        $req->clientId = 1;
+        $req->location = $requirementData['location'];
+        $req->area = $requirementData['area'];
+        $req->range = $requirementData['range'];
+        $req->price = $requirementData['price'];
+        $req->priceRange = $requirementData['priceRange'];
+        $req->type = $requirementData['type'];
+        $req->save(['user' => $user, 'requirement' => $req]);
+        $errors = $req->getErrors()->all();
+
+        if (empty($errors))
+        {
+            echo "Update successfully";
+        }
+        else
+        {
+            echo "Not update successfully";
+        }
+
 	}
 
 	/**

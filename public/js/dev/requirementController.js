@@ -92,12 +92,12 @@ requirementApp.factory('requirementService', ['$http', '$rootScope', function($h
 }]);
 
 requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function($scope, requirementService) {
-
+    //$scope.infoMsg="I am for message";
+    console.log('this info msg'+$scope.infoMsg);
 }]);
 
 requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
 
-     $scope.name = 'Urmi';
      requirementService.getRequirements().then(function(requirementData) {
         $scope.requirements = requirementData.data;
          //console.log(requirementData);
@@ -159,7 +159,16 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
 
             }else {
                 requirementService.updateRequirement(requirementId, $scope.requirement).then(function (requirementData) {
-                    $location.path('/');
+
+                    //console.log('update' + JSON.stringify(requirementData));
+                    console.log('update' + requirementData.data);
+
+                    /*$scope.infoMsg="Requirement Updated Failed";
+                    if(requirementData.statusText == "OK")
+                    {
+                        $scope.infoMsg="Requirement Updated";
+                    }*/
+                    //$location.path('/');
                 });
             }
         }
