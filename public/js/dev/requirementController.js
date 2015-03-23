@@ -92,8 +92,12 @@ requirementApp.factory('requirementService', ['$http', '$rootScope', function($h
 }]);
 
 requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function($scope, requirementService) {
-    //$scope.infoMsg="I am for message";
-    console.log('this info msg'+$scope.infoMsg);
+    $scope.infoMsg = 'dummy';
+    $scope.$on('MsgEvent', function(event, data) {
+        //console.log('mi:'+data);
+        $scope.infoMsg = data;
+    });
+    $scope.infoMsg = '';
 }]);
 
 requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
@@ -129,9 +133,10 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
 
     $scope.deleteRequirement = function (requirementId)
     {
-        console.log(requirementId);
+        //console.log(requirementId);
         requirementService.deleteRequirement(requirementId).then(function(requirementData) {
-            console.log(requirementData);
+            //console.log('Delete Msg : ' + requirementData.data);
+            $scope.$emit('MsgEvent', requirementData.data);
             $location.path('/');
         });
 
@@ -140,9 +145,11 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
 
 }]);
 
-requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' , '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
+requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService', '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
     $scope.requirement ={};
     $scope.submitClicked = false;
+    $scope.$emit('MsgEvent', '');
+
     if($routeParams.id) {
         //Call For Edit
         var requirementId = $scope.requirement.id = $routeParams.id;
@@ -160,15 +167,9 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
             }else {
                 requirementService.updateRequirement(requirementId, $scope.requirement).then(function (requirementData) {
 
-                    //console.log('update' + JSON.stringify(requirementData));
-                    console.log('update' + requirementData.data);
-
-                    /*$scope.infoMsg="Requirement Updated Failed";
-                    if(requirementData.statusText == "OK")
-                    {
-                        $scope.infoMsg="Requirement Updated";
-                    }*/
-                    //$location.path('/');
+                    //console.log('Update Msg : ' + requirementData.data);
+                    $scope.$emit('MsgEvent', requirementData.data);
+                    $location.path('/');
                 });
             }
         }
@@ -177,15 +178,18 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
         //Call For Add
         $scope.save_requirement = function () {
             $scope.submitClicked = true;
-            console.log('In save add');
+            //console.log('In save add');
             if($scope.addRequirementForm.$invalid) {
                 //console.log('In if');
-                console.log('IF'+$scope.addRequirementForm);
+                //console.log('IF'+$scope.addRequirementForm);
 
             }else {
                 //console.log('In Else');
-                console.log('Else'+$scope.addRequirementForm);
+                //console.log('Else'+$scope.addRequirementForm);
                 requirementService.saveRequirement($scope.requirement).then(function (requirementData) {
+
+                    //console.log('Add Msg : ' + requirementData.data);
+                    $scope.$emit('MsgEvent', requirementData.data);
                     $location.path('/');
                 });
             }
