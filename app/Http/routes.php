@@ -91,15 +91,6 @@ Route::get('properties', 'Property\PropertyAppController@index');
 Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
 
-
-Route::post('test-me', function(Request $request)
-{
-    $postData = $request->input();
-    $members = json_decode($postData['members']);
-    Queue::later('sendmail', new SendEmail($postData, $members));
-    return Response::json($postData);
-});
-
 Route::post('oauth/token', function(Request $request)
 {
     $bridgedRequest  = OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
