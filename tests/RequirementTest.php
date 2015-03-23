@@ -10,45 +10,79 @@ use App\Requirement;
 
 class RequirementTest extends TestCase {
 
-    /*public function testSomethingIsTrue() {
-        $this->assertTrue(true);
-    }*/
-
-
-    /*public function testRequirementSave() {
+    /** Insert new Requirement with correct Data **/
+    public function testRequirementSave() {
         $req = new \App\Requirement();
 
         $req->agentId = 1;
         $req->clientId = 1;
-        $req->location = 'L19999';
+        $req->location = 'Mulund';
        $req->area = 'Area';
+       $req->price = '2343545';
 
-        if ($req->save()) {
-            $this->assertTrue(true);
-        } else {
+        if (!$req->save()) {
             $errors = $req->getErrors()->all();
-            print_r($errors);
-
-            $this->assertFalse(false);
+           // echo 'Insert new rquirement failed' . print_r($errors);
+            $this->assertTrue(false);
+        } else {
+            $this->assertTrue(true);
         }
-    }*/
+    }
 
-    /*public function testRequirementUpdateSave() {
+    /** Insert new Requirement with incorrect Data **/
+    public function testRequirementIncorrectDataSave() {
+        $req = new \App\Requirement();
 
-        $req = Requirement::find(24);
         $req->agentId = 1;
         $req->clientId = 1;
-        $req->location = 'L23456';
+        $req->location = 'Mulund';
+       $req->area = 'Area';
+       $req->price = '';
+
+        if (!$req->save()) {
+            $errors = $req->getErrors()->all();
+           // echo 'Insert incorrect req data passed' . print_r($errors);
+            $this->assertTrue(true);
+        } else {
+            $this->assertTrue(false);
+        }
+    }
+
+    /** Update Requirement with correct data **/
+    public function testRequirementUpdateSave() {
+
+        $req = Requirement::find(1);
+        $req->agentId = 1;
+        $req->clientId = 1;
+        $req->location = 'THANE';
+        $req->area = 'Area';
+        $req->price = '324324';
+
+        if(!$req->save()) {
+            $errors = $req->getErrors()->all();
+           // echo 'Update rquirement test failed' . print_r($errors);
+             $this->assertTrue(false);
+        }else {
+            $this->assertTrue(true);
+        }
+    }
+
+    /** Update Requirement with incorrect data **/
+    public function testRequirementUpdateIncorrectData() {
+
+        $req = Requirement::find(1);
+        $req->agentId = 1;
+        $req->clientId = 1;
+        $req->location = 'WRONG';
         $req->area = 'Area';
         $req->price = '';
 
-        if ($req->save()) {
-            $this->assertTrue(true);
-        } else {
+        if(!$req->save()) {
             $errors = $req->getErrors()->all();
-            print_r($errors);
-
-            $this->assertFalse(false);
+            //echo 'Update incorrect req data passed' . print_r($errors);
+             $this->assertTrue(true);
+        }else {
+            $this->assertTrue(false);
         }
-    }*/
+    }
 }
