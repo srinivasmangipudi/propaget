@@ -1,5 +1,6 @@
 var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
 
+/* CODE FOR PAGINATION */
 propertyApp.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
@@ -9,6 +10,8 @@ propertyApp.filter('startFrom', function() {
         return [];
     }
 });
+
+/** ROUTES CONFIGURATION STARTS **/
 propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
     $routeProvider
@@ -31,7 +34,10 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             redirectTo: '/list'
         });
 }]);
+/** ROUTES CONFIGURATION ENDS **/
 
+
+/** FACTORY METHOD STARTS **/
 propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $rootScope) {
     return {
         apiCall: function (operation, method, functionUrl, propertyData) {
@@ -42,19 +48,15 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
                 data: (propertyData!=undefined) ? $.param(propertyData) : ''
             })
             .success(function (jsonData) {
+                    console.log('SUCESS', jsonData);
+            })
+            .error(function(data, status, headers, config) {
+                console.log('ERROR', data);
             });
         },
-        deleteProperty: function (propertyId){
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property/' + propertyId,
-                method: "DELETE"
-            })
-            .success(function(propertyData){
-            });
-        }
     }
 }]);
+/** FACTORY METHOD ENDS **/
 
 
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
@@ -62,7 +64,6 @@ propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scop
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
-   //propertyService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
@@ -95,9 +96,10 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
 
     $scope.deleteProperty = function (propertyId)
     {
-        console.log(propertyId);
-        propertyService.deleteProperty(propertyId).then(function(propertyData) {
-            console.log(propertyData);
+        var propertyId = $scope.property.id = propertyId;
+        var method = 'DELETE';
+        var functionUrl = 'property/' + propertyId;
+        propertyService.apiCall('deleteProperty', method, functionUrl).then(function(propertyData) {
             $location.path('/');
         });
 
@@ -142,8 +144,11 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
             }else {
                 var method = 'POST';
                 var functionUrl = 'property/';
+                console.log($scope.property);
                 propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                 $location.path('/');
+                    console.log(propertyData);
+
+                 //$location.path('/');
                  });
             }
         }

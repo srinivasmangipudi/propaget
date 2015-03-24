@@ -1,12 +1,13 @@
 <?php namespace App\Http\Controllers\Property;
 
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use App\Properties;
 use Auth;
-use App\User;
-
+use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Response;
 use Request;
+
 
 class PropertyController extends Controller {
 
@@ -39,13 +40,27 @@ class PropertyController extends Controller {
 	 */
 	public function store()
 	{
-        //$userId = Auth::user()->id;
-        $userId = 1;
-        $propertyData = Request::all();
-        $propertyData['agentId'] = $userId;
-        $propertyData['clientId'] = $userId;
-        $properties = Properties::create($propertyData);
-        return $properties;
+        try {
+            //$userId = Auth::user()->id;
+            $userId = 1;
+            $prop = new Properties;
+            $prop->agentId = 1;
+            $prop->clientId = 1;
+            $prop->location = Request::input('location');
+            $prop->area = Request::input('area');
+            $prop->price = Request::input('price');
+            $prop->title = Request::input('title');
+            if (!$prop->save()) {
+                $errors = $prop->getErrors()->all();
+                return Response::json(array('message' => 'Bad request.', 'prop' => $errors), 422);
+            }
+
+            return Response::json(array('message' => 'Property saved.', 'prop' => $prop), 201);
+
+        } catch (Exception $e) {
+            return Response::json(array('message' => 'Property not saved.'), 500);
+        }
+
 	}
 
 	/**
