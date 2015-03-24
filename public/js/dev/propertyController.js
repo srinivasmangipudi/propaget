@@ -1,5 +1,4 @@
 var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
-
 propertyApp.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
@@ -10,7 +9,6 @@ propertyApp.filter('startFrom', function() {
     }
 });
 propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-
     $routeProvider
         .when('/list', {
             title: 'View Properties',
@@ -23,6 +21,7 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             controller: 'propertyAddCtrl'
         })
         .when('/edit/:id', {
+
             title: 'Edit property',
             templateUrl: base_url + '/properties/add',
             controller: 'propertyAddCtrl'
@@ -48,15 +47,6 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
             })
             .success(function (jsonData) {
             });
-        },
-        deleteProperty: function (propertyId){
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'property/' + propertyId,
-                method: "DELETE"
-            })
-            .success(function(propertyData){
-            });
         }
     }
 }]);
@@ -64,9 +54,7 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
 
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
 
-    $scope.infoMsg = 'dummy';
     $scope.$on('MsgEvent', function(event, data) {
-        //console.log('mi:'+data);
         $scope.infoMsg = data;
     });
     $scope.infoMsg = '';
@@ -74,7 +62,6 @@ propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scop
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
-   //propertyService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
@@ -107,18 +94,21 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
 
     $scope.deleteProperty = function (propertyId)
     {
-        console.log(propertyId);
-        propertyService.deleteProperty(propertyId).then(function(propertyData) {
+        //console.log(propertyId);
+        var method = 'DELETE';
+        var functionUrl =  'property/' + propertyId;
+
+        propertyService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
             //console.log('Delete Msg : ' + propertyData.data);
             $scope.$emit('MsgEvent', propertyData.data);
             $location.path('/');
         });
-
     }
-
 }]);
 
 propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$routeParams',  function($scope, propertyService, $routeParams) {
+
+    $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
 
         var propertyId = $routeParams.id;
@@ -130,7 +120,6 @@ propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$route
             }
         });
     }
-
 }]);
 
 propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {
