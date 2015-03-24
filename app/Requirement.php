@@ -12,7 +12,10 @@ class Requirement extends BaseModel {
     protected $rules = [
         'location' => 'required|min:5',
         'area' => 'required',
-        'price' => 'required|numeric'
+        'price' => 'required|numeric',
+        'title' => 'required',
+        'clientId' => 'required|numeric',
+        'agentId' => 'required|numeric',
     ];
 
     protected $validationMessages = [

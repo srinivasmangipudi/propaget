@@ -94,7 +94,8 @@ class RequirementController extends Controller {
 	 */
 	public function show($id)
 	{
-        return $id;
+        $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
+        return $response;
         /*try{
             $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
             $statusCode = 200;

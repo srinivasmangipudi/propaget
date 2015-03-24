@@ -25,6 +25,11 @@ requirementApp.config(['$routeProvider', '$locationProvider', function($routePro
             templateUrl: base_url + '/requirements/add',
             controller: 'requirementAddCtrl'
         })
+        .when('/view/:id',{
+            title: 'View Requirement',
+            templateUrl: base_url + 'requirements/view',
+            controller : 'requirementViewCtrl'
+        })
         .otherwise({
             redirectTo: '/list'
         });
@@ -145,6 +150,20 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
 
 }]);
 
+
+requirementApp.controller('requirementViewCtrl', ['$scope', 'requirementService', '$routeParams',  function($scope, requirementService, $routeParams) {
+    if($routeParams.id) {
+
+        var requirementId = $routeParams.id;
+        requirementService.getRequirement(requirementId).then(function(requirementData) {
+            if(requirementData.data) {
+                $scope.requirement = requirementData.data;
+            }
+        });
+    }
+
+}]);
+
 requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService', '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
     $scope.requirement ={};
     $scope.submitClicked = false;
@@ -196,7 +215,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
         }
     }
     /* To put error class for input */
-    $scope.show_error = function(name) {
+    /*$scope.show_error = function(name) {
         if($scope.submitClicked) {
             if($scope.addRequirementForm[name].$invalid) {
                 return 'error';
@@ -208,6 +227,6 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }
         }
         return '';
-    }
+    }*/
 
 }]);

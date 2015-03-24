@@ -69,6 +69,7 @@ Route::controller('req-list','Requirementctrl\RequirementController');
 Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
 Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
 Route::get('requirements/add', 'Requirementctrl\RequirementAppController@add');
+Route::get('requirements/view', 'Requirementctrl\RequirementAppController@view');
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
@@ -91,6 +92,7 @@ Route::resource('property', 'Property\PropertyController');
 Route::get('properties', 'Property\PropertyAppController@index');
 Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
+Route::get('properties/view', 'Property\PropertyAppController@view');
 
 
 Route::post('test-me', function(Request $request)

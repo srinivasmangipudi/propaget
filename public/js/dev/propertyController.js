@@ -27,6 +27,11 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             templateUrl: base_url + '/properties/add',
             controller: 'propertyAddCtrl'
         })
+        .when('/view/:id',{
+            title: 'View property',
+            templateUrl: base_url + 'properties/view',
+            controller : 'propertyViewCtrl'
+        })
         .otherwise({
             redirectTo: '/list'
         });
@@ -109,6 +114,21 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
             $location.path('/');
         });
 
+    }
+
+}]);
+
+propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$routeParams',  function($scope, propertyService, $routeParams) {
+    if($routeParams.id) {
+
+        var propertyId = $routeParams.id;
+        var method = 'GET';
+        var functionUrl = 'property/' + propertyId+ '/edit';
+        propertyService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
+            if(propertyData.data) {
+                $scope.property = propertyData.data;
+            }
+        });
     }
 
 }]);

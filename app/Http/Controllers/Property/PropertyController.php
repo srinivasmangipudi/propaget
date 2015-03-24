@@ -78,7 +78,8 @@ class PropertyController extends Controller {
 	 */
 	public function show($id)
 	{
-        return $id;
+        $response = Properties::where('agentId','=','2')->where('id','=',$id)->get();
+        return $response;
 	}
 
 	/**
