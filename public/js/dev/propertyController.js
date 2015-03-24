@@ -61,6 +61,7 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
         },
     }
 }]);
+
 /** FACTORY METHOD ENDS **/
 
 
