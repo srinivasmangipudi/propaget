@@ -19,6 +19,7 @@ class RequirementTest extends TestCase {
         $req->location = 'Mulund';
        $req->area = 'Area';
        $req->price = '2343545';
+       $req->title = 'asdasfasf';
 
         if (!$req->save()) {
             $errors = $req->getErrors()->all();
@@ -38,6 +39,8 @@ class RequirementTest extends TestCase {
         $req->location = 'Mulund';
        $req->area = 'Area';
        $req->price = '';
+        $req->title = 'asdasfasf';
+
 
         if (!$req->save()) {
             $errors = $req->getErrors()->all();
@@ -57,6 +60,8 @@ class RequirementTest extends TestCase {
         $req->location = 'THANE';
         $req->area = 'Area';
         $req->price = '324324';
+        $req->title = 'asdasfasf';
+
 
         if(!$req->save()) {
             $errors = $req->getErrors()->all();
@@ -76,13 +81,15 @@ class RequirementTest extends TestCase {
         $req->location = 'WRONG';
         $req->area = 'Area';
         $req->price = 100;
+        $req->title = 'asdasfasf';
+
 
         if(!$req->save()) {
             $errors = $req->getErrors()->all();
             echo 'Update incorrect req data passed' . print_r($errors);
              $this->assertTrue(true);
         }else {
-            echo "check working";
+            echo "CHECK WORKLING =========== ";
             $this->assertTrue(false);
         }
     }

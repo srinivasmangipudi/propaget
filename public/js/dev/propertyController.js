@@ -58,7 +58,7 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
             .error(function(data, status, headers, config) {
                 console.log('ERROR', data);
             });
-        },
+        }
     }
 }]);
 
