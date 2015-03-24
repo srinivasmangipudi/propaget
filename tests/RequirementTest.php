@@ -75,13 +75,14 @@ class RequirementTest extends TestCase {
         $req->clientId = 1;
         $req->location = 'WRONG';
         $req->area = 'Area';
-        $req->price = '';
+        $req->price = 100;
 
         if(!$req->save()) {
             $errors = $req->getErrors()->all();
-            //echo 'Update incorrect req data passed' . print_r($errors);
+            echo 'Update incorrect req data passed' . print_r($errors);
              $this->assertTrue(true);
         }else {
+            echo "check working";
             $this->assertTrue(false);
         }
     }

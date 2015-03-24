@@ -1,7 +1,7 @@
 ## Propaget Api Definitions
 
-Outlining the basic API endpoints for reference. For GET requests "/?access_token={}" has to be appended with all requests. While for POST requests, the access_token has to be passed in the header.
-
+Outlining the basic API endpoints for reference. For GET and POST requests "/?access_token={}" will be passed in the header.
+The user object will be extracted from the access_token on the server end.
 
 ### Server info
 GET: /info/?client_version={1.0}
@@ -43,11 +43,11 @@ POST:
 ### Client
 * ###### get client information
 
-  GET: /client/{id}
+  GET: /client
 
 * ###### update client information
 
-  PUT: /client/{id}
+  PUT: /client
 
       params:
           name1=value1
@@ -57,10 +57,10 @@ POST:
 
 ### Agent
 * ###### get agent information
-GET: /agent/{id}
+GET: /agent
 
 * ###### update agent information
-PUT: /agent/{id}
+PUT: /agent
 
         params:
             name1=value1
@@ -71,27 +71,27 @@ PUT: /agent/{id}
 ### Distribution List
 
 * ###### get distribution list information
-GET: /distribution_list/{id}
+GET: /agent/distribution_list/{id}
 
 * ###### update distribution list information
-PUT: /distribution_list/{id}
+PUT: /agent/distribution_list/{id}
 
         params:
             name1=value1
           & name2=value2  
 
 * ###### create a new distribution list
-POST: /distribution_list
+POST: /agent/distribution_list
 
         params:
             name1=value1
           & name2=value2  
 
 * ###### delete a distribution list
-DELETE: /distribution_list/{id}
+DELETE: /agent/distribution_list/{id}
 
 * ###### get saved distribution lists for an agent
-GET: /{agent_id}/distribution_lists
+GET: /agent/distribution_lists
 
 
 
@@ -115,13 +115,13 @@ PUT: /requirement/{id}
           & name2=value2  
 
 * ###### get all (drafts + handshaken) requirement cards of an agent
-GET: /agent/{agent_id}/requirements
+GET: /agent/requirements
 
 * ###### get only draft-requirement cards of an agent
-GET: /agent/{agent_id}/requirements?type=draft
+GET: /agent/requirements?type=draft
 
 * ###### get only handshaken-requirement cards of an agent
-GET: /agent/{agent_id}/requirements?type=handshake
+GET: /agent/requirements?type=handshake
 
 
 ### Property
@@ -143,28 +143,28 @@ PUT: /property/{id}
           & name2=value2
 
 * ###### get all (drafts + handshaken) property cards of an agent
-GET: /agent/{agent_id}/properties
+GET: /agent/properties
 
 * ###### get only draft-property cards of an agent
-GET: /agent/{agent_id}/properties?type=draft
+GET: /agent/properties?type=draft
 
 * ###### get only handshaken-property cards of an agent
-GET: /agent/{agent_id}/properties?type=handshake
+GET: /agent/properties?type=handshake
 
 
 
 ### Notifications
 * ###### get unread notifications
-GET: /agent/{my_agent_id}/notifications
+GET: /agent/notifications
 
 * ###### get all notifications
-GET: /agent/{my_agent_id}/notifications?all=true
+GET: /agent/notifications?all=true
 
 
 
-### Propaget
-* ###### propaget property tile to a distribution list or a single agent
-POST: /propaget/property/{id}
+### Forward (Propaget)
+* ###### forward property tile to a distribution list or a single agent
+POST: /agent/forward/property/{id}
 
         params:
             up_agent_id = xxx
@@ -173,8 +173,8 @@ POST: /propaget/property/{id}
           OR
           down_agent_id = xxx
 
-* ###### propaget requirement tile to a distribution list or a single agent
-POST: /propaget/requirement/{id}
+* ###### forward requirement tile to a distribution list or a single agent
+POST: /agent/forward/requirement/{id}
 
         params:
             up_agent_id = xxx
@@ -188,16 +188,16 @@ POST: /propaget/requirement/{id}
 ### Handshake
 
 * ###### get all handshakes for agent
-GET: /agent/{my_agent_id}/handshakes
+GET: /agent/handshakes
 
 * ###### get all pending handshakes for agent
-GET: /agent/{my_agent_id}/handshakes?pending=true
+GET: /agent/handshakes?pending=true
 
 * ###### get all handshakes for client
-GET: /client/{my_client_id}/handshakes
+GET: /client/handshakes
 
 * ###### get all pending handshakes for client
-GET: /client/{my_client_id}/handshakes?pending=true
+GET: /client/handshakes?pending=true
 
 * ###### get all pending handshakes for a property (could be used in top level agent and client dashboard)
 GET: /property/{property_id/}handshakes?pending=true
@@ -220,7 +220,7 @@ POST: /handshake/{network_chain_id}?confirm=true
 
 ### Matches
 * ###### get matches for requirement - for an agent
-GET: /agent/{my_agent_id}/requirement/{id}/matches
+GET: /matches/requirement/{id}
 
         params:
             agent_id: xxx
@@ -233,7 +233,7 @@ GET: /agent/{my_agent_id}/requirement/{id}/matches
           }
 
 * ###### get matches for property - for an agent
-GET: /agent/{my_agent_id}/property/{id}/matches
+GET: /matches/property/{id}
 
         params:
             agent_id: xxx

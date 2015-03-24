@@ -30,6 +30,11 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             templateUrl: base_url + '/properties/add',
             controller: 'propertyAddCtrl'
         })
+        .when('/view/:id',{
+            title: 'View property',
+            templateUrl: base_url + 'properties/view',
+            controller : 'propertyViewCtrl'
+        })
         .otherwise({
             redirectTo: '/list'
         });
@@ -61,9 +66,15 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
 
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
 
+    $scope.$on('MsgEvent', function(event, data) {
+        $scope.infoMsg = data;
+    });
+    $scope.infoMsg = '';
+
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
+   //propertyService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
@@ -96,20 +107,39 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
 
     $scope.deleteProperty = function (propertyId)
     {
-        var propertyId = $scope.property.id = propertyId;
+        //console.log(propertyId);
         var method = 'DELETE';
-        var functionUrl = 'property/' + propertyId;
-        propertyService.apiCall('deleteProperty', method, functionUrl).then(function(propertyData) {
+        var functionUrl =  'property/' + propertyId;
+
+        propertyService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
+            //console.log('Delete Msg : ' + propertyData.data);
+            $scope.$emit('MsgEvent', propertyData.data);
             $location.path('/');
         });
 
     }
+}]);
 
+propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$routeParams',  function($scope, propertyService, $routeParams) {
+
+    $scope.$emit('MsgEvent', '');
+    if($routeParams.id) {
+
+        var propertyId = $routeParams.id;
+        var method = 'GET';
+        var functionUrl = 'property/' + propertyId+ '/edit';
+        propertyService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
+            if(propertyData.data) {
+                $scope.property = propertyData.data;
+            }
+        });
+    }
 }]);
 
 propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {
     $scope.property ={};
     $scope.submitClicked = false;
+    $scope.$emit('MsgEvent', '');
 
     /* Check if the form is in edit mode with property id in the url */
     if($routeParams.id) {
@@ -131,6 +161,9 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 var method = 'PUT';
                 var functionUrl = 'property/' + propertyId;
                 propertyService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
+
+                    //console.log('Update Msg : ' + propertyData.data);
+                    $scope.$emit('MsgEvent', propertyData.data);
                     $location.path('/');
                 });
             }
@@ -144,11 +177,8 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
             }else {
                 var method = 'POST';
                 var functionUrl = 'property/';
-                console.log($scope.property);
                 propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                    console.log(propertyData);
-
-                 //$location.path('/');
+                 $location.path('/');
                  });
             }
         }

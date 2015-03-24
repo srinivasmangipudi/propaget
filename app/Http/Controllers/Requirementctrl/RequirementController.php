@@ -54,16 +54,18 @@ class RequirementController extends Controller {
 	public function store()
 	{
         //$userId = Auth::user()->id;
-        $userId = 2;
         $requirementData = Request::all();
         //Log::error('i m in store');
-        Log::info('this store'. print_r($requirementData, true));
-
+        //Log::info('this store'. print_r($requirementData, true));
         //$requirement = Requirement::create($requirementData);
+
         $user = User::find(1);
         $req = new Requirement();
-        $req->agentId = 1;
+        $req->agentId = 2;
         $req->clientId = 1;
+        $req->title = $requirementData['title'];
+        $req->description = $requirementData['description'];
+        $req->clientEmail = $requirementData['clientEmail'];
         $req->location = $requirementData['location'];
         $req->area = $requirementData['area'];
         $req->range = $requirementData['range'];
@@ -71,8 +73,17 @@ class RequirementController extends Controller {
         $req->priceRange = $requirementData['priceRange'];
         $req->type = $requirementData['type'];
         $req->save(['user' => $user, 'requirement' => $req]);
-        return $req;
 
+        $errors = $req->getErrors()->all();
+
+        if (empty($errors))
+        {
+            echo "Requirement added successfully";
+        }
+        else
+        {
+            echo "Requirement not added ";
+        }
 	}
 
 	/**
@@ -83,7 +94,8 @@ class RequirementController extends Controller {
 	 */
 	public function show($id)
 	{
-        return $id;
+        $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
+        return $response;
         /*try{
             $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
             $statusCode = 200;
@@ -120,18 +132,39 @@ class RequirementController extends Controller {
 	public function update($id)
 	{
 
-        $requirementData = Request::all();
+        /*$requirementData = Request::all();
         unset($requirementData['updated_at']);
         unset($requirementData['created_at']);
         print_r($requirementData);
-        Requirement::where('id', $id)->update($requirementData);
-        return 'Updated requirement';
+        Requirement::where('id', $id)->update($requirementData);*/
 
-		/*$requirement = Requirement::find($id);
-        //Log::info('this array'. print_r(Request::all(), true));
-        $requirement->area = Request::input('area');
-        $requirement->save();
-        return $requirement;*/
+
+        $user = User::find(1);
+        $requirementData = Request::all();
+        $req =  Requirement::find($id);
+        $req->agentId = 2;
+        $req->clientId = 1;
+        $req->title = $requirementData['title'];
+        $req->description = $requirementData['description'];
+        $req->clientEmail = $requirementData['clientEmail'];
+        $req->location = $requirementData['location'];
+        $req->area = $requirementData['area'];
+        $req->range = $requirementData['range'];
+        $req->price = $requirementData['price'];
+        $req->priceRange = $requirementData['priceRange'];
+        $req->type = $requirementData['type'];
+        $req->save(['user' => $user, 'requirement' => $req]);
+        $errors = $req->getErrors()->all();
+
+        if (empty($errors))
+        {
+            echo "Requirement updated successfully";
+        }
+        else
+        {
+            echo "Requirement Not updated";
+        }
+
 	}
 
 	/**
@@ -144,6 +177,6 @@ class RequirementController extends Controller {
 	{
         //Log::error('i m in delete'.$id);
 		Requirement::destroy($id);
-        return "Delete Requirement";
+        echo  "Delete Requirement";
 	}
 }

@@ -53,5 +53,8 @@
     {
         return view('property/add');
     }
-
+    public function view()
+    {
+        return view('property/view');
+    }
 }

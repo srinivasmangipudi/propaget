@@ -24,7 +24,7 @@
                </thead>
                <tbody>
                    <tr  ng-repeat='req in filtered = (requirements | filter: search | orderBy : predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit track by $index '>
-                       <td>@{{ req.title }}</td>
+                       <td><a href="#view/@{{ req.id }}">@{{ req.title }}</a></td>
                        <td>@{{ req.location }}</td>
                        <td>@{{ req.area }}</td>
                        <td>@{{ req.price }}</td>

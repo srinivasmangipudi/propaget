@@ -25,89 +25,53 @@ requirementApp.config(['$routeProvider', '$locationProvider', function($routePro
             templateUrl: base_url + '/requirements/add',
             controller: 'requirementAddCtrl'
         })
+        .when('/view/:id',{
+            title: 'View Requirement',
+            templateUrl: base_url + 'requirements/view',
+            controller : 'requirementViewCtrl'
+        })
         .otherwise({
             redirectTo: '/list'
         });
 }]);
 
 requirementApp.factory('requirementService', ['$http', '$rootScope', function($http, $rootScope) {
-    var requirements = [];
     return {
-        getRequirements: function () {
+        apiCall: function (operation, method, functionUrl, requirementData) {
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'req-list',
-                method: "GET"
+                url: base_url + functionUrl,
+                method: method,
+                data: (requirementData!=undefined) ? $.param(requirementData) : ''
             })
-            .success(function (jsonData) {
-                if (jsonData) {
-                    requirements = jsonData.data;
-                }
-                else {
-                    requirements = {};
-                }
-                // quiz = addData;
-                $rootScope.$broadcast('handleProjectsBroadcast', requirements);
-            });
-        },
-        saveRequirement: function (requirementData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'req-list',
-                method: "POST",
-                data: $.param(requirementData)
-            })
-            .success(function (requirementData) {
-            });
-        },
-        getRequirement: function (requirement_id) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'req-list/' + requirement_id + '/edit',
-                method: "GET"
-            })
-            .success(function (requirementData) {
-            });
-        },
-        updateRequirement: function (requirement_id, requirementData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'req-list/' + requirement_id,
-                method: "PUT",
-                data: $.param(requirementData)
-            })
-            .success(function (requirementData) {
-            });
-        },
-        deleteRequirement: function (requirement_id){
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + 'req-list/' + requirement_id,
-                method: "DELETE"
-            })
-            .success(function(requirementData){
-            });
+                .success(function (jsonData) {
+                });
         }
     }
 }]);
 
+
 requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function($scope, requirementService) {
 
+    $scope.$on('MsgEvent', function(event, data) {
+        $scope.infoMsg = data;
+    });
+    $scope.infoMsg = '';
 }]);
 
 requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
 
-     $scope.name = 'Urmi';
-     requirementService.getRequirements().then(function(requirementData) {
-        $scope.requirements = requirementData.data;
-         //console.log(requirementData);
+    var method = 'GET';
+    var functionUrl = 'req-list';
+    requirementService.apiCall('getRequirements', method, functionUrl).then(function(requirementData) {
+         $scope.requirements = requirementData.data;
 
          $scope.currentPage = 1; //current page
          $scope.entryLimit = 10; //max no of items to display in a page
          $scope.filteredItems = $scope.requirements.length; //Initially for no filter
          $scope.totalItems = $scope.requirements.length;
 
-     });
+    });
 
 
     /** Function for angular pager starts **/
@@ -126,27 +90,47 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
         $scope.reverse = !$scope.reverse;
     };
 
-
     $scope.deleteRequirement = function (requirementId)
     {
-        console.log(requirementId);
-        requirementService.deleteRequirement(requirementId).then(function(requirementData) {
-            console.log(requirementData);
+        //console.log(requirementId);
+        var method = 'DELETE';
+        var functionUrl =  'req-list/' + requirementId;
+        requirementService.apiCall('DeleteRequirement', method, functionUrl).then(function(requirementData) {
+            //console.log('Delete Msg : ' + requirementData.data);
+            $scope.$emit('MsgEvent', requirementData.data);
             $location.path('/');
         });
-
     }
-
-
 }]);
 
-requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' , '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
+
+requirementApp.controller('requirementViewCtrl', ['$scope', 'requirementService', '$routeParams',  function($scope, requirementService, $routeParams) {
+
+    $scope.$emit('MsgEvent', '');
+    if($routeParams.id) {
+
+        var requirementId = $routeParams.id;
+        var method = 'GET';
+        var functionUrl = 'req-list/' + requirementId+ '/edit';
+        requirementService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
+            if(requirementData.data) {
+                $scope.requirement = requirementData.data;
+            }
+        });
+    }
+}]);
+
+requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService', '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
     $scope.requirement ={};
     $scope.submitClicked = false;
+    $scope.$emit('MsgEvent', '');
+
     if($routeParams.id) {
         //Call For Edit
         var requirementId = $scope.requirement.id = $routeParams.id;
-        requirementService.getRequirement(requirementId).then(function(requirementData) {
+        var method = 'GET';
+        var functionUrl = 'req-list/' + requirementId + '/edit';
+        requirementService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
             if(requirementData.data) {
                 $scope.requirement = requirementData.data;
             }
@@ -155,32 +139,49 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService' 
         $scope.save_requirement = function() {
             $scope.submitClicked = true;
             if($scope.addRequirementForm.$invalid) {
-                console.log($scope.addRequirementForm);
 
             }else {
-                requirementService.updateRequirement(requirementId, $scope.requirement).then(function (requirementData) {
+                var method = 'PUT';
+                var functionUrl = 'req-list/' + requirementId;
+                requirementService.apiCall('updateRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
+
+                    //console.log('Update Msg : ' + requirementData.data);
+                    $scope.$emit('MsgEvent', requirementData.data);
                     $location.path('/');
                 });
             }
         }
     }else {
-        console.log('In add');
-        //Call For Add
+
         $scope.save_requirement = function () {
             $scope.submitClicked = true;
-            console.log('In save add');
             if($scope.addRequirementForm.$invalid) {
-                //console.log('In if');
-                console.log('IF'+$scope.addRequirementForm);
 
             }else {
-                //console.log('In Else');
-                console.log('Else'+$scope.addRequirementForm);
-                requirementService.saveRequirement($scope.requirement).then(function (requirementData) {
+                var method = 'POST';
+                var functionUrl = 'req-list/';
+                requirementService.apiCall('addRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
+
+                    //console.log('Add Msg : ' + requirementData.data);
+                    $scope.$emit('MsgEvent', requirementData.data);
                     $location.path('/');
                 });
             }
         }
     }
+    /* To put error class for input */
+    /*$scope.show_error = function(name) {
+        if($scope.submitClicked) {
+            if($scope.addRequirementForm[name].$invalid) {
+                return 'error';
+            }
+        }
+        else {
+            if($scope.addRequirementForm[name].$invalid && $scope.addRequirementForm[name].$dirty) {
+                return 'error';
+            }
+        }
+        return '';
+    }*/
 
 }]);
