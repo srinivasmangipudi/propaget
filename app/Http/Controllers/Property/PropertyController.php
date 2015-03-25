@@ -2,6 +2,7 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use App\Properties;
 use Auth;
 use Aws\CloudFront\Exception\Exception;
@@ -10,10 +11,6 @@ use Request;
 
 class PropertyController extends Controller {
 
-    var $OAuthFailCode = '403';
-    var $internalServerErrorCode = '502';
-    var $validationFailCode = '422';
-    var $successCode = '201';
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -59,18 +56,18 @@ class PropertyController extends Controller {
                 $errors = $prop->getErrors()->all();
                 $data = $errors;
                 $message = 'Requirement not added.';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->validationFailCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
             }
 
             $data = $prop;
             $message = 'Property added successfully';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
 
         } catch (Exception $e) {
 
             $data = '';
             $message = 'Property not Added.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
 	}
@@ -129,20 +126,20 @@ class PropertyController extends Controller {
             {
                 $data = $pro;
                 $message = 'Property updated successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
             }
             else
             {
                 $data = $errors;
                 $message = 'Property not updated.';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->validationFailCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
             }
         }
         catch(Exception $e)
         {
             $data = $id;
             $message = 'Property not updated.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
 
@@ -162,13 +159,13 @@ class PropertyController extends Controller {
             Properties::destroy($id);
             $data = $id;
             $message = 'Property Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
         }
         catch(Exception $e)
         {
             $data = $id;
             $message = 'Property not Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 	}
 

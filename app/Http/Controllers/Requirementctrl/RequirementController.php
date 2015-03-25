@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Requirement;
 use App\User;
 use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
@@ -13,10 +14,6 @@ use Auth;
 
 class RequirementController extends Controller {
 
-    var $OAuthFailCode = '403';
-    var $internalServerErrorCode = '502';
-    var $validationFailCode = '422';
-    var $successCode = '201';
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -81,21 +78,21 @@ class RequirementController extends Controller {
             {
                 $data = $req;
                 $message = 'Requirement added successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
 
             }
             else
             {
                 $data = $errors;
                 $message = 'Requirement not added.';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->validationFailCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
             }
         }
         catch(Exception $e)
         {
             $data = '';
             $message = 'Requirement not Added.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 	}
 
@@ -153,21 +150,21 @@ class RequirementController extends Controller {
             {
                 $data = $req;
                 $message = 'Requirement updated successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
 
             }
             else
             {
                 $data = $errors;
                 $message = 'Requirement not updated.';
-                return Response::json(array('message' => $message ,'data'=>$data), $this->validationFailCode);
+                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
             }
         }
         catch(Exception $e)
         {
             $data = $id;
             $message = 'Requirement not updated.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 	}
 
@@ -185,7 +182,7 @@ class RequirementController extends Controller {
             Requirement::destroy($id);
             $data = $id;
             $message = 'Requirement Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->successCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
 
 
         }
@@ -193,7 +190,7 @@ class RequirementController extends Controller {
         {
             $data = $id;
             $message = 'Requirement not Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), $this->internalServerErrorCode);
+            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
 	}
