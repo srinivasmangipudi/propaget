@@ -1,6 +1,7 @@
 <?php namespace App\Http\Middleware;
 
 use Closure;
+use OAuth2\HttpFoundationBridge\Request as OAuthRequest;
 
 class OAuthTokenVerification {
 
@@ -13,7 +14,19 @@ class OAuthTokenVerification {
      */
     public function handle($request, Closure $next)
     {
-//        dd($request->all());
+        // check if the access token is present
+        if (!$request->input('access_token'))
+        {
+            return abort(422, 'Token not found');
+        }
+
+        $req = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+        $bridgedRequest  = OAuthRequest::createFromRequest($req);
+        $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
+
+        if (!\App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+            return abort(422, 'Token validation failed.');
+        }
 
         return $next($request);
     }
