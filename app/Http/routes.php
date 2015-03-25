@@ -80,7 +80,7 @@ Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
 Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
 
 App::singleton('oauth2', function() {
-    $storage = new DoLoginPdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
+    $storage = new DoLoginPdo(array('dsn' => 'mysql:dbname=propOauth;host=localhost', 'username' => 'root', 'password' => 'password'));
     $server = new OAuth2\Server($storage);
 
     $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
