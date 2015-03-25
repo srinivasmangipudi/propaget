@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use OAuth2\HttpFoundationBridge\Request as OAuthRequest;
 
 /**
@@ -23,6 +24,10 @@ class OAuthController extends Controller {
         $bridgedRequest  = \OAuth2\HttpFoundationBridge\Request::createFromRequest($request->instance());
 
         $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
+
+        Log::info('$bridgedRequest'. print_r($bridgedRequest, true));
+        Log::info('$bridgedResponse'. print_r($bridgedResponse, true));
+
 
         $bridgedResponse = \App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);
 

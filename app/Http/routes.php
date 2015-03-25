@@ -1,6 +1,7 @@
 <?php
 
 use App\Device;
+use App\Http\Controllers\Auth\DoLoginPdo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -25,6 +26,8 @@ Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 
 
 Route::get('get-token', function() {
+   /* $storage = new DoLoginPdo();
+    echo $storage->display();*/
     return csrf_token();
 });
 
@@ -77,7 +80,7 @@ Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
 Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
 
 App::singleton('oauth2', function() {
-    $storage = new OAuth2\Storage\Pdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
+    $storage = new DoLoginPdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
     $server = new OAuth2\Server($storage);
 
     $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
