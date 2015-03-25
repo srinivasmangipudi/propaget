@@ -20,7 +20,7 @@ class Requirement extends BaseModel {
 
     protected $validationMessages = [
         'required' => 'A :attribute is required',
-        'location.min' => 'A Location should be longer. Min 3 characters'
+        'location.min' => 'A Location should be more then 5 characters'
     ];
 
     public function save(array $options = array())

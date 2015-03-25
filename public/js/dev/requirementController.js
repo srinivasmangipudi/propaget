@@ -35,7 +35,7 @@ requirementApp.config(['$routeProvider', '$locationProvider', function($routePro
         });
 }]);
 
-requirementApp.factory('requirementService', ['$http', '$rootScope', function($http, $rootScope) {
+requirementApp.factory('requirementService', ['$http', '$rootScope', function($http,$rootScope) {
     return {
         apiCall: function (operation, method, functionUrl, requirementData) {
             return $http({
@@ -44,8 +44,13 @@ requirementApp.factory('requirementService', ['$http', '$rootScope', function($h
                 method: method,
                 data: (requirementData!=undefined) ? $.param(requirementData) : ''
             })
-                .success(function (jsonData) {
-                });
+            .success(function (jsonData) {
+                console.log('SUCESS===', jsonData);
+            })
+            .error(function(data, status, headers, config) {
+                console.log('ERROR===', data);
+
+            });
         }
     }
 }]);
@@ -96,8 +101,8 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
         var method = 'DELETE';
         var functionUrl =  'req-list/' + requirementId;
         requirementService.apiCall('DeleteRequirement', method, functionUrl).then(function(requirementData) {
-            //console.log('Delete Msg : ' + requirementData.data);
-            $scope.$emit('MsgEvent', requirementData.data);
+            //console.log('Delete Msg : ' + JSON.stringify(requirementData));
+            $scope.$emit('MsgEvent', requirementData.data.message);
             $location.path('/');
         });
     }
@@ -143,12 +148,16 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }else {
                 var method = 'PUT';
                 var functionUrl = 'req-list/' + requirementId;
-                requirementService.apiCall('updateRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
-
-                    //console.log('Update Msg : ' + requirementData.data);
-                    $scope.$emit('MsgEvent', requirementData.data);
+                requirementService.apiCall('updateRequirement', method, functionUrl, $scope.requirement)
+                    .then(function (requirementData) {
+                    //console.log('Update Msg ==== ' + JSON.stringify(requirementData));
+                    $scope.$emit('MsgEvent', requirementData.data.message);
                     $location.path('/');
-                });
+                    })
+                    .catch(function(fallback) {
+                        //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
+                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                    });
             }
         }
     }else {
@@ -160,12 +169,17 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }else {
                 var method = 'POST';
                 var functionUrl = 'req-list/';
-                requirementService.apiCall('addRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
-
-                    //console.log('Add Msg : ' + requirementData.data);
-                    $scope.$emit('MsgEvent', requirementData.data);
-                    $location.path('/');
-                });
+                requirementService.apiCall('addRequirement', method, functionUrl, $scope.requirement)
+                    .then(function (requirementData) {
+                        console.log('Add Msg ==== ' + JSON.stringify(requirementData));
+                        $scope.$emit('MsgEvent', requirementData.data.message);
+                        $location.path('/');
+                    });
+                    /*.catch(function(fallback) {
+                        console.log('Error add Msg ==== ' + JSON.stringify(fallback));
+                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                        $location.path('/');
+                    });*/
             }
         }
     }

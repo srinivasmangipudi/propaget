@@ -113,8 +113,8 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
         var functionUrl =  'property/' + propertyId;
 
         propertyService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
-            //console.log('Delete Msg : ' + propertyData.data);
-            $scope.$emit('MsgEvent', propertyData.data);
+            //console.log('Delete Msg : ' + JSON.stringify(propertyData));
+            $scope.$emit('MsgEvent', propertyData.data.message);
             $location.path('/');
         });
 
@@ -164,8 +164,11 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 propertyService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
 
                     //console.log('Update Msg : ' + propertyData.data);
-                    $scope.$emit('MsgEvent', propertyData.data);
+                    $scope.$emit('MsgEvent', propertyData.data.message);
                     $location.path('/');
+                }).catch(function(fallback) {
+                    //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
+                    $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
                 });
             }
         }
@@ -179,7 +182,8 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 var method = 'POST';
                 var functionUrl = 'property/';
                 propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                 $location.path('/');
+                    $scope.$emit('MsgEvent', propertyData.data.message);
+                    $location.path('/');
                  });
             }
         }
