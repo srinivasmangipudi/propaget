@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class DistList extends Model {
 
-	protected $table = 'dist_lists';
+    protected $table = 'dist_lists';
 
     /**
      * @param array $listData
@@ -46,7 +46,8 @@ class DistList extends Model {
     }
 
     /**
-     * This function will sanitize the member phone numbers
+     * This function will sanitize the member phone numbers.
+     *
      * @param $members
      * @return mixed
      */
@@ -64,6 +65,7 @@ class DistList extends Model {
 
     /**
      * Saving the distribution list name and other details.
+     *
      * @param $listData
      * @return DistList
      */
@@ -80,6 +82,7 @@ class DistList extends Model {
 
     /**
      * Checking for existing users and also adding new users who are not in our system.
+     *
      * @param $members
      * @return array
      */
@@ -124,6 +127,7 @@ class DistList extends Model {
     /**
      * Create user for the numbers which are sent in the distribution list
      * but they are not present in our system.
+     *
      * @param $notPresent
      * @return array
      */
@@ -148,7 +152,6 @@ class DistList extends Model {
             $user->userId = '0';
             $user->save();
             $newUserArray[$user->id] = $userNumber;
-            Log::info('User created: ' . $user->id);
         }
 
         return $newUserArray;
