@@ -4,9 +4,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Properties;
 use Auth;
-use App\User;
-use Illuminate\Support\Facades\Log;
-
+use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Response;
 use Request;
 
 class PropertyController extends Controller {
@@ -41,31 +40,25 @@ class PropertyController extends Controller {
 	 */
 	public function store()
 	{
-        //$userId = Auth::user()->id;
-        //$user = User::find(1);
-        $propertyData = Request::all();
+        try {
+            //$userId = Auth::user()->id;
+            $userId = 1;
+            $prop = new Properties;
+            $prop->agentId = 1;
+            $prop->clientId = 1;
+            $prop->location = Request::input('location');
+            $prop->area = Request::input('area');
+            $prop->price = Request::input('price');
+            $prop->title = Request::input('title');
+            if (!$prop->save()) {
+                $errors = $prop->getErrors()->all();
+                return Response::json(array('message' => 'Bad request.', 'prop' => $errors), 422);
+            }
 
-        $pro = new Properties();
-        $pro->agentId = 2;
-        $pro->clientId = 1;
-        $pro->title = $propertyData['title'];
-        $pro->description = $propertyData['description'];
-        $pro->clientEmail = $propertyData['clientEmail'];
-        $pro->address = $propertyData['address'];
-        $pro->location = $propertyData['location'];
-        $pro->area = $propertyData['area'];
-        $pro->price = $propertyData['price'];
-        $pro->type = $propertyData['type'];
-        $pro->save();
+            return Response::json(array('message' => 'Property saved.', 'prop' => $prop), 201);
 
-        $errors = $pro->getErrors()->all();
-        if (empty($errors))
-        {
-            echo "Property added successfully";
-        }
-        else
-        {
-            echo "Property not added ";
+        } catch (Exception $e) {
+            return Response::json(array('message' => 'Property not saved.'), 500);
         }
 
 	}

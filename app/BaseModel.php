@@ -20,7 +20,7 @@ class BaseModel extends Model {
             parent::boot();
         }
 
-        return parent::save();
+        return parent::save($options);
     }
 
 }

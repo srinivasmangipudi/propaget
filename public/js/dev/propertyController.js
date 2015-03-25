@@ -1,4 +1,6 @@
 var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
+
+/* CODE FOR PAGINATION */
 propertyApp.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
@@ -8,7 +10,10 @@ propertyApp.filter('startFrom', function() {
         return [];
     }
 });
+
+/** ROUTES CONFIGURATION STARTS **/
 propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+
     $routeProvider
         .when('/list', {
             title: 'View Properties',
@@ -21,7 +26,6 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             controller: 'propertyAddCtrl'
         })
         .when('/edit/:id', {
-
             title: 'Edit property',
             templateUrl: base_url + '/properties/add',
             controller: 'propertyAddCtrl'
@@ -35,7 +39,10 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
             redirectTo: '/list'
         });
 }]);
+/** ROUTES CONFIGURATION ENDS **/
 
+
+/** FACTORY METHOD STARTS **/
 propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $rootScope) {
     return {
         apiCall: function (operation, method, functionUrl, propertyData) {
@@ -46,10 +53,16 @@ propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $
                 data: (propertyData!=undefined) ? $.param(propertyData) : ''
             })
             .success(function (jsonData) {
+                    console.log('SUCESS', jsonData);
+            })
+            .error(function(data, status, headers, config) {
+                console.log('ERROR', data);
             });
         }
     }
 }]);
+
+/** FACTORY METHOD ENDS **/
 
 
 propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
@@ -62,6 +75,7 @@ propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scop
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
+   //propertyService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
@@ -103,6 +117,7 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
             $scope.$emit('MsgEvent', propertyData.data);
             $location.path('/');
         });
+
     }
 }]);
 
@@ -164,9 +179,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
                 var method = 'POST';
                 var functionUrl = 'property/';
                 propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                    //console.log('Add Msg : ' + propertyData.data);
-                    $scope.$emit('MsgEvent', propertyData.data);
-                    $location.path('/');
+                 $location.path('/');
                  });
             }
         }
