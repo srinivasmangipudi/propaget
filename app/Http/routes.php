@@ -49,7 +49,7 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
    return 'Successfully Authenticated';
 }]);
 
-
+/* Distribution list */
 Route::resource('dist-list', 'DistListController');
 Route::controller('dist-list', 'DistListController');
 
