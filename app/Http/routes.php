@@ -60,8 +60,11 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
 }]);
 
 
-Route::resource('dist-list', 'DistListController');
-Route::controller('dist-list', 'DistListController');
+Route::resource('dist-list', 'Distribution\DistListController');
+Route::controller('dist-list', 'Distribution\DistListController');
+Route::get('distribution', 'Distribution\DistributionAppController@index');
+Route::get('distribution/list', 'Distribution\DistributionAppController@listing');
+Route::get('distribution/view', 'Distribution\DistributionAppController@view');
 
 Route::resource('req-list','Requirementctrl\RequirementController');
 Route::controller('req-list','Requirementctrl\RequirementController');

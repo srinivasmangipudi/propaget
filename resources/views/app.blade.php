@@ -65,5 +65,6 @@
     <script src="{{url('js/lib/ui-bootstrap-tpls-0.10.0.min.js')}}"></script>
     <script src="{{url('js/prod/propertyController.min.js')}}"></script>
     <script src="{{url('js/prod/requirementController.min.js')}}"></script>
+    <script src="{{url('js/prod/distributionController.min.js')}}"></script>
 </body>
 </html>
