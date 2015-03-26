@@ -1,4 +1,4 @@
-var requirementApp = angular.module('requirementApp', ['ngRoute', 'ui.bootstrap']);
+var requirementApp = angular.module('requirementApp', ['propagateServiceModule','ngRoute', 'ui.bootstrap']);
 requirementApp.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
@@ -35,28 +35,7 @@ requirementApp.config(['$routeProvider', '$locationProvider', function($routePro
         });
 }]);
 
-requirementApp.factory('requirementService', ['$http', '$rootScope', function($http,$rootScope) {
-    return {
-        apiCall: function (operation, method, functionUrl, requirementData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl,
-                method: method,
-                data: (requirementData!=undefined) ? $.param(requirementData) : ''
-            })
-            .success(function (jsonData) {
-                console.log('SUCESS===', jsonData);
-            })
-            .error(function(data, status, headers, config) {
-                console.log('ERROR===', data);
-
-            });
-        }
-    }
-}]);
-
-
-requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function($scope, requirementService) {
+requirementApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
 
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
@@ -64,11 +43,11 @@ requirementApp.controller('mainCtrl', ['$scope', 'requirementService',  function
     $scope.infoMsg = '';
 }]);
 
-requirementApp.controller('requirementController', ['$scope', 'requirementService', '$location',  function($scope, requirementService,$location) {
+requirementApp.controller('requirementController', ['$scope', 'propagateService', '$location',  function($scope, propagateService,$location) {
 
     var method = 'GET';
     var functionUrl = 'req-list';
-    requirementService.apiCall('getRequirements', method, functionUrl).then(function(requirementData) {
+    propagateService.apiCall('getRequirements', method, functionUrl).then(function(requirementData) {
          $scope.requirements = requirementData.data;
 
          $scope.currentPage = 1; //current page
@@ -100,7 +79,7 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
         //console.log(requirementId);
         var method = 'DELETE';
         var functionUrl =  'req-list/' + requirementId;
-        requirementService.apiCall('DeleteRequirement', method, functionUrl).then(function(requirementData) {
+        propagateService.apiCall('DeleteRequirement', method, functionUrl).then(function(requirementData) {
             //console.log('Delete Msg : ' + JSON.stringify(requirementData));
             $scope.$emit('MsgEvent', requirementData.data.message);
             $location.path('/');
@@ -109,7 +88,7 @@ requirementApp.controller('requirementController', ['$scope', 'requirementServic
 }]);
 
 
-requirementApp.controller('requirementViewCtrl', ['$scope', 'requirementService', '$routeParams',  function($scope, requirementService, $routeParams) {
+requirementApp.controller('requirementViewCtrl', ['$scope', 'propagateService', '$routeParams',  function($scope, propagateService, $routeParams) {
 
     $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
@@ -117,7 +96,7 @@ requirementApp.controller('requirementViewCtrl', ['$scope', 'requirementService'
         var requirementId = $routeParams.id;
         var method = 'GET';
         var functionUrl = 'req-list/' + requirementId+ '/edit';
-        requirementService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
+        propagateService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
             if(requirementData.data) {
                 $scope.requirement = requirementData.data;
             }
@@ -125,7 +104,7 @@ requirementApp.controller('requirementViewCtrl', ['$scope', 'requirementService'
     }
 }]);
 
-requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService', '$routeParams', '$location',  function($scope, requirementService, $routeParams, $location) {
+requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '$routeParams', '$location',  function($scope, propagateService, $routeParams, $location) {
     $scope.requirement ={};
     $scope.submitClicked = false;
     $scope.$emit('MsgEvent', '');
@@ -135,7 +114,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
         var requirementId = $scope.requirement.id = $routeParams.id;
         var method = 'GET';
         var functionUrl = 'req-list/' + requirementId + '/edit';
-        requirementService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
+        propagateService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
             if(requirementData.data) {
                 $scope.requirement = requirementData.data;
             }
@@ -148,7 +127,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }else {
                 var method = 'PUT';
                 var functionUrl = 'req-list/' + requirementId;
-                requirementService.apiCall('updateRequirement', method, functionUrl, $scope.requirement)
+                propagateService.apiCall('updateRequirement', method, functionUrl, $scope.requirement)
                     .then(function (requirementData) {
                     //console.log('Update Msg ==== ' + JSON.stringify(requirementData));
                     $scope.$emit('MsgEvent', requirementData.data.message);
@@ -169,7 +148,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }else {
                 var method = 'POST';
                 var functionUrl = 'req-list/';
-                requirementService.apiCall('addRequirement', method, functionUrl, $scope.requirement)
+                propagateService.apiCall('addRequirement', method, functionUrl, $scope.requirement)
                     .then(function (requirementData) {
                         console.log('Add Msg ==== ' + JSON.stringify(requirementData));
                         $scope.$emit('MsgEvent', requirementData.data.message);
@@ -184,7 +163,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
         }
     }
     /* To put error class for input */
-    /*$scope.show_error = function(name) {
+    $scope.show_error = function(name) {
         if($scope.submitClicked) {
             if($scope.addRequirementForm[name].$invalid) {
                 return 'error';
@@ -196,6 +175,6 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'requirementService',
             }
         }
         return '';
-    }*/
+    }
 
 }]);

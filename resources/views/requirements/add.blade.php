@@ -28,7 +28,7 @@
 
             <div class="form-group">
                 <label>Client Email:</label>
-                <input type='email' name="title" ng-model="requirement.clientEmail" class="form-control" name="clientEmail" required ng-class="show_error('clientEmail')">
+                <input type='email' ng-model="requirement.clientEmail" class="form-control" name="clientEmail" required ng-class="show_error('clientEmail')">
             </div>
 
            <div class="form-group">

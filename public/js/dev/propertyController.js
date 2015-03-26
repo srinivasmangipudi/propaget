@@ -1,4 +1,4 @@
-var propertyApp = angular.module('propertyApp', ['ngRoute', 'ui.bootstrap']);
+var propertyApp = angular.module('propertyApp', ['propagateServiceModule', 'ngRoute', 'ui.bootstrap']);
 
 /* CODE FOR PAGINATION */
 propertyApp.filter('startFrom', function() {
@@ -41,31 +41,10 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
 }]);
 /** ROUTES CONFIGURATION ENDS **/
 
-
-/** FACTORY METHOD STARTS **/
-propertyApp.factory('propertyService', ['$http', '$rootScope', function($http, $rootScope) {
-    return {
-        apiCall: function (operation, method, functionUrl, propertyData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl,
-                method: method,
-                data: (propertyData!=undefined) ? $.param(propertyData) : ''
-            })
-            .success(function (jsonData) {
-                    console.log('SUCESS', jsonData);
-            })
-            .error(function(data, status, headers, config) {
-                console.log('ERROR', data);
-            });
-        }
-    }
-}]);
-
 /** FACTORY METHOD ENDS **/
 
 
-propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scope, propertyService) {
+propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
 
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
@@ -74,13 +53,13 @@ propertyApp.controller('mainCtrl', ['$scope', 'propertyService',  function($scop
 
 }]);
 
-propertyApp.controller('propertyController', ['$scope', 'propertyService', '$location', function($scope, propertyService,$location) {
-   //propertyService.getProperties().then(function(propertyData) {
+propertyApp.controller('propertyController', ['$scope', 'propagateService', '$location', function($scope, propagateService,$location) {
+   //propagateService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
 
-   propertyService.apiCall('getProperties', method, functionUrl).then(function(propertyData) {
+   propagateService.apiCall('getProperties', method, functionUrl).then(function(propertyData) {
        $scope.properties = propertyData.data;
 
        $scope.currentPage = 1; //current page
@@ -112,7 +91,7 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
         var method = 'DELETE';
         var functionUrl =  'property/' + propertyId;
 
-        propertyService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
+        propagateService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
             //console.log('Delete Msg : ' + JSON.stringify(propertyData));
             $scope.$emit('MsgEvent', propertyData.data.message);
             $location.path('/');
@@ -121,7 +100,7 @@ propertyApp.controller('propertyController', ['$scope', 'propertyService', '$loc
     }
 }]);
 
-propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$routeParams',  function($scope, propertyService, $routeParams) {
+propertyApp.controller('propertyViewCtrl', ['$scope', 'propagateService', '$routeParams',  function($scope, propagateService, $routeParams) {
 
     $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
@@ -129,7 +108,7 @@ propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$route
         var propertyId = $routeParams.id;
         var method = 'GET';
         var functionUrl = 'property/' + propertyId+ '/edit';
-        propertyService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
+        propagateService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
             if(propertyData.data) {
                 $scope.property = propertyData.data;
             }
@@ -137,7 +116,7 @@ propertyApp.controller('propertyViewCtrl', ['$scope', 'propertyService', '$route
     }
 }]);
 
-propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$routeParams', '$location',  function($scope, propertyService, $routeParams, $location) {
+propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$routeParams', '$location',  function($scope, propagateService, $routeParams, $location) {
     $scope.property ={};
     $scope.submitClicked = false;
     $scope.$emit('MsgEvent', '');
@@ -147,7 +126,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
         var propertyId = $scope.property.id = $routeParams.id;
         var method = 'GET';
         var functionUrl = 'property/' + propertyId + '/edit';
-        propertyService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
+        propagateService.apiCall('getSingleProperty', method, functionUrl).then(function(propertyData) {
             if(propertyData.data) {
                 $scope.property = propertyData.data;
             }
@@ -161,7 +140,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
             }else {
                 var method = 'PUT';
                 var functionUrl = 'property/' + propertyId;
-                propertyService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
+                propagateService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
 
                     //console.log('Update Msg : ' + propertyData.data);
                     $scope.$emit('MsgEvent', propertyData.data.message);
@@ -181,7 +160,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
             }else {
                 var method = 'POST';
                 var functionUrl = 'property/';
-                propertyService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
+                propagateService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
                     $scope.$emit('MsgEvent', propertyData.data.message);
                     $location.path('/');
                  });
@@ -204,7 +183,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propertyService' , '$route
         return '';
     }
 
-   /*propertyService.addProperty().then(function() {
+   /*propagateService.addProperty().then(function() {
        $scope.properties = propertyData.data;
         console.log(propertyData);
     });*/
