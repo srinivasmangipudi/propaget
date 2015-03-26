@@ -8,7 +8,6 @@ use Aws\CloudFront\Exception\Exception;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
-
 class PropertyController extends Controller {
 
     public function __construct()
@@ -49,7 +48,7 @@ class PropertyController extends Controller {
 
         try {
             $postData = $request->input();
-            //$userId = Auth::user()->id;
+            
             $prop = new Properties;
             $prop->agentId = $userId;
             $prop->clientId = 1;

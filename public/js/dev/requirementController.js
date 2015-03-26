@@ -148,17 +148,15 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
             }else {
                 var method = 'POST';
                 var functionUrl = 'req-list/';
-                propagateService.apiCall('addRequirement', method, functionUrl, $scope.requirement)
-                    .then(function (requirementData) {
-                        console.log('Add Msg ==== ' + JSON.stringify(requirementData));
+                propagateService.apiCall('addRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
+                        //console.log('Add Msg ==== ' + JSON.stringify(requirementData));
                         $scope.$emit('MsgEvent', requirementData.data.message);
                         $location.path('/');
-                    });
-                    /*.catch(function(fallback) {
-                        console.log('Error add Msg ==== ' + JSON.stringify(fallback));
+                    })
+                    .catch(function(fallback) {
+                        //console.log('Error add Msg ==== ' + JSON.stringify(fallback));
                         $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
-                        $location.path('/');
-                    });*/
+                    });
             }
         }
     }
