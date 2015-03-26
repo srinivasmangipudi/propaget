@@ -4,12 +4,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Faker;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class DistList extends Model {
 
-	protected $table = 'dist_lists';
+    protected $table = 'dist_lists';
+
+    public function runQueueToSaveDistList(array $members, $distListId)
+    {
+        $this->saveEntireDistributionList($members, $distListId);
+    }
 
     public function loadFullDistribution()
     {
@@ -20,11 +26,12 @@ class DistList extends Model {
         return $results;
     }
     /**
-     * @param array $listData
      * @param array $members
+     * @param $distListId
      * @return DistList
+     * @internal param array $listData
      */
-    public function saveEntireDistributionList(array $listData, array $members)
+    private function saveEntireDistributionList(array $members, $distListId)
     {
         // sanitize the member numbers
         $members = $this->sanitizeMemberNumbers($members);
@@ -33,28 +40,28 @@ class DistList extends Model {
         // TODO: Need to write the validation rules
 
         // save the distribution list
-        $distList = $this->saveDistributionList($listData);
+        //$distList = $this->saveDistributionList($listData);
 
         // check users exist and new users
-        $finalArray = $this->checkExistingAndNewUser($members, $listData['createdBy']);
-
-        // save the member data
-        $distListId = $distList->id;
+        $finalArray = $this->checkExistingAndNewUser($members);
 
         // creating entries of the distribution list and member relation
         foreach ($finalArray as $key => $row)
         {
             $distListMem = new DistListMembers;
-            $distListMem->distListId = $distListId;
-            $distListMem->userId = $key;
+            $distListMem->dist_list_id = $distListId;
+            $distListMem->user_id = $key;
             $distListMem->save();
         }
 
-        return $distList;
+        Event::fire(new DistListMembersAdded());
+
+        return $distListId;
     }
 
     /**
-     * This function will sanitize the member phone numbers
+     * This function will sanitize the member phone numbers.
+     *
      * @param $members
      * @return mixed
      */
@@ -72,6 +79,7 @@ class DistList extends Model {
 
     /**
      * Saving the distribution list name and other details.
+     *
      * @param $listData
      * @return DistList
      */
@@ -80,7 +88,7 @@ class DistList extends Model {
         // save the distribution list
         $distList = new DistList;
         $distList->name = $listData['name'];
-        $distList->createdBy = $listData['createdBy'];
+        $distList->created_by = $listData['createdBy'];
         $distList->save();
 
         return $distList;
@@ -88,6 +96,7 @@ class DistList extends Model {
 
     /**
      * Checking for existing users and also adding new users who are not in our system.
+     *
      * @param $members
      * @return array
      */
@@ -132,6 +141,7 @@ class DistList extends Model {
     /**
      * Create user for the numbers which are sent in the distribution list
      * but they are not present in our system.
+     *
      * @param $notPresent
      * @return array
      */
@@ -156,7 +166,6 @@ class DistList extends Model {
             $user->userId = '0';
             $user->save();
             $newUserArray[$user->id] = $userNumber;
-            Log::info('User created: ' . $user->id);
         }
 
         return $newUserArray;

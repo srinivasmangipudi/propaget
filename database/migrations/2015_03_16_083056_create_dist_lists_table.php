@@ -13,14 +13,15 @@ class CreateDistListsTable extends Migration {
     public function up()
     {
         Schema::dropIfExists('dist_lists');
+
         Schema::create('dist_lists', function(Blueprint $table)
         {
             $table->increments('id')->comment('Unique identifier for distribution list');
             $table->string('name')->comment('Name of the distribution list');
-            $table->integer('createdBy')->unsigned()->comment('User id who created the list');
+            $table->integer('created_by')->unsigned()->comment('User id who created the list');
             $table->timestamps();
 
-            $table->index('createdBy');
+            $table->index('created_by');
         });
     }
 

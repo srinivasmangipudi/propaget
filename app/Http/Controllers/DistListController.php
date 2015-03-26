@@ -1,107 +1,143 @@
 <?php namespace App\Http\Controllers;
 
-use App\Device;
+use App\Commands\SaveDistributionList;
 use App\DistList;
-use App\DistListMembers;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Symfony\Component\HttpFoundation\Response;
 
 class DistListController extends Controller {
+    
+    public function __construct()
+    {
+        $this->middleware('oauth');
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-        Log::info('I was here');
-		$data = DB::table('migrations')->get();
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $requests)
+    {
+        $user_id = $requests['user_id'];
+
+        /* fetch distribution list which the user owns */
+        $data = DB::table('dist_lists')
+            ->where('created_by', $user_id)
+            ->get();
+
         return $data;
-	}
+    }
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param Request $request
      * @return Response
      */
-	public function store(Request $request)
-	{
+    public function store(Request $request)
+    {
         // get all post data
         $postData = $request->input();
-        $members = json_decode('["+919820098200", "+919820098237", "+919833356536", "+919820215537"]');
-        // handle the saving of the distribution list and all it's members
+
         $distList = new DistList;
-        $distList->saveEntireDistributionList(array(
-            'name' => $postData['name'],
-            'createdBy' => $postData['createdBy']
-        ), $members);
-	}
+        $distList->name = $postData['name'];
+        $distList->created_by = $request['user_id'];
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
+        if (!$distList->save()) {
+            return response([
+                'data' => $postData,
+                'message' => 'Could not save data'
+            ], 500);
+        }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
+        $members = json_decode($postData['members']);
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+        Queue::push(new SaveDistributionList($members, $distList->id));
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+        return response(array(
+            'data' => $distList,
+            'message' => "Your list {$distList->name} has been saved successfully."
+        ), 201);
+    }
 
-    public function getAllRequirement($id = null    )
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
     {
-        Log::info('I was here');
-        return array(1,2,3);
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id, Request $request)
+    {
+        $user_id = $request['user_id'];
+        $distList = DistList::find($id);
+
+        /*Check if the user is owner of the distribution list or not*/
+        if ($distList->created_by != $user_id) {
+            return response([
+                'message' => 'This distribution list does not belong to you.'
+            ], 422);
+        }
+
+        if ($distList->delete()) {
+            return response([
+                'data' => $id,
+                'message' => "Distribution list {$distList->name} has been deleted."
+            ], 201);
+        } else {
+            return response([
+                'data' => $id,
+                'message' => "Not able to delete the list."
+            ], 500);
+        }
     }
 
 }
