@@ -53,18 +53,22 @@ class DistListController extends Controller {
         $distList->createdBy = $postData['createdBy'];
 
         if (!$distList->save()) {
-
+            Log::info('Failed to save dist list');
+            return response([
+                'data' => $postData,
+                'message' => 'Could not save data'
+            ]);
+        } else {
+            Log::info('Correct');
         }
 
         $members = json_decode($postData['members']);
 
         Queue::push(new SaveDistributionList($members, $distList->id));
-        Log::info(print_r($distList->id, true));
-//        $distList->runQueueToSaveDistList($members, $distList->id);
 
         return response(array(
             'data' => $distList,
-            'message' => 'Distribution list saved successfully.'
+            'message' => "Your list {$distList->name} has been saved successfully."
         ), 201);
     }
 
