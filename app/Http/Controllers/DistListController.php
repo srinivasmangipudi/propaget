@@ -11,7 +11,7 @@ class DistListController extends Controller {
     
     public function __construct()
     {
-        $this->middleware('oauth');
+//        $this->middleware('oauth');
     }
 
     /**
@@ -45,14 +45,22 @@ class DistListController extends Controller {
     {
         // get all post data
         $postData = $request->input();
-        $members = json_decode('["+919820098200", "+919820098237", "+919833356536", "+919820215537"]');
+
+        $distList = new DistList;
+        $distList->name = $postData['name'];
+        $distList->createdBy = $postData['createdBy'];
+        $distList->save();
+
+        /*$members = json_decode($postData['members']);
 
         // handle the saving of the distribution list and all it's members
         $distList = new DistList;
         $distList->saveEntireDistributionList(array(
             'name' => $postData['name'],
             'createdBy' => $postData['createdBy']
-        ), $members);
+        ), $members);*/
+
+        \Log::info(print_r($distList, true));
     }
 
     /**
