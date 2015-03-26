@@ -19,7 +19,7 @@ class UserTableSeeder extends Seeder {
      */
     public function run()
     {
-        DB::table('users')->truncate();
+//        DB::table('users')->truncate();
 
         $user = new User;
         $user->name = 'Amitav Roy';

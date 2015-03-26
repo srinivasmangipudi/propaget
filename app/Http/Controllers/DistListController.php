@@ -13,7 +13,7 @@ class DistListController extends Controller {
     
     public function __construct()
     {
-//        $this->middleware('oauth');
+        $this->middleware('oauth');
     }
 
     /**
@@ -21,9 +21,10 @@ class DistListController extends Controller {
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $requests)
     {
-        $data = DB::table('migrations')->get();
+        $user_id = $requests['user_id'];
+        $data = DB::table('dist_lists')->get();
         return $data;
     }
 
@@ -49,10 +50,9 @@ class DistListController extends Controller {
 
         $distList = new DistList;
         $distList->name = $postData['name'];
-        $distList->created_by = $postData['createdBy'];
+        $distList->created_by = $request['user_id'];
 
         if (!$distList->save()) {
-            Log::info('Failed to save dist list');
             return response([
                 'data' => $postData,
                 'message' => 'Could not save data'
