@@ -4,6 +4,7 @@ use App\Commands\SaveDistributionList;
 use App\DistList;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -13,7 +14,7 @@ class DistListController extends Controller {
     
     public function __construct()
     {
-//        $this->middleware('oauth');
+        $this->middleware('oauth');
     }
 
     /**
@@ -21,9 +22,12 @@ class DistListController extends Controller {
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $requests)
     {
-        $data = DB::table('migrations')->get();
+        $user_id = $requests['user_id'];
+        $data = DB::table('dist_lists')
+            ->where('created_by', $user_id)
+            ->get();
         return $data;
     }
 
@@ -49,10 +53,9 @@ class DistListController extends Controller {
 
         $distList = new DistList;
         $distList->name = $postData['name'];
-        $distList->created_by = $postData['createdBy'];
+        $distList->created_by = $request['user_id'];
 
         if (!$distList->save()) {
-            Log::info('Failed to save dist list');
             return response([
                 'data' => $postData,
                 'message' => 'Could not save data'
@@ -108,9 +111,17 @@ class DistListController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
+        $user_id = $request['user_id'];
         $distList = DistList::find($id);
+
+        if ($distList->created_by != $user_id) {
+            return response([
+                'message' => 'This distribution list does not belong to you.'
+            ], 422);
+        }
+
         if ($distList->delete()) {
             return response([
                 'data' => $id,
