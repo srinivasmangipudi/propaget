@@ -116,6 +116,7 @@ class DistListController extends Controller {
     public function destroy($id, Request $request)
     {
         $user_id = $request['user_id'];
+
         $distList = DistList::find($id);
 
         /*Check if the user is owner of the distribution list or not*/

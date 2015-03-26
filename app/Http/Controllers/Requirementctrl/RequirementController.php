@@ -74,14 +74,20 @@ class RequirementController extends Controller {
             {
                 $data = $req;
                 $message = 'Requirement added successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'req' => $data,
+                    'type' => 'save'
+                ]), Config::get('statuscode.successCode'));
 
             }
             else
             {
                 $data = $errors;
                 $message = 'Requirement not added.';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'req' => $data,
+                    'type' => 'error'
+                ]), Config::get('statuscode.validationFailCode'));
             }
         }
         catch(Exception $e)
@@ -170,15 +176,26 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
+        $user_id = $request['user_id'];
+        $req = Requirement::find($id);
+
+        /*Check if the user is owner of the distribution list or not*/
+        if ($req->created_by != $user_id) {
+            return response([
+                'message' => 'This distribution list does not belong to you.'
+            ], 422);
+        }
+
         try
         {
-            //Log::error('i m in delete'.$id);
             Requirement::destroy($id);
-            $data = $id;
             $message = 'Requirement Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+            return Response::json(array('message' => $message ,'data'=> [
+                'req' => $id,
+                'type' => 'delete'
+            ]), Config::get('statuscode.successCode'));
 
 
         }
