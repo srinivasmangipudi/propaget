@@ -14,25 +14,25 @@ class HandleRequirementAdded {
      * Create the event handler.
      *
      */
-	public function __construct()
-	{
-		//
-	}
+    public function __construct()
+    {
+        //
+    }
 
-	/**
-	 * Handle the event.
-	 *
-	 * @param  EventRequirementAdded  $event
-	 * @return void
-	 */
-	public function handle(EventRequirementAdded $event)
-	{
+    /**
+     * Handle the event.
+     *
+     * @param  EventRequirementAdded  $event
+     * @return void
+     */
+    public function handle(EventRequirementAdded $event)
+    {
         $this->user = $event->user;
         $this->requirement = $event->requirement;
 
         $this->sendEmail();
         $this->sendMobileNotification();
-	}
+    }
 
     /**
      * This function will send an email to the respective user about a new Requirement being added.
