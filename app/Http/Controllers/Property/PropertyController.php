@@ -43,14 +43,19 @@ class PropertyController extends Controller {
 	{
         try {
             //$userId = Auth::user()->id;
-            $userId = 1;
+            $propertyData = Request::all();
             $prop = new Properties;
-            $prop->agentId = 1;
+            $prop->agentId = 2;
             $prop->clientId = 1;
-            $prop->location = Request::input('location');
-            $prop->area = Request::input('area');
-            $prop->price = Request::input('price');
-            $prop->title = Request::input('title');
+            $prop->title = $propertyData['title'];
+            $prop->description = $propertyData['description'];
+            $prop->clientEmail = $propertyData['clientEmail'];
+            $prop->address = $propertyData['address'];
+            $prop->location = $propertyData['location'];
+            $prop->area = $propertyData['area'];
+            $prop->price = $propertyData['price'];
+            $prop->type = $propertyData['type'];
+            $prop->save();
 
             if (!$prop->save()) {
                 $errors = $prop->getErrors()->all();
