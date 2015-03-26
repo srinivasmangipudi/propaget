@@ -11,12 +11,18 @@ class DistList extends Model {
 
     protected $table = 'dist_lists';
 
+    public function runQueueToSaveDistList(array $members, $distListId)
+    {
+        $this->saveEntireDistributionList($members, $distListId);
+    }
+
     /**
-     * @param array $listData
      * @param array $members
+     * @param $distListId
      * @return DistList
+     * @internal param array $listData
      */
-    public function saveEntireDistributionList(array $listData, array $members)
+    private function saveEntireDistributionList(array $members, $distListId)
     {
         // sanitize the member numbers
         $members = $this->sanitizeMemberNumbers($members);
@@ -25,13 +31,13 @@ class DistList extends Model {
         // TODO: Need to write the validation rules
 
         // save the distribution list
-        $distList = $this->saveDistributionList($listData);
+        //$distList = $this->saveDistributionList($listData);
 
         // check users exist and new users
-        $finalArray = $this->checkExistingAndNewUser($members, $listData['createdBy']);
+        $finalArray = $this->checkExistingAndNewUser($members);
 
         // save the member data
-        $distListId = $distList->id;
+        // $distListId = $distList->id;
 
         // creating entries of the distribution list and member relation
         foreach ($finalArray as $key => $row)
@@ -42,7 +48,7 @@ class DistList extends Model {
             $distListMem->save();
         }
 
-        return $distList;
+        return $distListId;
     }
 
     /**

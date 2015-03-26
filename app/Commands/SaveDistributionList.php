@@ -12,19 +12,17 @@ class SaveDistributionList extends Command implements SelfHandling, ShouldBeQueu
 
     use InteractsWithQueue, SerializesModels;
 
-    protected $name;
+    protected $distListId;
     protected $members;
-    protected $createdBy;
 
     /**
      * Create a new command instance.
      *
      */
-    public function __construct($name, $members, $createdBy)
+    public function __construct($members, $distListId)
     {
-        $this->name = $name;
-        $this->members = json_decode($members);
-        $this->createdBy = $createdBy;
+        $this->members = $members;
+        $this->distListId = $distListId;
     }
 
     /**
@@ -36,10 +34,7 @@ class SaveDistributionList extends Command implements SelfHandling, ShouldBeQueu
     {
         // handle the saving of the distribution list and all it's members
         $distList = new DistList;
-        $distList->saveEntireDistributionList(array(
-            'name' => $this->name,
-            'createdBy' => $this->createdBy
-        ), $this->members);
+        $distList->runQueueToSaveDistList($this->members, $this->distListId);
     }
 
 }

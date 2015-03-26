@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
+use App\Commands\SaveDistributionList;
 use App\DistList;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Symfony\Component\HttpFoundation\Response;
 
 class DistListController extends Controller {
@@ -49,18 +51,21 @@ class DistListController extends Controller {
         $distList = new DistList;
         $distList->name = $postData['name'];
         $distList->createdBy = $postData['createdBy'];
-        $distList->save();
 
-        /*$members = json_decode($postData['members']);
+        if (!$distList->save()) {
 
-        // handle the saving of the distribution list and all it's members
-        $distList = new DistList;
-        $distList->saveEntireDistributionList(array(
-            'name' => $postData['name'],
-            'createdBy' => $postData['createdBy']
-        ), $members);*/
+        }
 
-        \Log::info(print_r($distList, true));
+        $members = json_decode($postData['members']);
+
+        Queue::push(new SaveDistributionList($members, $distList->id));
+        Log::info(print_r($distList->id, true));
+//        $distList->runQueueToSaveDistList($members, $distList->id);
+
+        return response(array(
+            'data' => $distList,
+            'message' => 'Distribution list saved successfully.'
+        ), 201);
     }
 
     /**
