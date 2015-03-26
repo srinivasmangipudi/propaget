@@ -182,7 +182,7 @@ class RequirementController extends Controller {
         $req = Requirement::find($id);
 
         /*Check if the user is owner of the distribution list or not*/
-        if ($req->created_by != $user_id) {
+        if ($req->agentId != $user_id) {
             return response([
                 'message' => 'This distribution list does not belong to you.'
             ], 422);

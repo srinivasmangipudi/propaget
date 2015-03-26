@@ -18,6 +18,7 @@ class OAuthTokenVerification {
         // check if the access token is present
         if (!$request->input('access_token'))
         {
+            Log::info('Token not found');
             return abort(422, 'Token not found');
         }
 
@@ -26,6 +27,7 @@ class OAuthTokenVerification {
         $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
 
         if (!\App::make('oauth2')->verifyResourceRequest($bridgedRequest, $bridgedResponse)) {
+            Log::info('Token validation failed.');
             return abort(422, 'Token validation failed.');
         } else {
             $token = \App::make('oauth2')->getAccessTokenData($bridgedRequest);
