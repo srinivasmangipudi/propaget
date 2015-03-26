@@ -4,9 +4,7 @@ use App\Commands\SaveDistributionList;
 use App\DistList;
 use App\Http\Requests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -71,7 +69,7 @@ class DistListController extends Controller {
         Queue::push(new SaveDistributionList($members, $distList->id));
 
         return response(array(
-            'data' => $distList,
+            'data' => ['type' => 'save', 'list' => $distList],
             'message' => "Your list {$distList->name} has been saved successfully."
         ), 201);
     }
@@ -129,7 +127,7 @@ class DistListController extends Controller {
 
         if ($distList->delete()) {
             return response([
-                'data' => $id,
+                'data' => ['type' => 'delete', 'id' => $id],
                 'message' => "Distribution list {$distList->name} has been deleted."
             ], 201);
         } else {
