@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Faker;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -44,6 +45,8 @@ class DistList extends Model {
             $distListMem->user_id = $key;
             $distListMem->save();
         }
+
+        Event::fire(new DistListMembersAdded());
 
         return $distListId;
     }

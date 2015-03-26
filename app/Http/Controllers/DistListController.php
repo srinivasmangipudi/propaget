@@ -25,9 +25,12 @@ class DistListController extends Controller {
     public function index(Request $requests)
     {
         $user_id = $requests['user_id'];
+
+        /* fetch distribution list which the user owns */
         $data = DB::table('dist_lists')
             ->where('created_by', $user_id)
             ->get();
+
         return $data;
     }
 
@@ -43,6 +46,7 @@ class DistListController extends Controller {
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param Request $request
      * @return Response
      */
@@ -116,6 +120,7 @@ class DistListController extends Controller {
         $user_id = $request['user_id'];
         $distList = DistList::find($id);
 
+        /*Check if the user is owner of the distribution list or not*/
         if ($distList->created_by != $user_id) {
             return response([
                 'message' => 'This distribution list does not belong to you.'
