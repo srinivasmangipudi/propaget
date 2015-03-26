@@ -23,7 +23,6 @@ class DistListController extends Controller {
      */
     public function index()
     {
-        Log::info('I was here');
         $data = DB::table('migrations')->get();
         return $data;
     }
@@ -50,16 +49,14 @@ class DistListController extends Controller {
 
         $distList = new DistList;
         $distList->name = $postData['name'];
-        $distList->createdBy = $postData['createdBy'];
+        $distList->created_by = $postData['createdBy'];
 
         if (!$distList->save()) {
             Log::info('Failed to save dist list');
             return response([
                 'data' => $postData,
                 'message' => 'Could not save data'
-            ]);
-        } else {
-            Log::info('Correct');
+            ], 500);
         }
 
         $members = json_decode($postData['members']);
@@ -113,13 +110,18 @@ class DistListController extends Controller {
      */
     public function destroy($id)
     {
-        //
-    }
-
-    public function getAllRequirement($id = null    )
-    {
-        Log::info('I was here');
-        return array(1,2,3);
+        $distList = DistList::find($id);
+        if ($distList->delete()) {
+            return response([
+                'data' => $id,
+                'message' => "Distribution list {$distList->name} has been deleted."
+            ], 201);
+        } else {
+            return response([
+                'data' => $id,
+                'message' => "Not able to delete the list."
+            ], 500);
+        }
     }
 
 }

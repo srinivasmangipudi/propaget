@@ -12,6 +12,8 @@ use Illuminate\Database\Seeder;
 class OAuthUsersSeeder extends Seeder {
     public function run()
     {
+        DB::table('oauth_users')->truncate();
+
         DB::table('oauth_users')->insert(array(
             'username' => "focalworks",
             'password' => sha1('password'),

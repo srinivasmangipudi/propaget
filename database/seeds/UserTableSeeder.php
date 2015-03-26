@@ -30,6 +30,15 @@ class UserTableSeeder extends Seeder {
         $user->userId = '0';
         $user->save();
 
+        $user = new User;
+        $user->name = 'Kaustubh Malgaonkar';
+        $user->phoneNumber = '+919830098300';
+        $user->email = 'kaustubh.malgaonkar@focalworks.in';
+        $user->password = Hash::make('password');
+        $user->userType = 'normal';
+        $user->userId = '0';
+        $user->save();
+
         $faker = Faker\Factory::create();
 
         for ($i = 0; $i < 49; $i++)

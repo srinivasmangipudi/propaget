@@ -36,15 +36,12 @@ class DistList extends Model {
         // check users exist and new users
         $finalArray = $this->checkExistingAndNewUser($members);
 
-        // save the member data
-        // $distListId = $distList->id;
-
         // creating entries of the distribution list and member relation
         foreach ($finalArray as $key => $row)
         {
             $distListMem = new DistListMembers;
-            $distListMem->distListId = $distListId;
-            $distListMem->userId = $key;
+            $distListMem->dist_list_id = $distListId;
+            $distListMem->user_id = $key;
             $distListMem->save();
         }
 
@@ -80,7 +77,7 @@ class DistList extends Model {
         // save the distribution list
         $distList = new DistList;
         $distList->name = $listData['name'];
-        $distList->createdBy = $listData['createdBy'];
+        $distList->created_by = $listData['createdBy'];
         $distList->save();
 
         return $distList;
