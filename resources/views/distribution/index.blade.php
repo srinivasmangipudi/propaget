@@ -1,8 +1,8 @@
 @extends('app')
 @section('content')
-<div class="container" ng-app="requirementApp">
+<div class="container" ng-app="distributionApp">
      <div ng-controller="mainCtrl">
-        <div ng-bind="infoMsg" class="alert-warning"></div>
+        <div ng-bind="infoMsg" class="alert-warning">i m here</div>
         <div ng-view>
 
         </div>

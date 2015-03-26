@@ -53,8 +53,8 @@ return [
             'driver' => 'sqs',
             'key'    => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'queue'  => 'https://sqs.ap-southeast-1.amazonaws.com/665543750180/propagate',
-            'region' => 'ap-southeast-1',
+            'queue'  => env('AWS_QUEUE_URL'),
+            'region' => env('AWS_QUEUE_REGION'),
         ],
 
         'iron' => [

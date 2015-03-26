@@ -4,6 +4,10 @@
     border-color: #ff0011;
   }
 
+  #addRequirementForm input.error {
+    border-color: #ff0011;
+  }
+
   #addRequirementForm input.ng-valid.ng-touched {
     border-color: #cccccc;
   }
@@ -14,7 +18,7 @@
         <form name="addRequirementForm" id="addRequirementForm"  ng-submit="save_requirement()" novalidate>
            <div class="form-group">
                 <label>Title:</label>
-                <input type='text' ng-model="requirement.title" name="title" class="form-control" required>
+                <input type='text' ng-model="requirement.title" name="title" class="form-control" required ng-class="show_error('title')">
             </div>
 
            <div class="form-group">
@@ -24,32 +28,32 @@
 
             <div class="form-group">
                 <label>Client Email:</label>
-                <input type='email' name="title" ng-model="requirement.clientEmail" class="form-control" name="clientEmail" required>
+                <input type='email' ng-model="requirement.clientEmail" class="form-control" name="clientEmail" required ng-class="show_error('clientEmail')">
             </div>
 
            <div class="form-group">
                 <label>Location:</label>
-                <input type='text' ng-model="requirement.location" class="form-control" name="location" required>
+                <input type='text' ng-model="requirement.location" class="form-control" name="location" required ng-class="show_error('location')">
            </div>
 
            <div class="form-group">
                 <label>Area:</label>
-                <input type='text' ng-model="requirement.area" class="form-control" name="area" required>
+                <input type='text' ng-model="requirement.area" class="form-control" name="area" required ng-class="show_error('area')">
            </div>
 
            <div class="form-group">
                <label>Range:</label>
-               <input type='text' ng-model="requirement.range" class="form-control" name="range" required>
+               <input type='text' ng-model="requirement.range" class="form-control" name="range" required ng-class="show_error('range')">
           </div>
 
            <div class="form-group">
                 <label>Price:</label>
-                <input type='text' ng-model="requirement.price" class="form-control" name="price" required>
+                <input type='text' ng-model="requirement.price" class="form-control" name="price" required ng-class="show_error('price')">
            </div>
 
             <div class="form-group">
                 <label>Price Range:</label>
-                <input type='text' ng-model="requirement.priceRange" class="form-control" name="priceRange" required>
+                <input type='text' ng-model="requirement.priceRange" class="form-control" name="priceRange" required ng-class="show_error('priceRange')">
             </div>
 
            <div class="form-group">

@@ -9,6 +9,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
 
@@ -29,7 +30,9 @@ class Properties extends BaseModel {
 
     public function save(array $options = array())
     {
-        $saved = parent::save();
+        //print_r($options);
+        $saved = parent::save($options);
+
         //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
 
         return $saved;

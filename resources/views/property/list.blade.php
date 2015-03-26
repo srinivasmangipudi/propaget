@@ -23,7 +23,7 @@
                     </thead>
                     <tbody>
                         <tr  ng-repeat='property in filtered = (properties | filter: search | orderBy : predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit track by $index '>
-                            <td>@{{ property.title }}</td>
+                            <td><a href="#view/@{{ property.id }}">@{{ property.title }}</a></td>
                             <td>@{{ property.location }}</td>
                             <td>@{{ property.area }}</td>
                             <td>@{{ property.price }}</td>

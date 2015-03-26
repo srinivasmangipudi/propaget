@@ -28,32 +28,32 @@
 
             <div class="form-group">
                 <label>Client Email:</label>
-                <input type='email' name="title" ng-model="property.clientEmail" class="form-control" name="clientEmail" required  ng-class="show_error('clientEmail')">
+                <input type='email' ng-model="property.clientEmail" class="form-control" name="clientEmail" required  ng-class="show_error('clientEmail')">
             </div>
 
            <div class="form-group">
                 <label>Address:</label>
-                <input type='text' ng-model="property.address" class="form-control" name="clientEmail">
+                <input type='text' ng-model="property.address" class="form-control" name="address">
             </div>
 
            <div class="form-group">
                 <label>Location:</label>
-                <input type='text' ng-model="property.location" class="form-control" name="location" required  ng-class="show_error('title')">
+                <input type='text' ng-model="property.location" class="form-control" name="location" required  ng-class="show_error('location')">
            </div>
 
            <div class="form-group">
                 <label>Area:</label>
-                <input type='text' ng-model="property.area" class="form-control" name="area" required  ng-class="show_error('title')">
+                <input type='text' ng-model="property.area" class="form-control" name="area" required  ng-class="show_error('area')">
            </div>
 
            <div class="form-group">
                 <label>Price:</label>
-                <input type='text' ng-model="property.price" class="form-control" name="price" required  ng-class="show_error('title')">
+                <input type='text' ng-model="property.price" class="form-control" name="price" required  ng-class="show_error('price')">
            </div>
 
            <div class="form-group">
                 <label>Type:</label>
-                <select type='text' ng-model="property.type" class="form-control" name="type" required  ng-class="show_error('title')">
+                <select type='text' ng-model="property.type" class="form-control" name="type" required  ng-class="show_error('type')">
                     <option value="Sale">Sale</option>
                     <option value="Lease">Lease</option>
                 </select>

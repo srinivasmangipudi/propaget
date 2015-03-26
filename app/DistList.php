@@ -17,6 +17,14 @@ class DistList extends Model {
         $this->saveEntireDistributionList($members, $distListId);
     }
 
+    public function loadFullDistribution()
+    {
+        //SELECT t1.id,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.userid ) AS totaluser, t3.distListId FROM dist_list_members t3 GROUP BY (distListId)) AS t2 ON t1.id = t2.distListId
+
+        $results = DB::select( DB::raw("SELECT t1.id,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.userid ) AS totaluser, t3.distListId FROM dist_list_members t3 GROUP BY (distListId)) AS t2 ON t1.id = t2.distListId") );
+
+        return $results;
+    }
     /**
      * @param array $members
      * @param $distListId

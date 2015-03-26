@@ -1,17 +1,9 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: komal
- * Date: 16/3/15
- * Time: 2:37 PM
- */
+<?php namespace App\Http\Controllers\Distribution;
 
- namespace App\Http\Controllers\Property;
-
- use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 
 
- class PropertyAppController extends Controller {
+class DistributionAppController extends Controller {
 
     /*
     |--------------------------------------------------------------------------
@@ -41,20 +33,17 @@
      */
     public function index()
     {
-        return view('property/index');
+        return view('distribution/index');
     }
 
     public function listing()
     {
-        return view('property/list');
+        return view('distribution/list');
     }
 
-    public function add()
-    {
-        return view('property/add');
-    }
+
     public function view()
     {
-        return view('property/view');
+        return view('distribution/view');
     }
 }

@@ -27,7 +27,7 @@ class DistListMembers extends Migration {
             $table->index('dist_list_id');
             $table->index('user_id');
         });
-    }
+	}
 
     /**
      * Reverse the migrations.
@@ -37,6 +37,6 @@ class DistListMembers extends Migration {
     public function down()
     {
         Schema::dropIfExists('dist_list_members');
-    }
+	}
 
 }
