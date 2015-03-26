@@ -1,20 +1,8 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-use App\Commands\SendEmail;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Device;
-use Illuminate\Support\Facades\Queue;
+use App\Http\Controllers\Auth\DoLoginPdo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
 Route::get('/', 'WelcomeController@index');
@@ -59,8 +47,8 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
    return 'Successfully Authenticated';
 }]);
 
-
-Route::resource('dist-list', 'Distribution\DistListController');
+/* Distribution list */
+Route::resource('dist-list', 'DistListController');
 Route::controller('dist-list', 'Distribution\DistListController');
 Route::get('distribution', 'Distribution\DistributionAppController@index');
 Route::get('distribution/list', 'Distribution\DistributionAppController@listing');
@@ -97,11 +85,25 @@ Route::get('properties/list', 'Property\PropertyAppController@listing');
 Route::get('properties/add', 'Property\PropertyAppController@add');
 Route::get('properties/view', 'Property\PropertyAppController@view');
 
+Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
+Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
 
-Route::post('test-me', function(Request $request)
+App::singleton('oauth2', function() {
+    $storage = new DoLoginPdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
+    $server = new OAuth2\Server($storage);
+
+    $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
+    $server->addGrantType(new OAuth2\GrantType\UserCredentials($storage));
+    $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
+    $server->addGrantType(new OAuth2\GrantType\RefreshToken($storage));
+
+    return $server;
+});
+
+/*Route::post('test-me', function(Request $request)
 {
     $postData = $request->input();
     $members = json_decode($postData['members']);
     Queue::later('sendmail', new SendEmail($postData, $members));
     return Response::json($postData);
-});
+});*/
