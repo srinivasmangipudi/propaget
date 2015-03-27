@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Events\DistListMembersAdded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;

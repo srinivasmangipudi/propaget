@@ -1,66 +1,62 @@
 <?php namespace App\Http\Controllers\Requirementctrl;
 
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests;
 use App\Requirement;
 use App\User;
+use Auth;
 use Aws\CloudFront\Exception\Exception;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Request;
-use Auth;
+use Illuminate\Http\Request;
 
 class RequirementController extends Controller {
+    
+    public function __construct()
+    {
+        $this->middleware('oauth');
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-        //$allRequirement = Requirement::all();
-        //$userId = Auth::user()->id;
-        $userId = 2;
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $requests
+     * @return Response
+     */
+    public function index(Request $requests)
+    {
+        $userId = $requests['user_id'];
         $allRequirement = Requirement::where('agentId','=',$userId)->get();
         return $allRequirement;
-	}
+    }
 
-    /*public function getAllRequirement()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
     {
-        //Log::error('i m in all fun');
-        $allRequirement = Requirement::where('agentId','=','2')->get();
-//        $allRequirement = Requirement::where('agentId','=',$agentId)->get();
-        return $allRequirement;
-    }*/
+        //
+    }
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $userId = $request['user_id'];
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
         try{
-            //$userId = Auth::user()->id;
-            $requirementData = Request::all();
-            //Log::info('this store'. print_r($requirementData, true));
+            $requirementData = $request->input();
 
-            $user = User::find(1);
+            $user = User::find($userId);
+
             $req = new Requirement();
-            $req->agentId = 2;
+            $req->agentId = $userId;
             $req->clientId = 1;
             $req->title = $requirementData['title'];
             $req->description = $requirementData['description'];
@@ -78,14 +74,20 @@ class RequirementController extends Controller {
             {
                 $data = $req;
                 $message = 'Requirement added successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'req' => $data,
+                    'type' => 'save'
+                ]), Config::get('statuscode.successCode'));
 
             }
             else
             {
                 $data = $errors;
                 $message = 'Requirement not added.';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'req' => $data,
+                    'type' => 'error'
+                ]), Config::get('statuscode.validationFailCode'));
             }
         }
         catch(Exception $e)
@@ -94,40 +96,40 @@ class RequirementController extends Controller {
             $message = 'Requirement not Added.';
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
-	}
+    }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
         $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
         return $response;
-	}
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
         $requirement = Requirement::find($id);
         return $requirement;
-	}
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
         try{
             $user = User::find(1);
             $requirementData = Request::all();
@@ -166,23 +168,34 @@ class RequirementController extends Controller {
             $message = 'Requirement not updated.';
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
-	}
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id, Request $request)
+    {
+        $user_id = $request['user_id'];
+        $req = Requirement::find($id);
+
+        /*Check if the user is owner of the distribution list or not*/
+        if ($req->agentId != $user_id) {
+            return response([
+                'message' => 'This distribution list does not belong to you.'
+            ], 422);
+        }
+
         try
         {
-            //Log::error('i m in delete'.$id);
             Requirement::destroy($id);
-            $data = $id;
             $message = 'Requirement Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+            return Response::json(array('message' => $message ,'data'=> [
+                'req' => $id,
+                'type' => 'delete'
+            ]), Config::get('statuscode.successCode'));
 
 
         }
@@ -193,5 +206,5 @@ class RequirementController extends Controller {
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
-	}
+    }
 }

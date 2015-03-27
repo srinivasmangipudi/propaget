@@ -44,7 +44,7 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
 /** FACTORY METHOD ENDS **/
 
 
-propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
+    propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
 
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
@@ -161,9 +161,13 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$rout
                 var method = 'POST';
                 var functionUrl = 'property/';
                 propagateService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                    $scope.$emit('MsgEvent', propertyData.data.message);
-                    $location.path('/');
-                 });
+                        $scope.$emit('MsgEvent', propertyData.data.message);
+                        $location.path('/');
+                    })
+                    .catch(function(fallback) {
+                        //console.log('Error add Msg ==== ' + JSON.stringify(fallback));
+                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                    });
             }
         }
     }

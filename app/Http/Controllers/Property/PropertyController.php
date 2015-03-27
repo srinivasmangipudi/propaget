@@ -4,64 +4,71 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Config;
 use App\Properties;
-use Auth;
 use Aws\CloudFront\Exception\Exception;
 use Illuminate\Support\Facades\Response;
-use Request;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-        //$userId = Auth::user()->id;
-        $userId = 2;
+    public function __construct()
+    {
+        $this->middleware('oauth');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $requests)
+    {
+        $userId = $requests['user_id'];
         $properties = Properties::where('agentId', '=', $userId)->get();
         return $properties;
-	}
+    }
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $userId = $request['user_id'];
+
         try {
-            //$userId = Auth::user()->id;
-            $userId = 1;
+            $postData = $request->input();
+            
             $prop = new Properties;
-            $prop->agentId = 1;
+            $prop->agentId = $userId;
             $prop->clientId = 1;
-            $prop->location = Request::input('location');
-            $prop->area = Request::input('area');
-            $prop->price = Request::input('price');
-            $prop->title = Request::input('title');
+            $prop->location = $postData['location'];
+            $prop->area = $postData['area'];
+            $prop->price = $postData['price'];
+            $prop->title = $postData['title'];
 
             if (!$prop->save()) {
                 $errors = $prop->getErrors()->all();
                 $data = $errors;
-                $message = 'Requirement not added.';
+                $message = 'Property not added.';
                 return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
             }
 
-            $data = $prop;
             $message = 'Property added successfully';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+            return Response::json(array('message' => $message ,'data'=> [
+                'type' => 'save',
+                'prop' => $prop
+            ]), Config::get('statuscode.successCode'));
 
         } catch (Exception $e) {
 
@@ -70,40 +77,40 @@ class PropertyController extends Controller {
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
-	}
+    }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
         $response = Properties::where('agentId','=','2')->where('id','=',$id)->get();
         return $response;
-	}
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
         $property = Properties::find($id);
         return $property;
-	}
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
         try{
             //$user = User::find(1);
             $propertyData = Request::all();
@@ -145,17 +152,26 @@ class PropertyController extends Controller {
 
     }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id, Request $request)
+    {
+        $user_id = $request['user_id'];
+        $property = Properties::find($id);
+
+        /*Check if the user is owner of the distribution list or not*/
+        if ($property->created_by != $user_id) {
+            return response([
+                'message' => 'This distribution list does not belong to you.'
+            ], 422);
+        }
+
         try
         {
-            //Log::error('i m in delete'.$id);
             Properties::destroy($id);
             $data = $id;
             $message = 'Property Deleted.';
@@ -167,6 +183,6 @@ class PropertyController extends Controller {
             $message = 'Property not Deleted.';
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
-	}
+    }
 
 }
