@@ -191,7 +191,7 @@ class RequirementController extends Controller {
         try
         {
             Requirement::destroy($id);
-            $message = 'Requirement Deleted.';
+            $message = 'Requirement deleted';
             return Response::json(array('message' => $message ,'data'=> [
                 'req' => $id,
                 'type' => 'delete'

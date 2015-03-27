@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 /**
@@ -20,10 +19,12 @@ class DeviceController extends Controller {
      */
     function registerDevice(Request $request) {
         $postData = $request->input();
+        $user_id = $request['user_id'];
 
         $device = new Device;
-        $device->deviceId = $postData['deviceId'];
-        $device->registraionId = $postData['registrationId'];
+        $device->device_id = $postData['deviceId'];
+        $device->registraion_id = $postData['registrationId'];
+        $device->user_id = $user_id;
         $device->save();
     }
 
