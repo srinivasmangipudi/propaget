@@ -86,10 +86,15 @@ Route::get('properties/add', 'Property\PropertyAppController@add');
 Route::get('properties/view', 'Property\PropertyAppController@view');
 
 Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
-Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
+//Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
 
 App::singleton('oauth2', function() {
-    $storage = new DoLoginPdo(array('dsn' => 'mysql:dbname=propagate;host=localhost', 'username' => 'root', 'password' => 'password'));
+    $storage = new DoLoginPdo(array(
+        'dsn' => 'mysql:dbname=' . env('DB_DATABASE') . ';host=' . env('DB_HOST'),
+        'username' => env('DB_USERNAME'),
+        'password' => env('DB_PASSWORD')
+    ));
+
     $server = new OAuth2\Server($storage);
 
     $server->addGrantType(new OAuth2\GrantType\ClientCredentials($storage));
@@ -107,3 +112,11 @@ App::singleton('oauth2', function() {
     Queue::later('sendmail', new SendEmail($postData, $members));
     return Response::json($postData);
 });*/
+
+Route::post('get-new-token', 'Auth\OAuthController@newAccessToken');
+
+
+Route::group(['middleware' => 'oauth', 'prefix' => 'oauth'], function() {
+    Route::get('get-access', 'Auth\OAuthController@validateAccessToken');
+});
+

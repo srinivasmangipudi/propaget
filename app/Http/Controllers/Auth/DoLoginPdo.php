@@ -44,9 +44,11 @@ class DoLoginPdo extends Pdo
 
     public function setAccessToken($access_token, $client_id, $user_id, $expires, $scope = null)
     {
+        if(!is_numeric($user_id)) {
+            $userData = User::where('email', $user_id)->first();
+            $user_id = $userData->id;
 
-        $userData = User::where('email', $user_id)->first();
-        $user_id = $userData->id;
+        }
 
         // convert expires to datestring
         $expires = date('Y-m-d H:i:s', $expires);
@@ -64,8 +66,11 @@ class DoLoginPdo extends Pdo
     public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = null)
     {
 
-        $userData = User::where('email', $user_id)->first();
-        $user_id = $userData->id;
+        if(!is_numeric($user_id)) {
+            $userData = User::where('email', $user_id)->first();
+            $user_id = $userData->id;
+
+        }
 
         // convert expires to datestring
         $expires = date('Y-m-d H:i:s', $expires);

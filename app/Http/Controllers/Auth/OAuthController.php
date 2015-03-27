@@ -36,6 +36,7 @@ class OAuthController extends Controller {
 
     public function validateAccessToken(Request $request)
     {
+
         $req = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
         $bridgedRequest  = OAuthRequest::createFromRequest($req);
         $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
@@ -56,5 +57,25 @@ class OAuthController extends Controller {
                 'error' => 'Unauthorized'
             ), $bridgedResponse->getStatusCode());
         }
+    }
+
+    /**
+     * This function will take the client_id, client_secret, refresh_token, grant_type=refresh_token
+     * and then return the token.
+     * @param \Illuminate\Http\Request $request
+     * @return new access token for user
+     */
+    public function newAccessToken(Request $request)
+    {
+
+        $req = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+        $bridgedRequest  = OAuthRequest::createFromRequest($req);
+        $bridgedResponse = new \OAuth2\HttpFoundationBridge\Response();
+
+        if(!$value = \App::make('oauth2')->grantAccessToken($bridgedRequest, $bridgedResponse)) {
+            return abort(422, 'Invalid Refresh Token.');
+        }
+
+        return $value;
     }
 }
