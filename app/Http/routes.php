@@ -105,14 +105,6 @@ App::singleton('oauth2', function() {
     return $server;
 });
 
-/*Route::post('test-me', function(Request $request)
-{
-    $postData = $request->input();
-    $members = json_decode($postData['members']);
-    Queue::later('sendmail', new SendEmail($postData, $members));
-    return Response::json($postData);
-});*/
-
 Route::post('get-new-token', 'Auth\OAuthController@newAccessToken');
 
 
