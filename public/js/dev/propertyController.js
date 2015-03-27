@@ -41,10 +41,7 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
 }]);
 /** ROUTES CONFIGURATION ENDS **/
 
-/** FACTORY METHOD ENDS **/
-
-
-    propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
+propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
 
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
@@ -54,7 +51,6 @@ propertyApp.config(['$routeProvider', '$locationProvider', function($routeProvid
 }]);
 
 propertyApp.controller('propertyController', ['$scope', 'propagateService', '$location', function($scope, propagateService,$location) {
-   //propagateService.getProperties().then(function(propertyData) {
 
     var method = 'GET';
     var functionUrl = 'property';
