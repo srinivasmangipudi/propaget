@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Config;
 use App\Properties;
 use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
@@ -163,10 +164,10 @@ class PropertyController extends Controller {
         $user_id = $request['user_id'];
         $property = Properties::find($id);
 
-        /*Check if the user is owner of the distribution list or not*/
-        if ($property->created_by != $user_id) {
+        /*Check if the user is owner of the Property list or not*/
+        if ($property->agentId != $user_id) {
             return response([
-                'message' => 'This distribution list does not belong to you.'
+                'message' => 'This Property list does not belong to you.'
             ], 422);
         }
 
