@@ -88,18 +88,22 @@ requirementApp.controller('requirementController', ['$scope', 'propagateService'
 }]);
 
 
-requirementApp.controller('requirementViewCtrl', ['$scope', 'propagateService', '$routeParams',  function($scope, propagateService, $routeParams) {
+requirementApp.controller('requirementViewCtrl', ['$scope', 'propagateService', '$routeParams', '$location',  function($scope, propagateService, $routeParams ,$location) {
 
     $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
 
         var requirementId = $routeParams.id;
         var method = 'GET';
-        var functionUrl = 'req-list/' + requirementId+ '/edit';
+        var functionUrl = 'req-list/' + requirementId;
         propagateService.apiCall('getSingleRequirement', method, functionUrl).then(function(requirementData) {
             if(requirementData.data) {
                 $scope.requirement = requirementData.data;
             }
+        }).catch(function(fallback) {
+            //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
+            $scope.$emit('MsgEvent', fallback.data.message);
+            $location.path('/');
         });
     }
 }]);
@@ -118,6 +122,10 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
             if(requirementData.data) {
                 $scope.requirement = requirementData.data;
             }
+        }).catch(function(fallback) {
+            //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
+            $scope.$emit('MsgEvent', fallback.data.message);
+            $location.path('/');
         });
 
         $scope.save_requirement = function() {

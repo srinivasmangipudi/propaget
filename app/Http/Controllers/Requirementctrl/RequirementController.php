@@ -100,10 +100,19 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id,Request $request)
     {
-        $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
-        return $response;
+        $user_id = $request['user_id'];
+        $requirement = Requirement::find($id);
+        /*Check if the user is owner of the Property list or not*/
+        if ($requirement->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Requirement does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
+        return $requirement;
     }
 
     /**
@@ -112,9 +121,18 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, Request $request)
     {
+        $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
+        /*Check if the user is owner of the Property list or not*/
+        if ($requirement->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Requirement does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
         return $requirement;
     }
 
