@@ -16,8 +16,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'requirementsold'], function()
 });
 
 Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
+    'auth' => 'Auth\AuthController',
+    'password' => 'Auth\PasswordController',
 ]);
 
 Route::group(['middleware' => 'oauth'], function() {
@@ -64,24 +64,8 @@ Route::get('mobile-logout', function() {
 //Route::post('mobile/login', 'SocialLoginController@mobile_login', ['middleware' => 'auth.token']);
 Route::post('mobile/login', 'SocialLogin\SocialLoginController@mobile_login');
 Route::post('testingAuth', ['middleware' => 'auth.token', function () {
-   return 'Successfully Authenticated';
+    return 'Successfully Authenticated';
 }]);
-
-
-Route::post('register-device', function(Request $request) {
-    $postData = $request->input();
-
-    $device = new Device;
-    $device->deviceId = $postData['deviceId'];
-    $device->registraionId = $postData['registrationId'];
-    $device->save();
-
-    /*$gcm = new GcmHelper;
-    $gcm->sendNotification(
-        array($device->registraionId),
-        array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
-    );*/
-});
 
 Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
 //Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');
