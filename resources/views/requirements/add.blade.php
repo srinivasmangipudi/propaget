@@ -28,7 +28,7 @@
 
             <div class="form-group">
                 <label>Client Email:</label>
-                <input type='email' ng-model="requirement.clientEmail" class="form-control" name="clientEmail" required ng-class="show_error('clientEmail')">
+                <input type='email' ng-model="requirement.client_email" class="form-control" name="client_email" required ng-class="show_error('client_email')">
             </div>
 
            <div class="form-group">
@@ -53,7 +53,7 @@
 
             <div class="form-group">
                 <label>Price Range:</label>
-                <input type='text' ng-model="requirement.priceRange" class="form-control" name="priceRange" required ng-class="show_error('priceRange')">
+                <input type='text' ng-model="requirement.price_range" class="form-control" name="price_range" required ng-class="show_error('price_range')">
             </div>
 
            <div class="form-group">

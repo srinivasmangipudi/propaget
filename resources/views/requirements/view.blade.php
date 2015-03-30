@@ -12,7 +12,7 @@
 
         <div class="form-group">
             <label class="text-primary">Client Email : </label>
-            @{{ requirement.clientEmail }}
+            @{{ requirement.client_email }}
         </div>
 
        <div class="form-group">
@@ -37,7 +37,7 @@
 
         <div class="form-group">
             <label  class="text-primary">Price Range : </label>
-            @{{ requirement.priceRange }}
+            @{{ requirement.price_range }}
         </div>
 
        <div class="form-group">

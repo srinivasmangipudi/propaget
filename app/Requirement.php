@@ -7,15 +7,15 @@ class Requirement extends BaseModel {
 
     protected $table = 'requirements';
 
-    protected $fillable = ['agentId','clientId','clientEmail','title','description','location', 'area', 'range', 'price', 'priceRange','type'];
+    protected $fillable = ['agent_id','client_id','client_email','title','description','location', 'area', 'range', 'price', 'price_range','type'];
 
     protected $rules = [
         'location' => 'required|min:5',
         'area' => 'required',
         'price' => 'required|numeric',
         'title' => 'required',
-        'clientId' => 'required|numeric',
-        'agentId' => 'required|numeric',
+        'client_id' => 'required|numeric',
+        'agent_id' => 'required|numeric',
     ];
 
     protected $validationMessages = [
