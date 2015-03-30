@@ -23,17 +23,23 @@ Route::controllers([
 Route::group(['middleware' => 'oauth'], function() {
     Route::resource('req-list','Requirementctrl\RequirementController');
     Route::resource('property', 'Property\PropertyController');
+    Route::resource('dist-list', 'Distribution\DistListController');
 });
+
 Route::get('requirements', 'Requirementctrl\RequirementController@indexpage');
 Route::get('requirements/list', 'Requirementctrl\RequirementController@listing');
 Route::get('requirements/view', 'Requirementctrl\RequirementController@view');
 Route::get('requirements/add', 'Requirementctrl\RequirementController@add');
 
-
 Route::get('properties', 'Property\PropertyController@indexpage');
 Route::get('properties/list', 'Property\PropertyController@listing');
 Route::get('properties/add', 'Property\PropertyController@add');
 Route::get('properties/view', 'Property\PropertyController@view');
+
+Route::get('distribution', 'Distribution\DistListController@indexpage');
+Route::get('distribution/list', 'Distribution\DistListController@listing');
+Route::get('distribution/view', 'Distribution\DistListController@view');
+
 
 Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');
@@ -60,16 +66,6 @@ Route::post('mobile/login', 'SocialLogin\SocialLoginController@mobile_login');
 Route::post('testingAuth', ['middleware' => 'auth.token', function () {
    return 'Successfully Authenticated';
 }]);
-
-/* Distribution list */
-Route::resource('dist-list', 'Distribution\DistListController');
-Route::controller('dist-list', 'Distribution\DistListController');
-Route::get('distribution', 'Distribution\DistributionAppController@index');
-Route::get('distribution/list', 'Distribution\DistributionAppController@listing');
-Route::get('distribution/view', 'Distribution\DistributionAppController@view');
-
-
-
 
 
 Route::post('register-device', function(Request $request) {

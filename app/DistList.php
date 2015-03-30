@@ -23,8 +23,8 @@ class DistList extends Model {
         //SELECT t1.id,t1.created_by,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id  where created_by=1
 
         //SELECT t1.id,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM (select id,name,created_by from dist_lists  where created_by=1) as t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id
-
-        $query = "SELECT t1.id,t1.created_by,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id  where created_by=1".$userId;
+        
+        $query = "SELECT t1.id,t1.created_by,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id  where created_by=".$userId;
 
         $results = DB::select( DB::raw($query));
 

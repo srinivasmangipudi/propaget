@@ -14,6 +14,23 @@ use Illuminate\Http\Request;
 
 class DistListController extends Controller {
 
+    /*Start View Pages Code*/
+    public function indexpage()
+    {
+        return view('distribution/index');
+    }
+
+    public function listing()
+    {
+        return view('distribution/list');
+    }
+
+    public function view()
+    {
+        return view('distribution/view');
+    }
+    /*Start View Pages Code*/
+
 	/**
 	 * Display a listing of the resource.
 	 *
