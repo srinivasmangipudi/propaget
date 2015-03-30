@@ -26,6 +26,7 @@ class DeviceController extends Controller {
      */
     function registerDevice(Request $request) {
         $postData = $request->input();
+
         $user_id = $request['user_id'];
 
         $device = Device::where('device_id', $postData['deviceId'])->first();
