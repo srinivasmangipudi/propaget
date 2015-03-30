@@ -94,13 +94,3 @@ Route::post('get-new-token', 'Auth\OAuthController@newAccessToken');
 Route::group(['middleware' => 'oauth', 'prefix' => 'oauth'], function() {
     Route::get('get-access', 'Auth\OAuthController@validateAccessToken');
 });
-
-Route::get('gcm', function() {
-    $gcm = new GcmHelper;
-    $gcm->sendNotification([
-        'APA91bHsWkhMbTnwFAl3b9zJWPFpG94yyyYOwu3v-ONkP0GUgrINXUyhQp0xA5SOsD_4E1vGMnthn1pYEUqKW2fybYBRd5p5hF0mXLONQ5AGGMA0iaZUVQrpN5e9IemHplnJ7AebJcQPzVtWaIu-82Fsr0BpXlH3kQ'
-    ], [
-        'message' => 'Test',
-        'title' => 'Test'
-    ]);
-});
