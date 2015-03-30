@@ -32,18 +32,18 @@ class DistListController extends Controller {
     }
     /*Start View Pages Code*/
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index(Request $requests)
-	{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $requests)
+    {
         $userId = $requests['user_id'];
         $disMember = new DistList();
         $response = $disMember->loadFullDistribution($userId);
         return $response;
-	}
+    }
 
     /*Old Function From Old Controller
      * public function index(Request $requests)
@@ -57,15 +57,15 @@ class DistListController extends Controller {
 
         return $data;
     }*/
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -98,52 +98,52 @@ class DistListController extends Controller {
         ), 201);
     }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
         //$userId = 2;
         //$response = DistList::where('createdBy','=',$userId)->where('id','=',$id)->get();
         //$response = DistListMembers::where('distListId','=',$id)->get();
         $disMember = new DistListMembers();
         $response = $disMember->loadDisMemberList($id);
         return $response;
-	}
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
         $userId = 2;
         $response = DistList::where('createdBy','=',$userId)->where('id','=',$id)->get();
         return $response;
-	}
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        //
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function destroy($id, Request $request)
     {
         $user_id = $request['user_id'];
