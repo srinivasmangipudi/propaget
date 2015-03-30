@@ -46,7 +46,7 @@ class RequirementController extends Controller {
     public function index(Request $requests)
     {
         $userId = $requests['user_id'];
-        $allRequirement = Requirement::where('agentId','=',$userId)->get();
+        $allRequirement = Requirement::where('agent_id','=',$userId)->get();
         return $allRequirement;
     }
 
@@ -76,16 +76,16 @@ class RequirementController extends Controller {
             $user = User::find($userId);
 
             $req = new Requirement();
-            $req->agentId = $userId;
-            $req->clientId = 1;
+            $req->agent_id = $userId;
+            $req->client_id = 1;
             $req->title = $requirementData['title'];
             $req->description = $requirementData['description'];
-            $req->clientEmail = $requirementData['clientEmail'];
+            $req->client_email = $requirementData['client_email'];
             $req->location = $requirementData['location'];
             $req->area = $requirementData['area'];
             $req->range = $requirementData['range'];
             $req->price = $requirementData['price'];
-            $req->priceRange = $requirementData['priceRange'];
+            $req->price_range = $requirementData['price_range'];
             $req->type = $requirementData['type'];
 
             if (!$req->save(['user' => $user, 'requirement' => $req])) {
@@ -125,7 +125,7 @@ class RequirementController extends Controller {
         $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
         /*Check if the user is owner of the Property list or not*/
-        if ($requirement->agentId != $user_id) {
+        if ($requirement->agent_id != $user_id) {
 
             return response([
                 'message' => 'This Requirement does not belong to you.'
@@ -146,7 +146,7 @@ class RequirementController extends Controller {
         $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
         /*Check if the user is owner of the Property list or not*/
-        if ($requirement->agentId != $user_id) {
+        if ($requirement->agent_id != $user_id) {
 
             return response([
                 'message' => 'This Requirement does not belong to you.'
@@ -170,16 +170,16 @@ class RequirementController extends Controller {
 
             $requirementData = $request->input();
             $req =  Requirement::find($id);
-            $req->agentId = $userId;
-            $req->clientId = 1;
+            $req->agent_id = $userId;
+            $req->client_id = 1;
             $req->title = $requirementData['title'];
             $req->description = $requirementData['description'];
-            $req->clientEmail = $requirementData['clientEmail'];
+            $req->client_email = $requirementData['client_email'];
             $req->location = $requirementData['location'];
             $req->area = $requirementData['area'];
             $req->range = $requirementData['range'];
             $req->price = $requirementData['price'];
-            $req->priceRange = $requirementData['priceRange'];
+            $req->price_range = $requirementData['price_range'];
             $req->type = $requirementData['type'];
 
             if (!$req->save(['user' => $user, 'requirement' => $req])) {
@@ -219,7 +219,7 @@ class RequirementController extends Controller {
         $req = Requirement::find($id);
 
         /*Check if the user is owner of the distribution list or not*/
-        if ($req->agentId != $user_id) {
+        if ($req->agent_id != $user_id) {
             return response([
                 'message' => 'This Requirement does not belong to you.'
             ], Config::get('statuscode.validationFailCode'));

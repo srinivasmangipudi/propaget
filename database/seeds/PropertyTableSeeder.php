@@ -17,7 +17,7 @@ class PropertyTableSeeder extends Seeder
     public function run()
     {
         DB::table('properties')->delete();
-        $type = array('Buy','Lease');
+        $type = array('Sale','Lease');
         $location = array('Vashi','Koperkhene','Ghansoli','Navi Mumbai','Bandra','V.T. Station','Kurla','Virar','Virat','Central','Dahisar','Katargam','Adajan');
         $area = array('100 sq ft','200 sq ft','300 sq ft','400 sq ft','500 sq ft','600 sq ft','700 sq ft','800 sq ft','900 sq ft','1000 sq ft','1100 sq ft','1200 sq ft','1300 sq ft','1400 sq ft','1500 sq ft','1600 sq ft');
         $price = array('10000','20000','30000','40000','50000','60000','70000','80000','90000','100000','110000','120000','130000','140000','150000','160000','170000','180000','190000','200000','210000');
