@@ -1,11 +1,11 @@
 <?php
 
-use App\Device;
 use App\Http\Controllers\Auth\DoLoginPdo;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 
 Route::get('/', 'WelcomeController@index');
+
+/*Device registration */
+Route::post('register-device', 'DeviceController@registerDevice');
 
 Route::get('home', ['uses' => 'HomeController@index', 'as' => 'userHome']);
 
@@ -61,23 +61,6 @@ Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
 Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
 Route::get('requirements/add', 'Requirementctrl\RequirementAppController@add');
 Route::get('requirements/view', 'Requirementctrl\RequirementAppController@view');
-
-Route::post('register-device', function(Request $request) {
-    $postData = $request->input();
-
-    $device = new Device;
-    $device->deviceId = $postData['deviceId'];
-    $device->registraionId = $postData['registrationId'];
-    $device->save();
-
-    /*$gcm = new GcmHelper;
-    $gcm->sendNotification(
-        array($device->registraionId),
-        array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
-    );*/
-});
-
-
 
 Route::resource('property', 'Property\PropertyController');
 Route::get('properties', 'Property\PropertyAppController@index');

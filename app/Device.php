@@ -5,6 +5,6 @@ use App\BaseModel;
 
 class Device extends Model {
 
-	protected $table = 'devices';
+    protected $table = 'registered_devices';
 
 }
