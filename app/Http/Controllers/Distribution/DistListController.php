@@ -1,16 +1,16 @@
 <?php namespace App\Http\Controllers\Distribution;
 
-use App\Device;
 use App\DistList;
 use App\DistListMembers;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Auth;
+use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Request;
 
 class DistListController extends Controller {
 
@@ -19,13 +19,11 @@ class DistListController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $requests)
 	{
-        /*$userId = 2;
-        $allDistList =DistList::where('createdBy','=',$userId)->get();
-        return $allDistList;*/
+        $userId = $requests['user_id'];
         $disMember = new DistList();
-        $response = $disMember->loadFullDistribution();
+        $response = $disMember->loadFullDistribution($userId);
         return $response;
 	}
 

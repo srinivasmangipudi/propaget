@@ -20,6 +20,20 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::group(['middleware' => 'oauth'], function() {
+    Route::resource('req-list','Requirementctrl\RequirementController');
+    Route::resource('property', 'Property\PropertyController');
+});
+Route::get('requirements', 'Requirementctrl\RequirementController@indexpage');
+Route::get('requirements/list', 'Requirementctrl\RequirementController@listing');
+Route::get('requirements/view', 'Requirementctrl\RequirementController@view');
+Route::get('requirements/add', 'Requirementctrl\RequirementController@add');
+
+
+Route::get('properties', 'Property\PropertyController@indexpage');
+Route::get('properties/list', 'Property\PropertyController@listing');
+Route::get('properties/add', 'Property\PropertyController@add');
+Route::get('properties/view', 'Property\PropertyController@view');
 
 Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');
@@ -48,19 +62,15 @@ Route::post('testingAuth', ['middleware' => 'auth.token', function () {
 }]);
 
 /* Distribution list */
-Route::resource('dist-list', 'DistListController');
+Route::resource('dist-list', 'Distribution\DistListController');
 Route::controller('dist-list', 'Distribution\DistListController');
 Route::get('distribution', 'Distribution\DistributionAppController@index');
 Route::get('distribution/list', 'Distribution\DistributionAppController@listing');
 Route::get('distribution/view', 'Distribution\DistributionAppController@view');
 
-Route::resource('req-list','Requirementctrl\RequirementController');
-Route::controller('req-list','Requirementctrl\RequirementController');
 
-Route::get('requirements', 'Requirementctrl\RequirementAppController@index');
-Route::get('requirements/list', 'Requirementctrl\RequirementAppController@listing');
-Route::get('requirements/add', 'Requirementctrl\RequirementAppController@add');
-Route::get('requirements/view', 'Requirementctrl\RequirementAppController@view');
+
+
 
 Route::post('register-device', function(Request $request) {
     $postData = $request->input();
@@ -76,14 +86,6 @@ Route::post('register-device', function(Request $request) {
         array('title' => 'Device registered', 'message' => 'Congratulations, your devie has been registered with us.')
     );*/
 });
-
-
-
-Route::resource('property', 'Property\PropertyController');
-Route::get('properties', 'Property\PropertyAppController@index');
-Route::get('properties/list', 'Property\PropertyAppController@listing');
-Route::get('properties/add', 'Property\PropertyAppController@add');
-Route::get('properties/view', 'Property\PropertyAppController@view');
 
 Route::post('oauth/token', 'Auth\OAuthController@getOAuthToken');
 //Route::get('oauth/get-access', 'Auth\OAuthController@validateAccessToken');

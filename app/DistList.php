@@ -18,11 +18,15 @@ class DistList extends Model {
         $this->saveEntireDistributionList($members, $distListId);
     }
 
-    public function loadFullDistribution()
+    public function loadFullDistribution($userId)
     {
-        //SELECT t1.id,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.userid ) AS totaluser, t3.distListId FROM dist_list_members t3 GROUP BY (distListId)) AS t2 ON t1.id = t2.distListId
+        //SELECT t1.id,t1.created_by,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id  where created_by=1
 
-        $results = DB::select( DB::raw("SELECT t1.id,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.userid ) AS totaluser, t3.distListId FROM dist_list_members t3 GROUP BY (distListId)) AS t2 ON t1.id = t2.distListId") );
+        //SELECT t1.id,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM (select id,name,created_by from dist_lists  where created_by=1) as t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id
+
+        $query = "SELECT t1.id,t1.created_by,t1.created_by,t1.name, IF( t2.totaluser IS NULL , 0, t2.totaluser ) AS totalusers FROM dist_lists t1 LEFT JOIN ( SELECT count( t3.user_id ) AS totaluser, t3.dist_list_id FROM dist_list_members t3 GROUP BY (dist_list_id)) AS t2 ON t1.id = t2.dist_list_id  where created_by=1".$userId;
+
+        $results = DB::select( DB::raw($query));
 
         return $results;
     }

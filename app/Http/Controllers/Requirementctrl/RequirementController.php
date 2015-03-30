@@ -7,6 +7,7 @@ use App\User;
 use Auth;
 use Aws\CloudFront\Exception\Exception;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,27 @@ class RequirementController extends Controller {
     
     public function __construct()
     {
-        $this->middleware('oauth');
+        //$this->middleware('oauth');
     }
+
+    /*Start View Pages Code*/
+    public function indexpage()
+    {
+        return view('requirements/index');
+    }
+    public function listing()
+    {
+        return view('requirements/list');
+    }
+    public function view()
+    {
+        return view('requirements/view');
+    }
+    public function add()
+    {
+        return view('requirements/add');
+    }
+    /*Start View Pages Code*/
 
     /**
      * Display a listing of the resource.

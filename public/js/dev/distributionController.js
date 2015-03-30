@@ -1,4 +1,4 @@
-var distributionApp = angular.module('distributionApp', ['ngRoute', 'ui.bootstrap']);
+var distributionApp = angular.module('distributionApp', ['propagateServiceModule','ngRoute', 'ui.bootstrap']);
 distributionApp.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
@@ -25,23 +25,7 @@ distributionApp.config(['$routeProvider', '$locationProvider', function($routePr
         });
 }]);
 
-distributionApp.factory('distributionService', ['$http', '$rootScope', function($http, $rootScope) {
-    return {
-        apiCall: function (operation, method, functionUrl, distributionData) {
-            return $http({
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl,
-                method: method,
-                data: (distributionData!=undefined) ? $.param(distributionData) : ''
-            })
-                .success(function (jsonData) {
-                });
-        }
-    }
-}]);
-
-
-distributionApp.controller('mainCtrl', ['$scope', 'distributionService',  function($scope, distributionService) {
+distributionApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
 
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
@@ -49,11 +33,11 @@ distributionApp.controller('mainCtrl', ['$scope', 'distributionService',  functi
     $scope.infoMsg = '';
 }]);
 
-distributionApp.controller('distributionController', ['$scope', 'distributionService', '$location',  function($scope, distributionService,$location) {
+distributionApp.controller('distributionController', ['$scope', 'propagateService', '$location',  function($scope, propagateService,$location) {
 
     var method = 'GET';
     var functionUrl = 'dist-list';
-    distributionService.apiCall('getDistributions', method, functionUrl).then(function(distributionData) {
+    propagateService.apiCall('getDistributions', method, functionUrl).then(function(distributionData) {
          $scope.distributionlist = distributionData.data;
 
          $scope.currentPage = 1; //current page
@@ -85,7 +69,7 @@ distributionApp.controller('distributionController', ['$scope', 'distributionSer
         //console.log(distributionId);
         var method = 'DELETE';
         var functionUrl =  'dist-list/' + distributionId;
-        distributionService.apiCall('DeleteDistribution', method, functionUrl).then(function(distributionData) {
+        propagateService.apiCall('DeleteDistribution', method, functionUrl).then(function(distributionData) {
             //console.log('Delete Msg : ' + distributionData.data);
             $scope.$emit('MsgEvent', distributionData.data);
             $location.path('/');
@@ -94,7 +78,7 @@ distributionApp.controller('distributionController', ['$scope', 'distributionSer
 }]);
 
 
-distributionApp.controller('distributionViewCtrl', ['$scope', 'distributionService', '$routeParams',  function($scope, distributionService, $routeParams) {
+distributionApp.controller('distributionViewCtrl', ['$scope', 'propagateService', '$routeParams',  function($scope, propagateService, $routeParams) {
 
     $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
@@ -102,7 +86,7 @@ distributionApp.controller('distributionViewCtrl', ['$scope', 'distributionServi
         var distributionId = $routeParams.id;
         var method = 'GET';
         var functionUrl = 'dist-list/' + distributionId;
-        distributionService.apiCall('getSingleDistribution', method, functionUrl).then(function(distributionData) {
+        propagateService.apiCall('getSingleDistribution', method, functionUrl).then(function(distributionData) {
 
             //console.log('listing' + JSON.stringify(distributionData));
             if(distributionData.data) {

@@ -14,8 +14,29 @@ class PropertyController extends Controller {
 
     public function __construct()
     {
-        $this->middleware('oauth');
+        //$this->middleware('oauth');
     }
+
+    /*Start View Pages Code*/
+    public function indexpage()
+    {
+        return view('property/index');
+    }
+
+    public function listing()
+    {
+        return view('property/list');
+    }
+
+    public function add()
+    {
+        return view('property/add');
+    }
+    public function view()
+    {
+        return view('property/view');
+    }
+    /*Start View Pages Code*/
 
     /**
      * Display a listing of the resource.
