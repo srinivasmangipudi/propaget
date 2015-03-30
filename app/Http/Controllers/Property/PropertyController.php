@@ -46,7 +46,7 @@ class PropertyController extends Controller {
     public function index(Request $requests)
     {
         $userId = $requests['user_id'];
-        $properties = Properties::where('agentId', '=', $userId)->get();
+        $properties = Properties::where('agent_id', '=', $userId)->get();
         return $properties;
     }
 
@@ -73,11 +73,11 @@ class PropertyController extends Controller {
             $propertyData = $request->input();
             
             $pro = new Properties;
-            $pro->agentId = $userId;
-            $pro->clientId = 1;
+            $pro->agent_id = $userId;
+            $pro->client_id = 1;
             $pro->title = $propertyData['title'];
             $pro->description = $propertyData['description'];
-            $pro->clientEmail = $propertyData['clientEmail'];
+            $pro->client_email = $propertyData['client_email'];
             $pro->address = $propertyData['address'];
             $pro->location = $propertyData['location'];
             $pro->area = $propertyData['area'];
@@ -121,7 +121,7 @@ class PropertyController extends Controller {
         $user_id = $request['user_id'];
         $property = Properties::find($id);
         /*Check if the user is owner of the Property list or not*/
-        if ($property->agentId != $user_id) {
+        if ($property->agent_id != $user_id) {
 
             return response([
                 'message' => 'This Property does not belong to you.'
@@ -143,7 +143,7 @@ class PropertyController extends Controller {
         $property = Properties::find($id);
 
         /*Check if the user is owner of the Property list or not*/
-        if ($property->agentId != $user_id) {
+        if ($property->agent_id != $user_id) {
 
             return response([
                 'message' => 'This Property does not belong to you.'
@@ -167,11 +167,11 @@ class PropertyController extends Controller {
             $propertyData = $request->input();
             $pro = Properties::find($id);
 
-            $pro->agentId = $userId;
-            $pro->clientId = 1;
+            $pro->agent_id = $userId;
+            $pro->client_id = 1;
             $pro->title = $propertyData['title'];
             $pro->description = $propertyData['description'];
-            $pro->clientEmail = $propertyData['clientEmail'];
+            $pro->client_email = $propertyData['client_email'];
             $pro->address = $propertyData['address'];
             $pro->location = $propertyData['location'];
             $pro->area = $propertyData['area'];
@@ -218,7 +218,7 @@ class PropertyController extends Controller {
         $property = Properties::find($id);
 
         /*Check if the user is owner of the Property list or not*/
-        if ($property->agentId != $user_id) {
+        if ($property->agent_id != $user_id) {
             return response([
                 'message' => 'This Property does not belong to you.'
             ], Config::get('statuscode.validationFailCode'));

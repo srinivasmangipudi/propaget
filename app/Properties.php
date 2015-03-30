@@ -17,15 +17,15 @@ class Properties extends BaseModel {
 
     protected $table = 'properties';
 
-    protected $fillable = ['agentId','clientId','location', 'area', 'price','type', 'title', 'description', 'clientEmail', 'address'];
+    protected $fillable = ['agent_id','client_id','location', 'area', 'price','type', 'title', 'description', 'client_email', 'address'];
 
     protected $rules = [
         'location' => 'required|min:5',
         'area' => 'required',
         'price' => 'required|numeric',
         'title' => 'required',
-        'clientId' => 'required|numeric',
-        'agentId' => 'required|numeric',
+        'client_id' => 'required|numeric',
+        'agent_id' => 'required|numeric',
     ];
 
     public function save(array $options = array())

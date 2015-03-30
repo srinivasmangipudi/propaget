@@ -9,7 +9,7 @@
        </div>
 
         <div class="form-group">
-            <label class="text-primary">Client Email : </label>@{{ property.clientEmail }}
+            <label class="text-primary">Client Email : </label>@{{ property.client_email }}
         </div>
 
        <div class="form-group">

@@ -25,22 +25,21 @@ class PropertyTableSeeder extends Seeder
         $title = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
         $description = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
 
-        for ($i = 0; $i < 49; $i++)
+        for ($i = 0; $i < 50; $i++)
         {
             $userId = rand(1,50);
             $user = User::find($userId);
             $faker = Faker\Factory::create();
 
             $pro = new Properties();
-            $pro->agentId = $userId;
-            $pro->clientId = rand(1,50);
+            $pro->agent_id = $userId;
+            $pro->client_id = rand(1,50);
             $pro->title = $title[array_rand($title, 1)];
             $pro->description = $description[array_rand($description, 1)];
-            $pro->clientEmail =  $faker->email;
+            $pro->client_email =  $faker->email;
             $pro->address = $area[array_rand($area, 1)];
             $pro->location = $location[array_rand($location, 1)];
             $pro->area = $area[array_rand($area, 1)];
-            $pro->price = $price[array_rand($price, 1)];
             $pro->price = $price[array_rand($price, 1)];
             $pro->type = $type[array_rand($type, 1)];
             $pro->approved = $approved[array_rand($approved, 1)];
