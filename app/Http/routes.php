@@ -1,11 +1,11 @@
 <?php
 
-use App\Device;
 use App\Http\Controllers\Auth\DoLoginPdo;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 
 Route::get('/', 'WelcomeController@index');
+
+/*Device registration */
+Route::post('register-device', 'DeviceController@registerDevice');
 
 Route::get('home', ['uses' => 'HomeController@index', 'as' => 'userHome']);
 
