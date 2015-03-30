@@ -46,7 +46,7 @@ propertyApp.controller('mainCtrl', ['$scope', 'propagateService',  function($sco
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
     });
-    $scope.infoMsg = '';
+    //$scope.infoMsg = '';
 
 }]);
 
