@@ -2,9 +2,11 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Support\Facades\Config;
 use App\Properties;
 use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
@@ -12,8 +14,29 @@ class PropertyController extends Controller {
 
     public function __construct()
     {
-        $this->middleware('oauth');
+        //$this->middleware('oauth');
     }
+
+    /*Start View Pages Code*/
+    public function indexpage()
+    {
+        return view('property/index');
+    }
+
+    public function listing()
+    {
+        return view('property/list');
+    }
+
+    public function add()
+    {
+        return view('property/add');
+    }
+    public function view()
+    {
+        return view('property/view');
+    }
+    /*Start View Pages Code*/
 
     /**
      * Display a listing of the resource.
@@ -47,27 +70,35 @@ class PropertyController extends Controller {
         $userId = $request['user_id'];
 
         try {
-            $postData = $request->input();
+            $propertyData = $request->input();
             
-            $prop = new Properties;
-            $prop->agentId = $userId;
-            $prop->clientId = 1;
-            $prop->location = $postData['location'];
-            $prop->area = $postData['area'];
-            $prop->price = $postData['price'];
-            $prop->title = $postData['title'];
+            $pro = new Properties;
+            $pro->agentId = $userId;
+            $pro->clientId = 1;
+            $pro->title = $propertyData['title'];
+            $pro->description = $propertyData['description'];
+            $pro->clientEmail = $propertyData['clientEmail'];
+            $pro->address = $propertyData['address'];
+            $pro->location = $propertyData['location'];
+            $pro->area = $propertyData['area'];
+            $pro->price = $propertyData['price'];
+            $pro->type = $propertyData['type'];
 
-            if (!$prop->save()) {
-                $errors = $prop->getErrors()->all();
+            if (!$pro->save()) {
+                $errors = $pro->getErrors()->all();
                 $data = $errors;
                 $message = 'Property not added.';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'prop' => $data,
+                    'type' => 'error'
+                ]), Config::get('statuscode.validationFailCode'));
             }
 
+            $data = $pro;
             $message = 'Property added successfully';
             return Response::json(array('message' => $message ,'data'=> [
-                'type' => 'save',
-                'prop' => $prop
+                'prop' => $data,
+                'type' => 'save'
             ]), Config::get('statuscode.successCode'));
 
         } catch (Exception $e) {
@@ -85,10 +116,19 @@ class PropertyController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id,Request $request)
     {
-        $response = Properties::where('agentId','=','2')->where('id','=',$id)->get();
-        return $response;
+        $user_id = $request['user_id'];
+        $property = Properties::find($id);
+        /*Check if the user is owner of the Property list or not*/
+        if ($property->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Property does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
+        return $property;
     }
 
     /**
@@ -97,9 +137,19 @@ class PropertyController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, Request $request)
     {
+        $user_id = $request['user_id'];
         $property = Properties::find($id);
+
+        /*Check if the user is owner of the Property list or not*/
+        if ($property->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Property does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
         return $property;
     }
 
@@ -109,13 +159,15 @@ class PropertyController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
         try{
-            //$user = User::find(1);
-            $propertyData = Request::all();
+            $userId = $request['user_id'];
+            $user = User::find($userId);
+            $propertyData = $request->input();
             $pro = Properties::find($id);
-            $pro->agentId = 2;
+
+            $pro->agentId = $userId;
             $pro->clientId = 1;
             $pro->title = $propertyData['title'];
             $pro->description = $propertyData['description'];
@@ -125,22 +177,24 @@ class PropertyController extends Controller {
             $pro->area = $propertyData['area'];
             $pro->price = $propertyData['price'];
             $pro->type = $propertyData['type'];
-            $pro->save();
 
-            $errors = $pro->getErrors()->all();
-            //Log::info('this update'. print_r($errors, true));
-            if (empty($errors))
-            {
-                $data = $pro;
-                $message = 'Property updated successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
-            }
-            else
-            {
+            if (!$pro->save()) {
+                $errors = $pro->getErrors()->all();
+                //Log::info('this update'. print_r($errors, true));
                 $data = $errors;
                 $message = 'Property not updated.';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'prop' => $data,
+                    'type' => 'error'
+                ]), Config::get('statuscode.validationFailCode'));
             }
+            $data = $pro;
+            $message = 'Property updated successfully';
+            return Response::json(array('message' => $message ,'data'=> [
+                'prop' => $data,
+                'type' => 'Update'
+            ]), Config::get('statuscode.successCode'));
+
         }
         catch(Exception $e)
         {
@@ -163,19 +217,21 @@ class PropertyController extends Controller {
         $user_id = $request['user_id'];
         $property = Properties::find($id);
 
-        /*Check if the user is owner of the distribution list or not*/
-        if ($property->created_by != $user_id) {
+        /*Check if the user is owner of the Property list or not*/
+        if ($property->agentId != $user_id) {
             return response([
-                'message' => 'This distribution list does not belong to you.'
-            ], 422);
+                'message' => 'This Property does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
         }
 
         try
         {
             Properties::destroy($id);
-            $data = $id;
             $message = 'Property Deleted.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
+            return Response::json(array('message' => $message ,'data'=> [
+                'prop' => $id,
+                'type' => 'delete'
+            ]), Config::get('statuscode.successCode'));
         }
         catch(Exception $e)
         {
@@ -184,5 +240,4 @@ class PropertyController extends Controller {
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
     }
-
 }

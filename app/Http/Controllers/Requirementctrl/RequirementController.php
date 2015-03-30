@@ -7,6 +7,7 @@ use App\User;
 use Auth;
 use Aws\CloudFront\Exception\Exception;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,27 @@ class RequirementController extends Controller {
     
     public function __construct()
     {
-        $this->middleware('oauth');
+        //$this->middleware('oauth');
     }
+
+    /*Start View Pages Code*/
+    public function indexpage()
+    {
+        return view('requirements/index');
+    }
+    public function listing()
+    {
+        return view('requirements/list');
+    }
+    public function view()
+    {
+        return view('requirements/view');
+    }
+    public function add()
+    {
+        return view('requirements/add');
+    }
+    /*Start View Pages Code*/
 
     /**
      * Display a listing of the resource.
@@ -67,21 +87,9 @@ class RequirementController extends Controller {
             $req->price = $requirementData['price'];
             $req->priceRange = $requirementData['priceRange'];
             $req->type = $requirementData['type'];
-            $req->save(['user' => $user, 'requirement' => $req]);
-            $errors = $req->getErrors()->all();
 
-            if (empty($errors))
-            {
-                $data = $req;
-                $message = 'Requirement added successfully';
-                return Response::json(array('message' => $message ,'data'=> [
-                    'req' => $data,
-                    'type' => 'save'
-                ]), Config::get('statuscode.successCode'));
-
-            }
-            else
-            {
+            if (!$req->save(['user' => $user, 'requirement' => $req])) {
+                $errors = $req->getErrors()->all();
                 $data = $errors;
                 $message = 'Requirement not added.';
                 return Response::json(array('message' => $message ,'data'=> [
@@ -89,10 +97,18 @@ class RequirementController extends Controller {
                     'type' => 'error'
                 ]), Config::get('statuscode.validationFailCode'));
             }
+
+            $data = $req;
+            $message = 'Requirement added successfully';
+            return Response::json(array('message' => $message ,'data'=> [
+                'req' => $data,
+                'type' => 'save'
+            ]), Config::get('statuscode.successCode'));
+
         }
         catch(Exception $e)
         {
-            $data = '';
+            $data = 'Exception';
             $message = 'Requirement not Added.';
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
@@ -104,10 +120,19 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id,Request $request)
     {
-        $response = Requirement::where('agentId','=','2')->where('id','=',$id)->get();
-        return $response;
+        $user_id = $request['user_id'];
+        $requirement = Requirement::find($id);
+        /*Check if the user is owner of the Property list or not*/
+        if ($requirement->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Requirement does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
+        return $requirement;
     }
 
     /**
@@ -116,9 +141,18 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, Request $request)
     {
+        $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
+        /*Check if the user is owner of the Property list or not*/
+        if ($requirement->agentId != $user_id) {
+
+            return response([
+                'message' => 'This Requirement does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
+        }
+
         return $requirement;
     }
 
@@ -128,13 +162,15 @@ class RequirementController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
         try{
-            $user = User::find(1);
-            $requirementData = Request::all();
+            $userId = $request['user_id'];
+            $user = User::find($userId);
+
+            $requirementData = $request->input();
             $req =  Requirement::find($id);
-            $req->agentId = 2;
+            $req->agentId = $userId;
             $req->clientId = 1;
             $req->title = $requirementData['title'];
             $req->description = $requirementData['description'];
@@ -145,22 +181,23 @@ class RequirementController extends Controller {
             $req->price = $requirementData['price'];
             $req->priceRange = $requirementData['priceRange'];
             $req->type = $requirementData['type'];
-            $req->save(['user' => $user, 'requirement' => $req]);
-            $errors = $req->getErrors()->all();
 
-            if (empty($errors))
-            {
-                $data = $req;
-                $message = 'Requirement updated successfully';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.successCode'));
-
-            }
-            else
-            {
+            if (!$req->save(['user' => $user, 'requirement' => $req])) {
+                $errors = $req->getErrors()->all();
                 $data = $errors;
                 $message = 'Requirement not updated.';
-                return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.validationFailCode'));
+                return Response::json(array('message' => $message ,'data'=> [
+                    'req' => $data,
+                    'type' => 'error'
+                ]), Config::get('statuscode.validationFailCode'));
             }
+
+            $data = $req;
+            $message = 'Requirement updated successfully';
+            return Response::json(array('message' => $message ,'data'=> [
+                'req' => $data,
+                'type' => 'Update'
+            ]), Config::get('statuscode.successCode'));
         }
         catch(Exception $e)
         {
@@ -184,8 +221,8 @@ class RequirementController extends Controller {
         /*Check if the user is owner of the distribution list or not*/
         if ($req->agentId != $user_id) {
             return response([
-                'message' => 'This distribution list does not belong to you.'
-            ], 422);
+                'message' => 'This Requirement does not belong to you.'
+            ], Config::get('statuscode.validationFailCode'));
         }
 
         try
@@ -196,7 +233,6 @@ class RequirementController extends Controller {
                 'req' => $id,
                 'type' => 'delete'
             ]), Config::get('statuscode.successCode'));
-
 
         }
         catch(Exception $e)

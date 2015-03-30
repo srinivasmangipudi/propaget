@@ -11,7 +11,7 @@
                </thead>
                <tbody>
                    <tr  ng-repeat='listmembers in filtered = (distributionMemberlist | filter: search | orderBy : predicate :reverse) | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit track by $index '>
-                       <td><a href="#view/@{{ listmembers.name }}">@{{ listmembers.name }}</a></td>
+                       <td>@{{ listmembers.name }}</td>
                    </tr>
                </tbody>
             </table>
