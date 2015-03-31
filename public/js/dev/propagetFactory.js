@@ -10,7 +10,7 @@ propagateServiceModule.factory('propagateService', ['$http', '$rootScope', funct
         apiCall: function (operation, method, functionUrl, propagateData) {
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl + '?access_token=1baef17f40a43c182de78d67b0a01d5cfdd64732',
+                url: base_url + functionUrl + '?access_token=0f3027786012f371f687c50e9a75b2b5c9be86bf',
                 method: method,
                 data: (propagateData!=undefined) ? $.param(propagateData) : ''
             })

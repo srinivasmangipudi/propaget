@@ -25,11 +25,11 @@ class Requirement extends BaseModel {
 
     public function save(array $options = array())
     {
-
-        //return parent::save();
         $saved = parent::save();
 
-        //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
+        watchdog_message('New requirement was added.', 'normal', ['requirement' => $options['requirement']]);
+
+        \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
 
         return $saved;
     }
