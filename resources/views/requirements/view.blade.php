@@ -26,7 +26,7 @@
        </div>
 
        <div class="form-group">
-           <label class="text-primary">Range : </label>
+           <label class="text-primary">Area Range : </label>
            @{{ requirement.range }}
       </div>
 
