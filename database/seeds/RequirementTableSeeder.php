@@ -25,16 +25,25 @@ class RequirementTableSeeder extends Seeder
         $title = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
         $description = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
 
+        $agent_users = DB::table('users')->where('role', '=', 'agent')->get();
+        foreach($agent_users as $a_users) {
+            $agentIds[] = $a_users->id;
+        }
+
+        $client_users = DB::table('users')->where('role', '=', 'client')->get();
+        foreach($client_users as $c_users) {
+            $clientIds[] = $c_users->id;
+            $clientEmails[] = $c_users->email;
+        }
+
         for ($i = 0; $i < 50; $i++)
         {
-            $userId = rand(1,50);
-            $user = User::find($userId);
-
-            $faker = Faker\Factory::create();
             $req = new Requirement();
-            $req->agent_id = $userId;
-            $req->client_id = rand(1,50);
-            $req->client_email = $faker->email;
+            $req->agent_id = $agentIds[array_rand($agentIds, 1)];
+            $user = User::find($req->agent_id);
+            $selectClientId = array_rand($clientIds, 1);
+            $req->client_id = $clientIds[$selectClientId];
+            $req->client_email = $clientEmails[$selectClientId];
             $req->title = $title[array_rand($title, 1)];
             $req->description = $description[array_rand($description, 1)];
             $req->location = $location[array_rand($location, 1)];
@@ -43,7 +52,8 @@ class RequirementTableSeeder extends Seeder
             $req->price = $price[array_rand($price, 1)];
             $req->price_range = $priceRange[array_rand($priceRange, 1)];
             $req->type = $type[array_rand($type, 1)];
-            $req->approved = $approved[array_rand($approved, 1)];
+            //$req->approved = $approved[array_rand($approved, 1)];
+            $req->approved = 0;
             $req->save(['user' => $user, 'requirement' => $req]);
 
         }

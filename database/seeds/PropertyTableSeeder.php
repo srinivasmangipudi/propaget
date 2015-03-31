@@ -25,24 +25,34 @@ class PropertyTableSeeder extends Seeder
         $title = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
         $description = array('2-BHK','3-BHK','4-BHK','5-BHK','6-BHK','Home','Flat','Good Flat');
 
+        $agent_users = DB::table('users')->where('role', '=', 'agent')->get();
+        foreach($agent_users as $a_users) {
+            $agentIds[] = $a_users->id;
+        }
+
+        $client_users = DB::table('users')->where('role', '=', 'client')->get();
+        foreach($client_users as $c_users) {
+            $clientIds[] = $c_users->id;
+            $clientEmails[] = $c_users->email;
+        }
+
         for ($i = 0; $i < 50; $i++)
         {
-            $userId = rand(1,50);
-            $user = User::find($userId);
-            $faker = Faker\Factory::create();
-
             $pro = new Properties();
-            $pro->agent_id = $userId;
-            $pro->client_id = rand(1,50);
+            $pro->agent_id = $agentIds[array_rand($agentIds, 1)];
+            $user = User::find($pro->agent_id);
+            $selectClientId = array_rand($clientIds, 1);
+            $pro->client_id = $clientIds[$selectClientId];
+            $pro->client_email =  $clientEmails[$selectClientId];
             $pro->title = $title[array_rand($title, 1)];
             $pro->description = $description[array_rand($description, 1)];
-            $pro->client_email =  $faker->email;
             $pro->address = $area[array_rand($area, 1)];
             $pro->location = $location[array_rand($location, 1)];
             $pro->area = $area[array_rand($area, 1)];
             $pro->price = $price[array_rand($price, 1)];
             $pro->type = $type[array_rand($type, 1)];
-            $pro->approved = $approved[array_rand($approved, 1)];
+            //$pro->approved = $approved[array_rand($approved, 1)];
+            $pro->approved = 0;
             $pro->save();
 
         }

@@ -20,6 +20,7 @@ class UserTableSeeder extends Seeder {
     public function run()
     {
 //        DB::table('users')->truncate();
+        $role =array('agent', 'client','anonymous');
 
         $user = new User;
         $user->name = 'Amitav Roy';
@@ -28,6 +29,7 @@ class UserTableSeeder extends Seeder {
         $user->password = Hash::make('password');
         $user->userType = 'normal';
         $user->userId = '0';
+        $user->role = $role[0];
         $user->save();
 
         $user = new User;
@@ -37,7 +39,10 @@ class UserTableSeeder extends Seeder {
         $user->password = Hash::make('password');
         $user->userType = 'normal';
         $user->userId = '0';
+        $user->role = $role[0];
         $user->save();
+
+        $role =array('agent', 'client','anonymous');
 
         $faker = Faker\Factory::create();
 
@@ -51,6 +56,7 @@ class UserTableSeeder extends Seeder {
             $user->password = Hash::make('password');
             $user->userType = $faker->randomElement(array('normal', 'facebook', 'google'));
             $user->userId = '0';
+            $user->role = $role[array_rand($role, 1)];
             $user->save();
         }
     }
