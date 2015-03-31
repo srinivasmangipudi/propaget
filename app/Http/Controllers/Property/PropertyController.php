@@ -76,7 +76,10 @@ class PropertyController extends Controller {
             $pro->agent_id = $userId;
             $pro->client_id = 1;
             $pro->title = $propertyData['title'];
-            $pro->description = $propertyData['description'];
+            if(isset($propertyData['description']) && $propertyData['description'])
+            {
+                $pro->description = $propertyData['description'];
+            }
             $pro->client_email = $propertyData['client_email'];
             $pro->address = $propertyData['address'];
             $pro->location = $propertyData['location'];
@@ -170,7 +173,12 @@ class PropertyController extends Controller {
             $pro->agent_id = $userId;
             $pro->client_id = 1;
             $pro->title = $propertyData['title'];
-            $pro->description = $propertyData['description'];
+
+            if(isset($propertyData['description']))
+            {
+                $pro->description = $propertyData['description'];
+            }
+
             $pro->client_email = $propertyData['client_email'];
             $pro->address = $propertyData['address'];
             $pro->location = $propertyData['location'];
