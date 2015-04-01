@@ -60,8 +60,8 @@ class AuthController extends Controller {
                 'grant_type' => 'password',
                 'client_id' => 'testclient',
                 'client_secret' => 'testpass',
-                'username' => 'amitav.roy@focalworks.in',
-                'password' => 'password'
+                'username' => $request->input('email'),
+                'password' => $request->input('password')
             );
 
             /* Call get token route to get access token after user logs in */

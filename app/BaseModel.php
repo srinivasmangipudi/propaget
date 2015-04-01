@@ -10,6 +10,8 @@ class BaseModel extends Model {
 
     use ValidatingTrait;
 
+    protected $throwValidationExceptions = true;
+
     public function save(array $options = array())
     {
         /* Code to fix bug for Save during testing */
