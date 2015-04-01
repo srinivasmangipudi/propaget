@@ -1,16 +1,13 @@
 <?php namespace App\Http\Controllers\Distribution;
 
-use App\Commands\SaveDistributionList;
 use App\DistList;
-use App\Http\Requests;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Queue;
-use Symfony\Component\HttpFoundation\Response;
 use App\DistListMembers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-//use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class DistListController extends Controller {
@@ -32,43 +29,32 @@ class DistListController extends Controller {
     }
     /*Start View Pages Code*/
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index(Request $requests)
-	{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $requests)
+    {
         $userId = $requests['user_id'];
         $disMember = new DistList();
         $response = $disMember->loadFullDistribution($userId);
         return $response;
-	}
+    }
 
-    /*Old Function From Old Controller
-     * public function index(Request $requests)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
     {
-        $user_id = $requests['user_id'];
-
-        // fetch distribution list which the user owns
-        $data = DB::table('dist_lists')
-            ->where('created_by', $user_id)
-            ->get();
-
-        return $data;
-    }*/
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param Request $request
      * @return Response
      */
@@ -76,6 +62,7 @@ class DistListController extends Controller {
     {
         // get all post data
         $postData = $request->input();
+        Auth::loginUsingId($request['user_id']); // log in user
 
         $distList = new DistList;
         $distList->name = $postData['name'];
@@ -90,6 +77,8 @@ class DistListController extends Controller {
 
         $members = json_decode($postData['members']);
 
+        watchdog_message('New distribution list created.', 'normal', ['distList' => $distList, 'members' => $members]);
+
         Queue::push(new SaveDistributionList($members, $distList->id));
 
         return response(array(
@@ -98,52 +87,49 @@ class DistListController extends Controller {
         ), 201);
     }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-        //$userId = 2;
-        //$response = DistList::where('createdBy','=',$userId)->where('id','=',$id)->get();
-        //$response = DistListMembers::where('distListId','=',$id)->get();
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
         $disMember = new DistListMembers();
         $response = $disMember->loadDisMemberList($id);
         return $response;
-	}
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
         $userId = 2;
         $response = DistList::where('createdBy','=',$userId)->where('id','=',$id)->get();
         return $response;
-	}
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        //
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function destroy($id, Request $request)
     {
         $user_id = $request['user_id'];
@@ -170,8 +156,9 @@ class DistListController extends Controller {
         }
     }
 
-    public function getAllRequirement($id = null    )
+    public function getAllRequirement($id = null)
     {
+
         Log::info('I was here');
         return array(1,2,3);
     }

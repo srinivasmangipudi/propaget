@@ -8,7 +8,7 @@ requirementApp.filter('startFrom', function() {
         return [];
     }
 });
-requirementApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+requirementApp.config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
         .when('/list',{
             title: 'View Requirement',
@@ -33,6 +33,8 @@ requirementApp.config(['$routeProvider', '$locationProvider', function($routePro
         .otherwise({
             redirectTo: '/list'
         });
+
+    $httpProvider.defaults.withCredentials = true;
 }]);
 
 requirementApp.controller('mainCtrl', ['$scope', 'propagateService',  function($scope, propagateService) {
@@ -89,6 +91,9 @@ requirementApp.controller('requirementController', ['$scope', 'propagateService'
 
 
 requirementApp.controller('requirementViewCtrl', ['$scope', 'propagateService', '$routeParams', '$location',  function($scope, propagateService, $routeParams ,$location) {
+
+    console.log('UI AM HERE');
+    console.log('ACESS TOKEN===', readCookie('access_token'));
 
     $scope.$emit('MsgEvent', '');
     if($routeParams.id) {
@@ -163,7 +168,7 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
                     })
                     .catch(function(fallback) {
                         //console.log('Error add Msg ==== ' + JSON.stringify(fallback));
-                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                        //$scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
                     });
             }
         }

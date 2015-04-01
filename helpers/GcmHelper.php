@@ -23,7 +23,6 @@ class GcmHelper {
     public function sendNotification(array $registatoinIds, array $message)
     {
 
-        \Log::info(env('AWS_ACCESS_KEY_ID'));
         // Set POST variables
         $url = 'https://android.googleapis.com/gcm/send';
 
@@ -39,7 +38,6 @@ class GcmHelper {
 
         // Open connection
         $ch = curl_init();
-        \Log::info('Open curl');
 
         // Set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -57,13 +55,14 @@ class GcmHelper {
         $result = curl_exec($ch);
 
         if ($result === FALSE) {
-            \Log::info('Failed');
             die('Curl failed: ' . curl_error($ch));
         }
 
         // Close connection
         curl_close($ch);
+
+        watchdog_message('GCM notification sent.', 'normal', ['regIds' => $registatoinIds, 'message' => $message]);
+
         echo $result;
-        \Log::info('Sent');
     }
 }
