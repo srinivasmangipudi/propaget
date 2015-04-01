@@ -79,7 +79,12 @@ class RequirementController extends Controller {
             $req->agent_id = $userId;
             $req->client_id = 1;
             $req->title = $requirementData['title'];
-            $req->description = $requirementData['description'];
+
+            if(isset($requirementData['description']) && $requirementData['description'])
+            {
+                $req->description = $requirementData['description'];
+            }
+
             $req->client_email = $requirementData['client_email'];
             $req->location = $requirementData['location'];
             $req->area = $requirementData['area'];
@@ -173,7 +178,10 @@ class RequirementController extends Controller {
             $req->agent_id = $userId;
             $req->client_id = 1;
             $req->title = $requirementData['title'];
-            $req->description = $requirementData['description'];
+            if(isset($requirementData['description']))
+            {
+                $req->description = $requirementData['description'];
+            }
             $req->client_email = $requirementData['client_email'];
             $req->location = $requirementData['location'];
             $req->area = $requirementData['area'];

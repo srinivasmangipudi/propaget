@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\DoLoginPdo;
-use GcmHelper;
 
 Route::get('/', 'WelcomeController@index');
 

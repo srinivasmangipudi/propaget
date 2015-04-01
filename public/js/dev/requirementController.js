@@ -42,7 +42,7 @@ requirementApp.controller('mainCtrl', ['$scope', 'propagateService',  function($
     $scope.$on('MsgEvent', function(event, data) {
         $scope.infoMsg = data;
     });
-    $scope.infoMsg = '';
+    //$scope.infoMsg = '';
 }]);
 
 requirementApp.controller('requirementController', ['$scope', 'propagateService', '$location',  function($scope, propagateService,$location) {

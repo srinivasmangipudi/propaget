@@ -42,7 +42,7 @@
            </div>
 
            <div class="form-group">
-               <label>Range:</label>
+               <label>Area Range:</label>
                <input type='text' ng-model="requirement.range" class="form-control" name="range" required ng-class="show_error('range')">
           </div>
 

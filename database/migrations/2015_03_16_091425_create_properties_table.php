@@ -17,10 +17,10 @@ class CreatePropertiesTable extends Migration {
         {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('agentId');
-            $table->integer('clientId');
+            $table->integer('agent_id');
+            $table->integer('client_id');
             $table->string('title', '255');
-            $table->string('clientEmail', '255');
+            $table->string('client_email', '255');
             $table->text('description');
             $table->string('address', '255');
             $table->string('type', '100');
