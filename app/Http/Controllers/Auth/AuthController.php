@@ -69,6 +69,7 @@ class AuthController extends Controller {
             $request->replace($tokenRequest->input()); /* To replace the request parameters with new one */
             $OauthTokenData = json_decode(Route::dispatch($tokenRequest)->getContent());
 
+            /* Stored access token in the cookie */
             setcookie('access_token', $OauthTokenData->access_token, 0, '/', null, false, false);
 
             return  redirect()->intended($this->redirectPath());
@@ -79,6 +80,21 @@ class AuthController extends Controller {
             ->withErrors([
                 'email' => $this->getFailedLoginMessage(),
             ]);
+    }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getLogout()
+    {
+        $this->auth->logout();
+
+        /* Empty cookie once user logs out */
+        setcookie('access_token', '', 0, '/', null, false, false);
+
+        return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
     }
 
 }
