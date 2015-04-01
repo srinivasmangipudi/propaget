@@ -29,7 +29,7 @@ class Requirement extends BaseModel {
         //return parent::save();
         $saved = parent::save();
 
-        //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
+        \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
 
         return $saved;
     }

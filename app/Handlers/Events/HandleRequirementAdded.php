@@ -48,6 +48,11 @@ class HandleRequirementAdded {
     private function sendMobileNotification()
     {
         \Log::info('A GCM notification will be send to all users about a new Requirement');
+
+        $registrationIds = array('APA91bHsWkhMbTnwFAl3b9zJWPFpG94yyyYOwu3v-ONkP0GUgrINXUyhQp0xA5SOsD_4E1vGMnthn1pYEUqKW2fybYBRd5p5hF0mXLONQ5AGGMA0iaZUVQrpN5e9IemHplnJ7AebJcQPzVtWaIu-82Fsr0BpXlH3kQ');
+        $message = array('title' => 'New requirement added', 'message' => 'Requirement added successfully');
+        $gcmNotification = new \GcmHelper();
+        $gcmNotification->sendNotification($registrationIds, $message);
     }
 
 }

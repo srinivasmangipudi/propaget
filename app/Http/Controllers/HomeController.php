@@ -1,5 +1,8 @@
 <?php namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 class HomeController extends Controller {
 
 	/*
@@ -28,9 +31,11 @@ class HomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		return view('home');
+        Log::info('Cokies123 == '. print_r($request->cookie('access_token'), true));
+
+        return view('home');
 	}
 
 }
