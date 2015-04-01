@@ -219,30 +219,59 @@ POST: /handshake/{network_chain_id}?confirm=true
 
 
 ### Matches
-* ###### get matches for requirement - for an agent
+* ###### get matches for requirement - for an agent (local + network + extended)
 GET: /matches/requirement/{id}
 
         params:
             agent_id: xxx
 
-        returns (array of properties):
+        returns (array of properties with 3 different blocks >
+                local matches, matches from within his friend network,
+                matches from extended network for which he might have to buy subscriptions):
           {
-            [
-              prop1, prop2, prop3, ... propN
-            ]
+            local: {
+                    [
+                      prop1, prop2, prop3, ... propN
+                    ]
+            },
+            network: {
+                    [
+                      prop1, prop2, prop3, ... propN
+                    ]
+            },
+            extended: {
+                    [
+                      prop1, prop2, prop3, ... propN
+                    ]
+            }
           }
 
-* ###### get matches for property - for an agent
+* ###### get matches for property - for an agent (local + network + extended)
 GET: /matches/property/{id}
 
         params:
             agent_id: xxx
 
-        returns (array of requirements):
+        returns (array of requirements with 3 different blocks > 
+                local matches, matches from within his friend network,
+                matches from extended network for which he might have to buy subscriptions):
           {
-            [
-              req1, req2, req3, ... reqN
-            ]
+            local: {
+                    [
+                      req1, req2, req3, ... reqN
+                    ]
+            },
+            network: {
+                    [
+                      req1, req2, req3, ... reqN
+                    ]
+            },
+            extended: {
+                    [
+                      req1, req2, req3, ... reqN
+                    ]
+            },
+
           }
 
 * ###### confirm match
