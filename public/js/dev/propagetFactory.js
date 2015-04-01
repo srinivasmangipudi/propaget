@@ -2,16 +2,16 @@
  * Created by urmila on 26/3/15.
  */
 
-var propagateServiceModule= angular.module('propagateServiceModule', ['ngCookies']);
+var propagateServiceModule= angular.module('propagateServiceModule', []);
 
 /** FACTORY METHOD STARTS **/
-propagateServiceModule.factory('propagateService', ['$http', '$rootScope', '$cookieStore', function($http, $rootScope, $cookieStore) {
+propagateServiceModule.factory('propagateService', ['$http', '$rootScope', function($http, $rootScope) {
     var access_token = readCookie('access_token');
     return {
         apiCall: function (operation, method, functionUrl, propagateData) {
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl + '?access_token=1baef17f40a43c182de78d67b0a01d5cfdd64732',
+                url: base_url + functionUrl + '?access_token=' + access_token,
                 method: method,
                 data: (propagateData!=undefined) ? $.param(propagateData) : ''
             })
