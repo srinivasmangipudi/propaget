@@ -27,6 +27,7 @@ class OAuthController extends Controller {
 
         /*Log::info('$bridgedRequest'. print_r($bridgedRequest, true));
         Log::info('$bridgedResponse'. print_r($bridgedResponse, true));*/
+        Log::info('Inputs'. print_r($request->input(), true));
 
 
         $bridgedResponse = \App::make('oauth2')->handleTokenRequest($bridgedRequest, $bridgedResponse);

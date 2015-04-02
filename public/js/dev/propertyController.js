@@ -151,7 +151,7 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$rout
                     $location.path('/');
                 }).catch(function(fallback) {
                     //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-                    $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                    $scope.$emit('MsgEvent', fallback.data.message+fallback.data.prop);
                 });
             }
         }

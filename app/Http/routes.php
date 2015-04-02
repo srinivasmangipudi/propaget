@@ -20,26 +20,47 @@ Route::controllers([
     'password' => 'Auth\PasswordController',
 ]);
 
+Route::resource('profile', 'Profile\ProfileController');
+Route::filter('ifRoleSet', function()
+{
+    if ( Auth::user()->role !== 'anonymous') {
+        return Redirect::to('/');
+    }
+});
+
+Route::group(array('before' => 'ifRoleSet'), function () {
+    Route::get('profilepages', 'Profile\ProfileController@indexpage');
+    Route::get('profilepages/adddetailpage', 'Profile\ProfileController@adddetailpage');
+});
+
+Route::filter('ifRoleNotSet', function()
+{
+    if ( Auth::user()->role == 'anonymous') {
+        return Redirect::to('/profilepages#/adddetailpage');
+    }
+});
+Route::group(array('before' => 'ifRoleNotSet'), function ()
+{
+    Route::get('distribution', 'Distribution\DistListController@indexpage');
+    Route::get('distribution/list', 'Distribution\DistListController@listing');
+    Route::get('distribution/view', 'Distribution\DistListController@view');
+
+    Route::get('requirements', 'Requirementctrl\RequirementController@indexpage');
+    Route::get('requirements/list', 'Requirementctrl\RequirementController@listing');
+    Route::get('requirements/view', 'Requirementctrl\RequirementController@view');
+    Route::get('requirements/add', 'Requirementctrl\RequirementController@add');
+
+    Route::get('properties', 'Property\PropertyController@indexpage');
+    Route::get('properties/list', 'Property\PropertyController@listing');
+    Route::get('properties/add', 'Property\PropertyController@add');
+    Route::get('properties/view', 'Property\PropertyController@view');
+});
+
 Route::group(['middleware' => 'oauth'], function() {
     Route::resource('req-list','Requirementctrl\RequirementController');
     Route::resource('property', 'Property\PropertyController');
     Route::resource('dist-list', 'Distribution\DistListController');
 });
-
-Route::get('requirements', 'Requirementctrl\RequirementController@indexpage');
-Route::get('requirements/list', 'Requirementctrl\RequirementController@listing');
-Route::get('requirements/view', 'Requirementctrl\RequirementController@view');
-Route::get('requirements/add', 'Requirementctrl\RequirementController@add');
-
-Route::get('properties', 'Property\PropertyController@indexpage');
-Route::get('properties/list', 'Property\PropertyController@listing');
-Route::get('properties/add', 'Property\PropertyController@add');
-Route::get('properties/view', 'Property\PropertyController@view');
-
-Route::get('distribution', 'Distribution\DistListController@indexpage');
-Route::get('distribution/list', 'Distribution\DistListController@listing');
-Route::get('distribution/view', 'Distribution\DistListController@view');
-
 
 Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');

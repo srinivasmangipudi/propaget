@@ -6,11 +6,12 @@ var propagateServiceModule= angular.module('propagateServiceModule', []);
 
 /** FACTORY METHOD STARTS **/
 propagateServiceModule.factory('propagateService', ['$http', '$rootScope', function($http, $rootScope) {
+    var access_token = readCookie('access_token');
     return {
         apiCall: function (operation, method, functionUrl, propagateData) {
             return $http({
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                url: base_url + functionUrl + '?access_token=0f3027786012f371f687c50e9a75b2b5c9be86bf',
+                url: base_url + functionUrl + '?access_token=' + access_token,
                 method: method,
                 data: (propagateData!=undefined) ? $.param(propagateData) : ''
             })
@@ -23,3 +24,16 @@ propagateServiceModule.factory('propagateService', ['$http', '$rootScope', funct
         }
     }
 }]);
+
+
+function readCookie(name) {
+    var cookiename = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++)
+    {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(cookiename) == 0) return c.substring(cookiename.length,c.length);
+    }
+    return null;
+}

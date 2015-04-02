@@ -24,21 +24,21 @@ class UserTableSeeder extends Seeder {
 
         $user = new User;
         $user->name = 'Amitav Roy';
-        $user->phoneNumber = '+919820098200';
+        $user->phone_number = '+919820098200';
         $user->email = 'amitav.roy@focalworks.in';
         $user->password = Hash::make('password');
-        $user->userType = 'normal';
-        $user->userId = '0';
+        $user->user_type = 'normal';
+        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
 
         $user = new User;
         $user->name = 'Kaustubh Malgaonkar';
-        $user->phoneNumber = '+919830098300';
+        $user->phone_number = '+919830098300';
         $user->email = 'kaustubh.malgaonkar@focalworks.in';
         $user->password = Hash::make('password');
-        $user->userType = 'normal';
-        $user->userId = '0';
+        $user->user_type = 'normal';
+        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
 
@@ -51,11 +51,11 @@ class UserTableSeeder extends Seeder {
             $number = $faker->numberBetween('9820098200', '9820099900');
             $user = new User;
             $user->name = $faker->userName;
-            $user->phoneNumber = '+91' . $number;
+            $user->phone_number = '+91' . $number;
             $user->email = $faker->email;
             $user->password = Hash::make('password');
-            $user->userType = $faker->randomElement(array('normal', 'facebook', 'google'));
-            $user->userId = '0';
+            $user->user_type = $faker->randomElement(array('normal', 'facebook', 'google'));
+            $user->uid = '0';
             $user->role = $role[array_rand($role, 1)];
             $user->save();
         }

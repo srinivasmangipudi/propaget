@@ -3,12 +3,14 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use App\Properties;
-use Aws\CloudFront\Exception\Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use Watson\Validating\ValidationException;
 
 class PropertyController extends Controller {
 
@@ -64,52 +66,13 @@ class PropertyController extends Controller {
      * Store a newly created resource in storage.
      *
      * @return Response
-     */
+    */
     public function store(Request $request)
     {
         $userId = $request['user_id'];
+        $propertyData = $request->input();
 
-        try {
-            $propertyData = $request->input();
-            
-            $pro = new Properties;
-            $pro->agent_id = $userId;
-            $pro->client_id = 1;
-            $pro->title = $propertyData['title'];
-            if(isset($propertyData['description']) && $propertyData['description'])
-            {
-                $pro->description = $propertyData['description'];
-            }
-            $pro->client_email = $propertyData['client_email'];
-            $pro->address = $propertyData['address'];
-            $pro->location = $propertyData['location'];
-            $pro->area = $propertyData['area'];
-            $pro->price = $propertyData['price'];
-            $pro->type = $propertyData['type'];
-
-            if (!$pro->save()) {
-                $errors = $pro->getErrors()->all();
-                $data = $errors;
-                $message = 'Property not added.';
-                return Response::json(array('message' => $message ,'data'=> [
-                    'prop' => $data,
-                    'type' => 'error'
-                ]), Config::get('statuscode.validationFailCode'));
-            }
-
-            $data = $pro;
-            $message = 'Property added successfully';
-            return Response::json(array('message' => $message ,'data'=> [
-                'prop' => $data,
-                'type' => 'save'
-            ]), Config::get('statuscode.successCode'));
-
-        } catch (Exception $e) {
-
-            $data = '';
-            $message = 'Property not Added.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
-        }
+        return $this->save_property($userId, $propertyData);
 
     }
 
@@ -164,54 +127,11 @@ class PropertyController extends Controller {
      */
     public function update($id, Request $request)
     {
-        try{
-            $userId = $request['user_id'];
-            $user = User::find($userId);
-            $propertyData = $request->input();
-            $pro = Properties::find($id);
 
-            $pro->agent_id = $userId;
-            $pro->client_id = 1;
-            $pro->title = $propertyData['title'];
+        $userId = $request['user_id'];
+        $propertyData = $request->input();
 
-            if(isset($propertyData['description']))
-            {
-                $pro->description = $propertyData['description'];
-            }
-
-            $pro->client_email = $propertyData['client_email'];
-            $pro->address = $propertyData['address'];
-            $pro->location = $propertyData['location'];
-            $pro->area = $propertyData['area'];
-            $pro->price = $propertyData['price'];
-            $pro->type = $propertyData['type'];
-
-            if (!$pro->save()) {
-                $errors = $pro->getErrors()->all();
-                //Log::info('this update'. print_r($errors, true));
-                $data = $errors;
-                $message = 'Property not updated.';
-                return Response::json(array('message' => $message ,'data'=> [
-                    'prop' => $data,
-                    'type' => 'error'
-                ]), Config::get('statuscode.validationFailCode'));
-            }
-            $data = $pro;
-            $message = 'Property updated successfully';
-            return Response::json(array('message' => $message ,'data'=> [
-                'prop' => $data,
-                'type' => 'Update'
-            ]), Config::get('statuscode.successCode'));
-
-        }
-        catch(Exception $e)
-        {
-            $data = $id;
-            $message = 'Property not updated.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
-        }
-
-
+        return $this->save_property($userId, $propertyData, $id);
     }
 
     /**
@@ -248,4 +168,105 @@ class PropertyController extends Controller {
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
     }
+
+
+    /** Helper Function to Save property **/
+    private  function save_property($userId, $propertyData, $propertyID=NULL) {
+        DB::beginTransaction();
+        try {
+
+            if(!$propertyID) {
+                /* Create client user if not exists */
+                $clientUser = User::where('email', $propertyData['client_email'])->first();
+
+                if (!$clientUser) {
+                    $clientUser = new User;
+                    $clientUser->email = $propertyData['client_email'];
+                    $clientUser->password = Hash::make('password');
+                    $clientUser->role = 'client';
+                    $clientUser->save();
+                }
+
+                $clientId = $clientUser->id;
+            }
+
+            if($propertyID) {
+                $pro = Properties::find($propertyID);
+            }else {
+                $pro = new Properties;
+                $pro->client_id = $clientId;
+            }
+
+            $pro->agent_id = $userId;
+            $pro->title = $propertyData['title'];
+            if(isset($propertyData['description']) && $propertyData['description'])
+            {
+                $pro->description = $propertyData['description'];
+            }
+            $pro->client_email = $propertyData['client_email'];
+            $pro->address = $propertyData['address'];
+            $pro->location = $propertyData['location'];
+            $pro->area = $propertyData['area'];
+            $pro->price = $propertyData['price'];
+            $pro->type = $propertyData['type'];
+            $pro->save();
+
+            if($propertyID) {
+                $data = $pro;
+                $message = 'Property updated successfully';
+                $type =  'Update';
+            }else {
+                $data = $pro;
+                $message = 'Property added successfully';
+                $type =  'save';
+            }
+
+        }
+        catch (ValidationException $e) {
+            DB::rollback();
+            Log::info('Catch exception');
+
+            $errors = $e->getErrors()->all();
+
+            $data = $errors;
+
+            if($propertyID) {
+                $message = 'Property not updated.';
+            }else {
+                $message = 'Property not Added.';
+            }
+
+            return Response::json(array('message' => $message ,'data'=> [
+                'prop' => $data,
+                'type' => 'error'
+            ]), Config::get('statuscode.validationFailCode'));
+
+        }
+        catch (Exception $e) {
+            DB::rollback();
+
+            if($propertyID) {
+                $data = $propertyID;
+                $message = 'Property not updated.';
+            }else {
+                $data = '';
+                $message = 'Property not Added.';
+            }
+
+
+            return Response::json(array('message' => $message ,'data'=>$data),
+                Config::get('statuscode.internalServerErrorCode'));
+        }
+
+        DB::commit();
+
+        return Response::json(array('message' => $message ,'data'=> [
+            'prop' => $data,
+            'type' => $type,
+        ]), Config::get('statuscode.successCode'));
+
+
+
+    }
+
 }
