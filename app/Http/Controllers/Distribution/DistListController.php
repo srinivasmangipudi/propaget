@@ -79,7 +79,7 @@ class DistListController extends Controller {
 
         watchdog_message('New distribution list created.', 'normal', ['distList' => $distList, 'members' => $members]);
 
-        Queue::push(new SaveDistributionList($members, $distList->id));
+        //\Queue::push(new SaveDistributionList($members, $distList->id));
 
         return response(array(
             'data' => ['type' => 'save', 'list' => $distList],
