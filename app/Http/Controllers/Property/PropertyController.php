@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use Watson\Validating\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class PropertyController extends Controller {
 
