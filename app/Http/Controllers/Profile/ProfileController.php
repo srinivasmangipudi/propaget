@@ -2,13 +2,13 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
-use Aws\CloudFront\Exception\Exception;
 use App\User;
 use Illuminate\Support\Facades\Route;
 
@@ -59,22 +59,59 @@ class ProfileController extends Controller {
         try
         {
             $userData = $request->input();
-            Log::error('in store userdata'.print_r($userData,true));
-            $user = new User();
-            $user->name = $userData['name'];
-            $user->phoneNumber = $userData['phoneNumber'];
-            $user->email = $userData['email'];
-            $user->password = Hash::make($userData['password']);
-            $user->userType = 'normal';
-            if(isset($userData['role']) && $userData['role']) $user->role = $userData['role'];
-            if(isset($userData['experience']) && $userData['experience'] ) $user->experience = $userData['experience'];
-            if(isset($userData['summary']) && $userData['summary']) $user->summary = $userData['summary'];
-            $user->userId = '0';
+            //Log::error('in store userdata'.print_r($userData,true));
+            if(isset($userData['phone_number']) && $userData['phone_number'])
+            {
+                $clientUser = User::where('phone_number', $userData['phone_number'])->first();
+            }
+            if (!$clientUser) {
+                $user = new User();
+                $user->name = $userData['name'];
+                $user->phone_number = $userData['phone_number'];
+                $user->email = $userData['email'];
+                $user->password = Hash::make($userData['password']);
+                $user->user_type = 'normal';
+                if(isset($userData['role']) && $userData['role']) $user->role = $userData['role'];
+                if(isset($userData['experience']) && $userData['experience'] ) $user->experience = $userData['experience'];
+                if(isset($userData['summary']) && $userData['summary']) $user->summary = $userData['summary'];
+                $user->uid = '0';
 
-            if (!$user->save()) {
-                //$errors = $user->getErrors()->all();
-                $errors = 'Errors';
-                $data = $errors;
+                if (!$user->save()) {
+                    $errors = $user->getErrors()->all();
+
+                    $data = $errors;
+                    $message = 'User not added.';
+                    return Response::json(array('message' => $message ,'data'=> [
+                        'reg' => $data,
+                        'type' => 'error'
+                    ]), Config::get('statuscode.validationFailCode'));
+                }
+
+                $data = $user;
+                $message = 'User added successfully';
+                //Log::error('in store after insert'.print_r($user,true));
+                $requestParams = array(
+                    'grant_type' => 'password',
+                    'client_id' => 'testclient',
+                    'client_secret' => 'testpass',
+                    'username' => $user->email,
+                    'password' => $userData['password']
+                );
+
+                // Call get token route to get access token after user logs in
+                $tokenRequest = Request::create('oauth/token', 'POST', $requestParams);
+                $request->replace($tokenRequest->input()); // To replace the request parameters with new one
+                $OauthTokenData = json_decode(Route::dispatch($tokenRequest)->getContent());
+
+                return Response::json(array('message' => $message ,'data'=> [
+                    'reg' => $data,
+                    'token' => $OauthTokenData,
+                    'type' => 'save'
+                ]), Config::get('statuscode.successCode'));
+            }
+            else
+            {
+                $data = 'Phone Number already Exits';
                 $message = 'User not added.';
                 return Response::json(array('message' => $message ,'data'=> [
                     'reg' => $data,
@@ -82,27 +119,6 @@ class ProfileController extends Controller {
                 ]), Config::get('statuscode.validationFailCode'));
             }
 
-            $data = $user;
-            $message = 'User added successfully';
-            //Log::error('in store after insert'.print_r($user,true));
-            $requestParams = array(
-                                'grant_type' => 'password',
-                                'client_id' => 'testclient',
-                                'client_secret' => 'testpass',
-                                'username' => $user->email,
-                                'password' => $userData['password']
-                                );
-
-            // Call get token route to get access token after user logs in
-            $tokenRequest = Request::create('oauth/token', 'POST', $requestParams);
-            $request->replace($tokenRequest->input()); // To replace the request parameters with new one
-            $OauthTokenData = json_decode(Route::dispatch($tokenRequest)->getContent());
-
-            return Response::json(array('message' => $message ,'data'=> [
-                'reg' => $data,
-                'token' => $OauthTokenData,
-                'type' => 'save'
-            ]), Config::get('statuscode.successCode'));
 
         }
         catch(Exception $e)
@@ -147,20 +163,16 @@ class ProfileController extends Controller {
         try
         {
             $userId = $request['user_id'];
+            Log::error('in put request'.print_r($request['user_id'],true));
             $user = User::find($userId);
             $userData = $request->input();
-            Log::error('in put userdata'.print_r($userData,true));
 
             if(isset($userData['role'])) $user->role = $userData['role'];
             if(isset($userData['experience'])) $user->experience = $userData['experience'];
             if(isset($userData['summary'])) $user->summary = $userData['summary'];
 
-            //print_r($userData);
-
-
             if (!$user->save()) {
-                //$errors = $user->getErrors()->all();
-                $errors = 'Errors';
+                $errors = $user->getErrors()->all();
                 $data = $errors;
                 $message = 'User not updated.';
                 return Response::json(array('message' => $message ,'data'=> [

@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration {
             $table->string('phone_number', 20);
             $table->string('email')->unique();
             $table->string('password', 60);
-            $table->string('user_id')->default("0");
+            $table->string('uid')->default("0");
             $table->enum('role', array('agent', 'client','anonymous'))->default('anonymous')->comment('Role of User in System');
             $table->string('experience');
             $table->text('summary');

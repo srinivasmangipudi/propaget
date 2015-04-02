@@ -28,7 +28,7 @@ class UserTableSeeder extends Seeder {
         $user->email = 'amitav.roy@focalworks.in';
         $user->password = Hash::make('password');
         $user->user_type = 'normal';
-        $user->user_id = '0';
+        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
 
@@ -38,7 +38,7 @@ class UserTableSeeder extends Seeder {
         $user->email = 'kaustubh.malgaonkar@focalworks.in';
         $user->password = Hash::make('password');
         $user->user_type = 'normal';
-        $user->user_id = '0';
+        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
 
@@ -55,7 +55,7 @@ class UserTableSeeder extends Seeder {
             $user->email = $faker->email;
             $user->password = Hash::make('password');
             $user->user_type = $faker->randomElement(array('normal', 'facebook', 'google'));
-            $user->user_id = '0';
+            $user->uid = '0';
             $user->role = $role[array_rand($role, 1)];
             $user->save();
         }
