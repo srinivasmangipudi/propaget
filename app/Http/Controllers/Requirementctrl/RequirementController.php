@@ -5,14 +5,19 @@ use App\Http\Requests;
 use App\Requirement;
 use App\User;
 use Auth;
-use Aws\CloudFront\Exception\Exception;
+
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Watson\Validating\ValidationException;
+
 
 class RequirementController extends Controller {
-    
+
     public function __construct()
     {
         //$this->middleware('oauth');
@@ -69,54 +74,8 @@ class RequirementController extends Controller {
     public function store(Request $request)
     {
         $userId = $request['user_id'];
-
-        try{
-            $requirementData = $request->input();
-
-            $user = User::find($userId);
-
-            $req = new Requirement();
-            $req->agent_id = $userId;
-            $req->client_id = 1;
-            $req->title = $requirementData['title'];
-
-            if(isset($requirementData['description']) && $requirementData['description'])
-            {
-                $req->description = $requirementData['description'];
-            }
-
-            $req->client_email = $requirementData['client_email'];
-            $req->location = $requirementData['location'];
-            $req->area = $requirementData['area'];
-            $req->range = $requirementData['range'];
-            $req->price = $requirementData['price'];
-            $req->price_range = $requirementData['price_range'];
-            $req->type = $requirementData['type'];
-
-            if (!$req->save(['user' => $user, 'requirement' => $req])) {
-                $errors = $req->getErrors()->all();
-                $data = $errors;
-                $message = 'Requirement not added.';
-                return Response::json(array('message' => $message ,'data'=> [
-                    'req' => $data,
-                    'type' => 'error'
-                ]), Config::get('statuscode.validationFailCode'));
-            }
-
-            $data = $req;
-            $message = 'Requirement added successfully';
-            return Response::json(array('message' => $message ,'data'=> [
-                'req' => $data,
-                'type' => 'save'
-            ]), Config::get('statuscode.successCode'));
-
-        }
-        catch(Exception $e)
-        {
-            $data = 'Exception';
-            $message = 'Requirement not Added.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
-        }
+        $requirementData = $request->input();
+        return $this->save_requirement($userId, $requirementData);
     }
 
     /**
@@ -129,7 +88,7 @@ class RequirementController extends Controller {
     {
         $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
-        /*Check if the user is owner of the Property list or not*/
+        /*Check if the user is owner of the Requirement list or not*/
         if ($requirement->agent_id != $user_id) {
 
             return response([
@@ -150,7 +109,7 @@ class RequirementController extends Controller {
     {
         $user_id = $request['user_id'];
         $requirement = Requirement::find($id);
-        /*Check if the user is owner of the Property list or not*/
+        /*Check if the user is owner of the Requirement list or not*/
         if ($requirement->agent_id != $user_id) {
 
             return response([
@@ -169,50 +128,10 @@ class RequirementController extends Controller {
      */
     public function update($id, Request $request)
     {
-        try{
-            $userId = $request['user_id'];
-            $user = User::find($userId);
+        $userId = $request['user_id'];
+        $requirementData = $request->input();
 
-            $requirementData = $request->input();
-            $req =  Requirement::find($id);
-            $req->agent_id = $userId;
-            $req->client_id = 1;
-            $req->title = $requirementData['title'];
-            if(isset($requirementData['description']))
-            {
-                $req->description = $requirementData['description'];
-            }
-            $req->client_email = $requirementData['client_email'];
-            $req->location = $requirementData['location'];
-            $req->area = $requirementData['area'];
-            $req->range = $requirementData['range'];
-            $req->price = $requirementData['price'];
-            $req->price_range = $requirementData['price_range'];
-            $req->type = $requirementData['type'];
-
-            if (!$req->save(['user' => $user, 'requirement' => $req])) {
-                $errors = $req->getErrors()->all();
-                $data = $errors;
-                $message = 'Requirement not updated.';
-                return Response::json(array('message' => $message ,'data'=> [
-                    'req' => $data,
-                    'type' => 'error'
-                ]), Config::get('statuscode.validationFailCode'));
-            }
-
-            $data = $req;
-            $message = 'Requirement updated successfully';
-            return Response::json(array('message' => $message ,'data'=> [
-                'req' => $data,
-                'type' => 'Update'
-            ]), Config::get('statuscode.successCode'));
-        }
-        catch(Exception $e)
-        {
-            $data = $id;
-            $message = 'Requirement not updated.';
-            return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
-        }
+        return $this->save_requirement($userId, $requirementData, $id);
     }
 
     /**
@@ -250,5 +169,95 @@ class RequirementController extends Controller {
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
 
+    }
+
+    /* Helper function to save Requirement*/
+    private function save_requirement($userId, $requirementData,$requirementId=NULL)
+    {
+        Log::error('i m funh');
+        DB::beginTransaction();
+        try{
+            if(!$requirementId) {
+                /* Create client user if not exists */
+                $clientUser = User::where('email', $requirementData['client_email'])->first();
+
+                if (!$clientUser) {
+                    $clientUser = new User;
+                    $clientUser->email = $requirementData['client_email'];
+                    $clientUser->password = Hash::make('password');
+                    $clientUser->role = 'client';
+                    $clientUser->save();
+                }
+
+                $clientId = $clientUser->id;
+            }
+
+            if($requirementId) {
+                $req =  Requirement::find($requirementId);
+            }else {
+                $req = new Requirement;
+                $req->client_id = $clientId;
+            }
+
+            $req->agent_id = $userId;
+            $req->title = $requirementData['title'];
+            if(isset($requirementData['description']))
+            {
+                $req->description = $requirementData['description'];
+            }
+            $req->client_email = $requirementData['client_email'];
+            $req->location = $requirementData['location'];
+            $req->area = $requirementData['area'];
+            $req->range = $requirementData['range'];
+            $req->price = $requirementData['price'];
+            $req->price_range = $requirementData['price_range'];
+            $req->type = $requirementData['type'];
+            $req->save();
+
+            if($requirementId) {
+                $data = $req;
+                $message = 'Requirement updated successfully';
+                $type =  'Update';
+            }else {
+                $data = $req;
+                $message = 'Requirement added successfully';
+                $type =  'save';
+            }
+
+        }
+        catch (ValidationException $e) {
+            DB::rollback();
+            Log::info('Catch exception Validate');
+            $errors = $e->getErrors()->all();
+            $data = $errors;
+            if($requirementId) {
+                $message = 'Requirement not updated.';
+            }else {
+                $message = 'Requirement not Added.';
+            }
+            return Response::json(array('message' => $message ,'data'=> [
+                'req' => $data,
+                'type' => 'error'
+            ]), Config::get('statuscode.validationFailCode'));
+
+        }
+        catch (Exception $e) {
+            DB::rollback();
+            Log::info('Catch exception General');
+            if($requirementId) {
+                $data = $requirementId;
+                $message = 'Requirement not updated.';
+            }else {
+                $data = '';
+                $message = 'Requirement not Added.';
+            }
+            return Response::json(array('message' => $message ,'data'=>$data),
+                Config::get('statuscode.internalServerErrorCode'));
+        }
+        DB::commit();
+        return Response::json(array('message' => $message ,'data'=> [
+            'req' => $data,
+            'type' => $type,
+        ]), Config::get('statuscode.successCode'));
     }
 }
