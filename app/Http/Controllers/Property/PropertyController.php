@@ -182,7 +182,7 @@ class PropertyController extends Controller {
                 if (!$clientUser) {
                     $clientUser = new User;
                     $clientUser->email = $propertyData['client_email'];
-                    $clientUser->password = 'password';
+                    $clientUser->password = Hash::make('password');
                     $clientUser->role = 'client';
                     $clientUser->save();
                 }
