@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
 use Faker\Provider\en_US\PhoneNumber;
+use App\UserProfile;
 
 /**
  * Created by PhpStorm.
@@ -27,22 +28,29 @@ class UserTableSeeder extends Seeder {
         $user->phone_number = '+919820098200';
         $user->email = 'amitav.roy@focalworks.in';
         $user->password = Hash::make('password');
-        $user->user_type = 'normal';
-        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
+
+        $userId = $user->id;
+        $userProfile = new UserProfile();
+        $userProfile->user_id = $userId;
+        $userProfile->user_type = 'normal';
+        $userProfile->save();
 
         $user = new User;
         $user->name = 'Kaustubh Malgaonkar';
         $user->phone_number = '+919830098300';
         $user->email = 'kaustubh.malgaonkar@focalworks.in';
         $user->password = Hash::make('password');
-        $user->user_type = 'normal';
-        $user->uid = '0';
         $user->role = $role[0];
         $user->save();
 
-        $role =array('agent', 'client','anonymous');
+        $userId = $user->id;
+        $userProfile = new UserProfile();
+        $userProfile->user_id = $userId;
+        $userProfile->user_type = 'normal';
+        $userProfile->save();
+
 
         $faker = Faker\Factory::create();
 
@@ -54,10 +62,14 @@ class UserTableSeeder extends Seeder {
             $user->phone_number = '+91' . $number;
             $user->email = $faker->email;
             $user->password = Hash::make('password');
-            $user->user_type = $faker->randomElement(array('normal', 'facebook', 'google'));
-            $user->uid = '0';
             $user->role = $role[array_rand($role, 1)];
             $user->save();
+
+            $userId = $user->id;
+            $userProfile = new UserProfile();
+            $userProfile->user_id = $userId;
+            $userProfile->user_type = $faker->randomElement(array('normal', 'facebook', 'google'));
+            $userProfile->save();
         }
     }
 }
