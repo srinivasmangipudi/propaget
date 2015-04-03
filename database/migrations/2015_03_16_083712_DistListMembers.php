@@ -17,17 +17,17 @@ class DistListMembers extends Migration {
         Schema::create('dist_list_members', function(Blueprint $table)
         {
             $table->integer('dist_list_id')->unsigned()->comment('The distribution list id');
-            $table->foreign('dist_list_id')->references('id')->on('dist_lists')->onDelete('cascade');
+//            $table->foreign('dist_list_id')->references('id')->on('dist_lists')->onDelete('cascade');
 
             $table->integer('user_id')->unsigned()->comment('The user id who is member of the group');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+//            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
 
             $table->index('dist_list_id');
             $table->index('user_id');
         });
-	}
+    }
 
     /**
      * Reverse the migrations.
@@ -37,6 +37,6 @@ class DistListMembers extends Migration {
     public function down()
     {
         Schema::dropIfExists('dist_list_members');
-	}
+    }
 
 }

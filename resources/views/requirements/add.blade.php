@@ -27,8 +27,9 @@
            </div>
 
             <div class="form-group">
-                <label>Client Email:</label>
-                <input type='email' ng-model="requirement.client_email" class="form-control" name="client_email" required ng-class="show_error('client_email')">
+                <label>Client Email : </label>
+                <input type='email' ng-model="requirement.client_email" class="form-control" name="client_email" required ng-class="show_error('client_email')" ng-hide="requirement.id">
+                <span ng-show="requirement.id">@{{requirement.client_email}}</span>
             </div>
 
            <div class="form-group">

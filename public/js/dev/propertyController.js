@@ -89,7 +89,9 @@ propertyApp.controller('propertyController', ['$scope', 'propagateService', '$lo
 
         propagateService.apiCall('DeleteProperty', method, functionUrl).then(function(propertyData) {
             //console.log('Delete Msg : ' + JSON.stringify(propertyData));
-            $scope.$emit('MsgEvent', propertyData.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(propertyData.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
 
@@ -110,7 +112,9 @@ propertyApp.controller('propertyViewCtrl', ['$scope', 'propagateService', '$rout
             }
         }).catch(function(fallback) {
             //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-            $scope.$emit('MsgEvent', fallback.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(fallback.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
     }
@@ -132,7 +136,9 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$rout
             }
         }).catch(function(fallback) {
             //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-            $scope.$emit('MsgEvent', fallback.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(fallback.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
 
@@ -145,13 +151,15 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$rout
                 var method = 'PUT';
                 var functionUrl = 'property/' + propertyId;
                 propagateService.apiCall('updateProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-
                     //console.log('Update Msg : ' + propertyData.data);
-                    $scope.$emit('MsgEvent', propertyData.data.message);
+                    $scope.imsg = [];
+                    $scope.imsg.push(propertyData.data.message);
+                    $scope.$emit('MsgEvent', $scope.imsg);
                     $location.path('/');
                 }).catch(function(fallback) {
                     //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-                    $scope.$emit('MsgEvent', fallback.data.message+fallback.data.prop);
+                    fallback.data.data.prop.push(fallback.data.message);
+                    $scope.$emit('MsgEvent', fallback.data.data.prop);
                 });
             }
         }
@@ -165,12 +173,15 @@ propertyApp.controller('propertyAddCtrl', ['$scope', 'propagateService' , '$rout
                 var method = 'POST';
                 var functionUrl = 'property/';
                 propagateService.apiCall('addProperty', method, functionUrl, $scope.property).then(function (propertyData) {
-                        $scope.$emit('MsgEvent', propertyData.data.message);
+                        $scope.imsg = [];
+                        $scope.imsg.push(propertyData.data.message);
+                        $scope.$emit('MsgEvent', $scope.imsg);
                         $location.path('/');
                     })
                     .catch(function(fallback) {
                         //console.log('Error add Msg ==== ' + JSON.stringify(fallback));
-                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                        fallback.data.data.prop.push(fallback.data.message);
+                        $scope.$emit('MsgEvent', fallback.data.data.prop);
                     });
             }
         }

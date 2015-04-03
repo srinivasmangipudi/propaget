@@ -83,7 +83,9 @@ requirementApp.controller('requirementController', ['$scope', 'propagateService'
         var functionUrl =  'req-list/' + requirementId;
         propagateService.apiCall('DeleteRequirement', method, functionUrl).then(function(requirementData) {
             //console.log('Delete Msg : ' + JSON.stringify(requirementData));
-            $scope.$emit('MsgEvent', requirementData.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(requirementData.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
     }
@@ -106,8 +108,9 @@ requirementApp.controller('requirementViewCtrl', ['$scope', 'propagateService', 
                 $scope.requirement = requirementData.data;
             }
         }).catch(function(fallback) {
-            //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-            $scope.$emit('MsgEvent', fallback.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(fallback.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
     }
@@ -129,7 +132,9 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
             }
         }).catch(function(fallback) {
             //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-            $scope.$emit('MsgEvent', fallback.data.message);
+            $scope.imsg = [];
+            $scope.imsg.push(fallback.data.message);
+            $scope.$emit('MsgEvent', $scope.imsg);
             $location.path('/');
         });
 
@@ -143,12 +148,15 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
                 propagateService.apiCall('updateRequirement', method, functionUrl, $scope.requirement)
                     .then(function (requirementData) {
                     //console.log('Update Msg ==== ' + JSON.stringify(requirementData));
-                    $scope.$emit('MsgEvent', requirementData.data.message);
-                    $location.path('/');
+                        $scope.imsg = [];
+                        $scope.imsg.push(requirementData.data.message);
+                        $scope.$emit('MsgEvent', $scope.imsg);
+                        $location.path('/');
                     })
                     .catch(function(fallback) {
                         //console.log('Error Update Msg ==== ' + JSON.stringify(fallback));
-                        $scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                        fallback.data.data.req.push(fallback.data.message);
+                        $scope.$emit('MsgEvent', fallback.data.data.req);
                     });
             }
         }
@@ -163,12 +171,14 @@ requirementApp.controller('requirementAddCtrl', ['$scope', 'propagateService', '
                 var functionUrl = 'req-list/';
                 propagateService.apiCall('addRequirement', method, functionUrl, $scope.requirement).then(function (requirementData) {
                         //console.log('Add Msg ==== ' + JSON.stringify(requirementData));
-                        $scope.$emit('MsgEvent', requirementData.data.message);
+                        $scope.imsg = [];
+                        $scope.imsg.push(requirementData.data.message);
+                        $scope.$emit('MsgEvent', $scope.imsg);
                         $location.path('/');
                     })
                     .catch(function(fallback) {
-                        //console.log('Error add Msg ==== ' + JSON.stringify(fallback));
-                        //$scope.$emit('MsgEvent', fallback.data.message+fallback.data.data);
+                        fallback.data.data.req.push(fallback.data.message);
+                        $scope.$emit('MsgEvent', fallback.data.data.req);
                     });
             }
         }
