@@ -20,7 +20,8 @@
     "phpspec/phpspec": "~2.1",
     "barryvdh/laravel-debugbar": "dev-master",
     "laracasts/generators": "~1.1",
-    "adamwathan/bootforms": "0.4.2"
+    "adamwathan/bootforms": "0.4.2",
+    "fzaninotto/faker": "1.3.*@dev"
   },
   "autoload": {
     "classmap": [
