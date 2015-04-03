@@ -12,15 +12,15 @@
     "watson/validating": "dev-master",
     "aws/aws-sdk-php-laravel": "~2.0",
     "bshaffer/oauth2-server-php": "~1.6",
-    "bshaffer/oauth2-server-httpfoundation-bridge": "~1.1"
+    "bshaffer/oauth2-server-httpfoundation-bridge": "~1.1",
+    "philo/laravel5-facebook": "~1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
     "phpspec/phpspec": "~2.1",
     "barryvdh/laravel-debugbar": "dev-master",
     "laracasts/generators": "~1.1",
-    "adamwathan/bootforms": "0.4.2",
-    "fzaninotto/faker": "1.3.*@dev"
+    "adamwathan/bootforms": "0.4.2"
   },
   "autoload": {
     "classmap": [

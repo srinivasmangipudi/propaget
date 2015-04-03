@@ -44,6 +44,7 @@ class DoLoginPdo extends Pdo
 
     public function setAccessToken($access_token, $client_id, $user_id, $expires, $scope = null)
     {
+        Log::info(print_r($user_id, true));
         if(!is_numeric($user_id)) {
             $userData = User::where('email', $user_id)->first();
             $user_id = $userData->id;

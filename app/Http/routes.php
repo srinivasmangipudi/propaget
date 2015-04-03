@@ -104,6 +104,7 @@ App::singleton('oauth2', function() {
     $server->addGrantType(new OAuth2\GrantType\UserCredentials($storage));
     $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
     $server->addGrantType(new OAuth2\GrantType\RefreshToken($storage));
+    $server->addGrantType(new App\Http\Controllers\Auth\FacebookGrantType($storage));
 
     return $server;
 });
@@ -113,4 +114,36 @@ Route::post('get-new-token', 'Auth\OAuthController@newAccessToken');
 
 Route::group(['middleware' => 'oauth', 'prefix' => 'oauth'], function() {
     Route::get('get-access', 'Auth\OAuthController@validateAccessToken');
+});
+
+Route::post('mobilefb', 'Auth\OAuthController@facebook');
+
+Route::get('fb', function() {
+    session_start();
+    \Facebook\FacebookSession::setDefaultApplication('298422880260349', 'f312d7913a0acb866223483eb216c8f3');
+    $helper = new Facebook\FacebookRedirectLoginHelper('http://localhost:8000/fb-test');
+    $loginUrl = $helper->getLoginUrl();
+    echo "<a href='{$loginUrl}'>Link</a>";
+});
+
+Route::get('fb-test', function() {
+    session_start();
+    \Facebook\FacebookSession::setDefaultApplication('298422880260349', 'f312d7913a0acb866223483eb216c8f3');
+    $helper = new \Facebook\FacebookRedirectLoginHelper('http://localhost:8000/fb-test');
+    try {
+        $session = $helper->getSessionFromRedirect();
+    } catch(\Facebook\FacebookRequestException $ex) {
+        // When Facebook returns an error
+        dd('When Facebook returns an error');
+    } catch(\Exception $ex) {
+        // When validation fails or other local issues
+        dd('When validation fails or other local issues');
+    }
+    if ($session) {
+        // Logged in
+        $request = new \Facebook\FacebookRequest($session, 'GET', '/me');
+        $response = $request->execute();
+        $graphObject = $response->getGraphObject();
+        dd($graphObject);
+    }
 });

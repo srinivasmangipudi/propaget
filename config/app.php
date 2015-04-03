@@ -159,6 +159,7 @@ return [
         'Laravel\Socialite\SocialiteServiceProvider',
         'Illuminate\Html\HtmlServiceProvider',
         'Aws\Laravel\AwsServiceProvider',
+        'Philo\Laravel5Facebook\Laravel5FacebookServiceProvider',
     ],
 
     /*
@@ -210,5 +211,6 @@ return [
         'Str' => 'Illuminate\Support\Str',
         'BootForm'  => 'AdamWathan\BootForms\Facades\BootForm',
         'AWS' => 'Aws\Laravel\AwsFacade',
+        'Facebook'  => 'Philo\Laravel5Facebook\Facades\Facebook',
     ]
 ];
