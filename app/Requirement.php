@@ -29,9 +29,9 @@ class Requirement extends BaseModel {
         //return parent::save();
         $saved = parent::save();
 
-        watchdog_message('New requirement was added.', 'normal', ['requirement' => $options['requirement']]);
+        //watchdog_message('New requirement was added.', 'normal', ['requirement' => $options['requirement']]);
 
-        \Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
+        //\Event::fire(new EventRequirementAdded($options['user'], $options['requirement']));
 
         return $saved;
     }

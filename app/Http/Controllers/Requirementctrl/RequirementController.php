@@ -200,6 +200,7 @@ class RequirementController extends Controller {
             }
 
             $req->agent_id = $userId;
+            $user = User::find($userId);
             $req->title = $requirementData['title'];
             if(isset($requirementData['description']))
             {
@@ -212,7 +213,8 @@ class RequirementController extends Controller {
             $req->price = $requirementData['price'];
             $req->price_range = $requirementData['price_range'];
             $req->type = $requirementData['type'];
-            $req->save();
+            $req->save(['user' => $user, 'requirement' => $req]);
+            //$req->save();
 
             if($requirementId) {
                 $data = $req;
@@ -255,6 +257,7 @@ class RequirementController extends Controller {
                 Config::get('statuscode.internalServerErrorCode'));
         }
         DB::commit();
+        Log::info('final save : '.print_r($data,true));
         return Response::json(array('message' => $message ,'data'=> [
             'req' => $data,
             'type' => $type,
