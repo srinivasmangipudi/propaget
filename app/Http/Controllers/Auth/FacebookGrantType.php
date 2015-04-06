@@ -43,7 +43,17 @@ class FacebookGrantType implements GrantTypeInterface {
      */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        FacebookSession::setDefaultApplication('548793841817925', '7fac926e1d8429b81825b56d46a3afc6');
+        $client = $request->request('client');
+
+        switch ($client) {
+            case 'android':
+                FacebookSession::setDefaultApplication('548793841817925', '7fac926e1d8429b81825b56d46a3afc6');
+                break;
+
+            case 'web':
+                FacebookSession::setDefaultApplication('298422880260349', 'f312d7913a0acb866223483eb216c8f3');
+                break;
+        }
 
         $session = new FacebookSession($request->request('code'));
 
@@ -63,7 +73,6 @@ class FacebookGrantType implements GrantTypeInterface {
         }
 
         if ($object) {
-            Log::info(print_r($object, true));
             $facebookUserObject = [
                 'id' => $object->getProperty('id'),
                 'email' => $object->getProperty('email'),
