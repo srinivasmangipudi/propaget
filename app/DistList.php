@@ -8,6 +8,8 @@ use Faker;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\User;
+use App\UserProfile;
 
 class DistList extends Model {
 
@@ -108,19 +110,19 @@ class DistList extends Model {
     private function checkExistingAndNewUser($members)
     {
         // get users from DB based on members provided
-        $userData = DB::table('users')->whereIn('phoneNumber', $members)->get();
+        $userData = DB::table('users')->whereIn('phone_number', $members)->get();
 
         $finalArray = array();
 
         foreach ($userData as $row)
         {
-            if (in_array($row->phoneNumber, $members))
+            if (in_array($row->phone_number, $members))
             {
                 // push to the final array
-                $finalArray[$row->id] = $row->phoneNumber;
+                $finalArray[$row->id] = $row->phone_number;
 
                 // search for the key
-                $key = array_search($row->phoneNumber, $members);
+                $key = array_search($row->phone_number, $members);
 
                 // unset the array index so that next time the search is quicker.
                 unset($members[$key]);
@@ -164,12 +166,20 @@ class DistList extends Model {
             $userNumber = str_replace(' ', '', $userNumber);
             $user = new User;
             $user->name = "propagate_" . $userNumber;
-            $user->phoneNumber = $userNumber;
+            $user->phone_number = $userNumber;
             $user->email = $userNumber . '@propagate.com';
             $user->password = Hash::make('password');
-            $user->userType = 'normal';
-            $user->userId = '0';
+            //$user->userType = 'normal';
+            //$user->userId = '0';
             $user->save();
+            if(isset($user->id))
+            {
+                $userId = $user->id;
+                $userProfile = new UserProfile();
+                $userProfile->user_id = $userId;
+                $userProfile->user_type = 'normal';
+                $userProfile->save();
+            }
             $newUserArray[$user->id] = $userNumber;
         }
 
