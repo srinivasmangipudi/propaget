@@ -79,7 +79,7 @@ class ProfileController extends Controller {
                 if(isset($userData['summary']) && $userData['summary']) $user->summary = $userData['summary'];
 
                 $user->save();
-                if($user->id)
+                if(isset($user->id))
                 {
                     $userId = $user->id;
                     $userProfile = new UserProfile();
