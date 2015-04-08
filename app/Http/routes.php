@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\DoLoginPdo;
+use Illuminate\Http\Request;
 
 Route::get('/', 'WelcomeController@index');
 
@@ -66,7 +67,7 @@ Route::get('/fb/login', 'SocialLogin\SocialLoginController@fb_login');
 //Route::get('/fb/login/done', 'SocialLoginController@fbloginUser');
 
 
-Route::get('get-token', function() {
+Route::post('get-token', function() {
     return csrf_token();
 });
 
@@ -105,6 +106,7 @@ App::singleton('oauth2', function() {
     $server->addGrantType(new OAuth2\GrantType\AuthorizationCode($storage));
     $server->addGrantType(new OAuth2\GrantType\RefreshToken($storage));
     $server->addGrantType(new App\Http\Controllers\Auth\FacebookGrantType($storage));
+    $server->addGrantType(new App\Http\Controllers\Auth\GooglePlusGrantType($storage));
 
     return $server;
 });
@@ -117,6 +119,10 @@ Route::group(['middleware' => 'oauth', 'prefix' => 'oauth'], function() {
 });
 
 Route::post('mobilefb', 'Auth\OAuthController@facebook');
+Route::post('mobilegoogle', 'Auth\OAuthController@googlePlus');
+
+Route::get('googleLoginLINK', 'Auth\OAuthController@webGoogleLoginlink');
+Route::get('googleLogin', 'Auth\OAuthController@webGoogleLogin');
 
 Route::get('fb', function() {
     session_start();
