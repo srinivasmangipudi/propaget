@@ -27,38 +27,11 @@
 
 	@yield('content')
 
-    <!--<button id="click">Click</button>-->
-
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	 <script>
           var base_url = "{{ URL::to('/') }}/";
-    </script>
-    <script>
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $('#click').click(function() {
-                setAjax();
-            });
-        });
-
-        function setAjax() {
-            $.ajax({
-                url: "http://192.168.7.102/propagate/public/register-device",
-                async: false,
-                type: "POST",
-                data: "deviceId=Amitav&registrationId=Roy",
-                dataType: "html",
-                success: function(data) {
-                    console.log(data);
-                }
-            });
-        }
     </script>
     <script src="{{url('js/lib/angular.min.js')}}"></script>
     <script src="{{url('js/lib/angular-route.min.js')}}"></script>

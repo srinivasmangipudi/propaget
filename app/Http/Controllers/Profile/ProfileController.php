@@ -2,15 +2,18 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\UserProfile;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 use App\User;
 use Illuminate\Support\Facades\Route;
+use Watson\Validating\ValidationException;
 
 class ProfileController extends Controller {
 
@@ -58,8 +61,8 @@ class ProfileController extends Controller {
     {
         try
         {
+            DB::beginTransaction();
             $userData = $request->input();
-            //Log::error('in store userdata'.print_r($userData,true));
             if(isset($userData['phone_number']) && $userData['phone_number'])
             {
                 $clientUser = User::where('phone_number', $userData['phone_number'])->first();
@@ -70,44 +73,44 @@ class ProfileController extends Controller {
                 $user->phone_number = $userData['phone_number'];
                 $user->email = $userData['email'];
                 $user->password = Hash::make($userData['password']);
-                $user->user_type = 'normal';
+                //$user->user_type = 'normal';
                 if(isset($userData['role']) && $userData['role']) $user->role = $userData['role'];
                 if(isset($userData['experience']) && $userData['experience'] ) $user->experience = $userData['experience'];
                 if(isset($userData['summary']) && $userData['summary']) $user->summary = $userData['summary'];
-                $user->uid = '0';
 
-                if (!$user->save()) {
-                    $errors = $user->getErrors()->all();
+                $user->save();
+                if(isset($user->id))
+                {
+                    $userId = $user->id;
+                    $userProfile = new UserProfile();
+                    $userProfile->user_id = $userId;
+                    $userProfile->user_type = 'normal';
+                    $userProfile->save();
 
-                    $data = $errors;
-                    $message = 'User not added.';
+                    $data = $user;
+
+                    $message = 'User added successfully';
+                    //Log::error('in store after insert'.print_r($user,true));
+                    $requestParams = array(
+                        'grant_type' => 'password',
+                        'client_id' => 'testclient',
+                        'client_secret' => 'testpass',
+                        'username' => $userData['email'],
+                        'password' => $userData['password']
+                    );
+
+                    DB::commit();
+                    // Call get token route to get access token after user logs in
+                    $tokenRequest = Request::create('oauth/token', 'POST', $requestParams);
+                    $request->replace($tokenRequest->input()); // To replace the request parameters with new one
+                    $OauthTokenData = json_decode(Route::dispatch($tokenRequest)->getContent());
+
                     return Response::json(array('message' => $message ,'data'=> [
                         'reg' => $data,
-                        'type' => 'error'
-                    ]), Config::get('statuscode.validationFailCode'));
+                        'token' => $OauthTokenData,
+                        'type' => 'save'
+                    ]), Config::get('statuscode.successCode'));
                 }
-
-                $data = $user;
-                $message = 'User added successfully';
-                //Log::error('in store after insert'.print_r($user,true));
-                $requestParams = array(
-                    'grant_type' => 'password',
-                    'client_id' => 'testclient',
-                    'client_secret' => 'testpass',
-                    'username' => $user->email,
-                    'password' => $userData['password']
-                );
-
-                // Call get token route to get access token after user logs in
-                $tokenRequest = Request::create('oauth/token', 'POST', $requestParams);
-                $request->replace($tokenRequest->input()); // To replace the request parameters with new one
-                $OauthTokenData = json_decode(Route::dispatch($tokenRequest)->getContent());
-
-                return Response::json(array('message' => $message ,'data'=> [
-                    'reg' => $data,
-                    'token' => $OauthTokenData,
-                    'type' => 'save'
-                ]), Config::get('statuscode.successCode'));
             }
             else
             {
@@ -119,15 +122,24 @@ class ProfileController extends Controller {
                 ]), Config::get('statuscode.validationFailCode'));
             }
 
-
+        }
+        catch (ValidationException $e) {
+            DB::rollback();
+            $errors = $e->getErrors()->all();
+            $data = $errors;
+            $message = 'User not added.';
+            return Response::json(array('message' => $message ,'data'=> [
+                'reg' => $data,
+                'type' => 'error'
+            ]), Config::get('statuscode.validationFailCode'));
         }
         catch(Exception $e)
         {
+            DB::rollback();
             $data = 'Exception';
             $message = 'User not Added.';
             return Response::json(array('message' => $message ,'data'=>$data), Config::get('statuscode.internalServerErrorCode'));
         }
-
     }
 
     /**

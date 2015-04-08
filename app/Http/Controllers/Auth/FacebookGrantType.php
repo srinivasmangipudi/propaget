@@ -5,6 +5,7 @@ use Exception;
 use Facebook\FacebookRequest;
 use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use OAuth2\GrantType\GrantTypeInterface;
 use OAuth2\RequestInterface;
@@ -42,7 +43,17 @@ class FacebookGrantType implements GrantTypeInterface {
      */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        FacebookSession::setDefaultApplication('548793841817925', '7fac926e1d8429b81825b56d46a3afc6');
+        $client = $request->request('client');
+
+        switch ($client) {
+            case 'android':
+                FacebookSession::setDefaultApplication('548793841817925', '7fac926e1d8429b81825b56d46a3afc6');
+                break;
+
+            case 'web':
+                FacebookSession::setDefaultApplication('298422880260349', 'f312d7913a0acb866223483eb216c8f3');
+                break;
+        }
 
         $session = new FacebookSession($request->request('code'));
 
@@ -62,22 +73,35 @@ class FacebookGrantType implements GrantTypeInterface {
         }
 
         if ($object) {
+            $facebookUserObject = [
+                'id' => $object->getProperty('id'),
+                'email' => $object->getProperty('email'),
+                'first_name' => $object->getProperty('first_name'),
+                'gender' => $object->getProperty('gender'),
+                'last_name' => $object->getProperty('last_name'),
+                'link' => $object->getProperty('link'),
+                'locale' => $object->getProperty('locale'),
+                'name' => $object->getProperty('name'),
+                'timezone' => $object->getProperty('timezone'),
+                'updated_time' => $object->getProperty('updated_time'),
+                'verified' => $object->getProperty('verified'),
+            ];
             // set up the user object properties
-            $this->user['user_id'] = $object->getProperty('name');
-            $this->user['facebook_id'] = $object->getProperty('id');
-            $this->user['email'] = $object->getProperty('email');
-            $this->user['first_name'] = $object->getProperty('first_name');
-            $this->user['last_name'] = $object->getProperty('last_name');
-            $this->user['name'] = $object->getProperty('name');
-            $this->user['verified'] = $object->getProperty('verified');
+            $this->user['user_id'] = $facebookUserObject['name'];
+            $this->user['facebook_id'] = $facebookUserObject['id'];
+            $this->user['email'] = $facebookUserObject['email'];
+            $this->user['first_name'] = $facebookUserObject['first_name'];
+            $this->user['last_name'] = $facebookUserObject['last_name'];
+            $this->user['name'] = $facebookUserObject['name'];
+            $this->user['verified'] = $facebookUserObject['verified'];
 
             // checking if the user is already present in the system
             if ($this->checkIfUserExist()) {
                 // update profile
-                $this->updateProfile($object);
+                $this->updateProfile($facebookUserObject);
             } else {
                 // create profile
-                $this->createdUserProfile($object);
+                $this->createdUserProfile($facebookUserObject);
             }
         }
 
@@ -89,6 +113,11 @@ class FacebookGrantType implements GrantTypeInterface {
         return null;
     }
 
+    /**
+     * This function will return the current user's id.
+     *
+     * @return mixed
+     */
     public function getUserId()
     {
         return $this->user['id'];
@@ -124,33 +153,58 @@ class FacebookGrantType implements GrantTypeInterface {
         $user = User::where('email', $this->user['email'])->first();
 
         if ($user) {
+            $this->user['id'] = $user->id;
             return true;
         } else {
             return false;
         }
     }
 
-    private function updateProfile($object)
+    /**
+     * This function is updating the profile of the user
+     *
+     * @param $facebookUserObject
+     */
+    private function updateProfile($facebookUserObject)
     {
-
+        DB::table('users_profile')
+            ->where('user_id', $this->user['id'])
+            ->update([
+                'data' => serialize($facebookUserObject),
+            ]);
     }
 
     /**
      * This function will take the user object
      * and create a user object.
      *
-     * @param $object
      */
-    private function createdUserProfile($object)
+    private function createdUserProfile($facebookUserObject)
     {
-        $user = new User;
-        $user->name = $this->user['name'];
-        $user->email = $this->user['email'];
-        $user->user_type = 'facebook';
-        $user->status = 1;
-        $user->role = 'agent';
-        $user->save();
+        try {
+            DB::beginTransaction();
 
-        $this->user['id'] = $user->id;
+            $user = new User;
+            $user->name = $this->user['name'];
+            $user->email = $this->user['email'];
+            $user->user_type = 'facebook';
+            $user->status = 1;
+            $user->role = 'agent';
+            $user->save();
+
+            DB::table('users_profile')->insert([
+                'user_id' => $user->id,
+                'uid' => $facebookUserObject['id'],
+                'user_type' => 'facebook',
+                'data' => serialize($facebookUserObject),
+            ]);
+
+            DB::commit();
+
+            $this->user['id'] = $user->id;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new Exception('Database transaction failed. Error: ' . print_r($e->getMessage(), true));
+        }
     }
 }

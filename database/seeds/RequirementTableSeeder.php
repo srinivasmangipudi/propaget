@@ -36,11 +36,13 @@ class RequirementTableSeeder extends Seeder
             $clientEmails[] = $c_users->email;
         }
 
-        for ($i = 0; $i < 50; $i++)
+        //for ($i = 0; $i < 50; $i++)
         {
             $req = new Requirement();
-            $req->agent_id = $agentIds[array_rand($agentIds, 1)];
-            $user = User::find($req->agent_id);
+            $agent_id = $agentIds[array_rand($agentIds, 1)];
+            $user = User::find($agent_id);
+            Auth::loginUsingId($agent_id);
+            $req->agent_id = $agent_id;
             $selectClientId = array_rand($clientIds, 1);
             $req->client_id = $clientIds[$selectClientId];
             $req->client_email = $clientEmails[$selectClientId];
