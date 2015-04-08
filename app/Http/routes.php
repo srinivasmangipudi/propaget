@@ -118,19 +118,14 @@ Route::group(['middleware' => 'oauth', 'prefix' => 'oauth'], function() {
     Route::get('get-access', 'Auth\OAuthController@validateAccessToken');
 });
 
-Route::post('mobilefb', 'Auth\OAuthController@facebook');
-Route::post('mobilegoogle', 'Auth\OAuthController@googlePlus');
 
-Route::get('googleLoginLINK', 'Auth\OAuthController@webGoogleLoginlink');
-Route::get('googleLogin', 'Auth\OAuthController@webGoogleLogin');
+/** ROUTES FOR SOCIAL LOGIN STARTS **/
+Route::get('SocialLoginPage', 'Auth\OAuthController@socialLoginLinks');
+Route::post('fbOauth', 'Auth\OAuthController@facebook');
+Route::post('googleOauth', 'Auth\OAuthController@googlePlus');
 
-Route::get('fb', function() {
-    session_start();
-    \Facebook\FacebookSession::setDefaultApplication('298422880260349', 'f312d7913a0acb866223483eb216c8f3');
-    $helper = new Facebook\FacebookRedirectLoginHelper('http://localhost:8000/fb-test');
-    $loginUrl = $helper->getLoginUrl();
-    echo "<a href='{$loginUrl}'>Link</a>";
-});
+Route::get('google-login', 'Auth\OAuthController@webGoogleLogin');
+Route::post('google-post', 'Auth\OAuthController@handleGooglePost');
 
-Route::get('fb-test', 'Auth\OAuthController@handleFacebookLogin');
+Route::get('fb-login', 'Auth\OAuthController@handleFacebookLogin');
 Route::post('fb-post', 'Auth\OAuthController@handleFbPost');
